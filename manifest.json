@@ -1,10 +1,10 @@
 {
-  "id": "flashcards-obsidian",
-  "name": "Flashcards",
-  "version": "1.2.1",
-  "minAppVersion": "0.9.17",
-  "description": "Anki integration",
-  "author": "Alex Colucci",
-  "authorUrl": "https://github.com/reuseman",
+  "id": "AnkiBridge",
+  "name": "AnkiBridge",
+  "version": "0.1.0",
+  "minAppVersion": "0.12.3",
+  "description": "Yet Another Anki Bridge",
+  "author": "Jeppe Klitgaard",
+  "authorUrl": "https://jeppe.science",
   "isDesktopOnly": true
 }

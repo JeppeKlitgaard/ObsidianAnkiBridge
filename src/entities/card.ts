@@ -1,5 +1,5 @@
-import { codeDeckExtension } from 'src/constants'
-import { arraysEqual } from 'src/utils'
+import { codeDeckExtension } from 'consts'
+import { arraysEqual } from 'utils'
 
 export abstract class Card {
     id: number
@@ -17,7 +17,18 @@ export abstract class Card {
     modelName: string
 
     // TODO set "obsidian as optional in the settings", this means that the tag should be outside
-    constructor(id: number, deckName: string, initialContent: string, fields: Record<string, string>, reversed: boolean, endOffset: number, tags: string[], inserted: boolean, mediaNames: string[], containsCode: boolean = false) {
+    constructor(
+        id: number,
+        deckName: string,
+        initialContent: string,
+        fields: Record<string, string>,
+        reversed: boolean,
+        endOffset: number,
+        tags: string[],
+        inserted: boolean,
+        mediaNames: string[],
+        containsCode = false,
+    ) {
         this.id = id
         this.deckName = deckName
         this.initialContent = initialContent
@@ -25,19 +36,47 @@ export abstract class Card {
         this.reversed = reversed
         this.endOffset = endOffset
         this.tags = tags
-        this.tags.unshift("obsidian")
+        this.tags.unshift('obsidian')
         this.inserted = inserted
         this.mediaNames = mediaNames
         this.mediaBase64Encoded = []
         this.oldTags = []
         this.containsCode = containsCode
-        this.modelName = ""
+        this.modelName = ''
     }
 
     abstract toString(): string
-    abstract getCard(update: boolean): object
-    abstract getMedias(): object[]
-    abstract getIdFormat(): string
+
+    public getIdFormat(): string {
+        return '^' + this.id.toString() + '\n'
+    }
+
+    public getCard(update = false): object {
+        const card: any = {
+            deckName: this.deckName,
+            modelName: this.modelName,
+            fields: this.fields,
+            tags: this.tags,
+        }
+
+        if (update) {
+            card['id'] = this.id
+        }
+
+        return card
+    }
+
+    public getMedias(): object[] {
+        const medias: object[] = []
+        this.mediaBase64Encoded.forEach((data, index) => {
+            medias.push({
+                filename: this.mediaNames[index],
+                data: data,
+            })
+        })
+
+        return medias
+    }
 
     match(card: any): boolean {
         // TODO not supported currently
@@ -45,14 +84,14 @@ export abstract class Card {
         //     return false
         // }
 
-        let fields = Object.entries(card.fields)
+        const fields = Object.entries(card.fields)
         // This is the case of a switch from a model to another one. It cannot be handeled
         if (fields.length !== Object.entries(this.fields).length) {
             return true
         }
 
-        for (let field of fields) {
-            let fieldName = field[0]
+        for (const field of fields) {
+            const fieldName = field[0]
             if (field[1].value !== this.fields[fieldName]) {
                 return false
             }
@@ -62,6 +101,6 @@ export abstract class Card {
     }
 
     getCodeDeckNameExtension() {
-        return this.containsCode ? codeDeckExtension : ""
+        return this.containsCode ? codeDeckExtension : ''
     }
 }

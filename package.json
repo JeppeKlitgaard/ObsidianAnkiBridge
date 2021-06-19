@@ -1,11 +1,12 @@
 {
-  "name": "flashcards",
+  "name": "ankibridge",
   "version": "0.2.0",
-  "description": "An Anki integration.",
+  "description": "Yet Another Anki Bridge.",
   "main": "main.js",
   "scripts": {
     "dev": "rollup --config rollup.config.js -w",
-    "build": "rollup --config rollup.config.js"
+    "build": "rollup --config rollup.config.js",
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +16,13 @@
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@rollup/plugin-typescript": "^6.0.0",
     "@types/node": "^14.14.41",
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
+    "eslint": "^7.29.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
     "obsidian": "https://github.com/obsidianmd/obsidian-api/tarball/master",
+    "prettier": "^2.3.1",
     "rollup": "^2.45.2",
     "ts-node": "^9.1.0",
     "tslib": "^2.2.0",

@@ -1,12 +1,18 @@
-import { Anki } from 'src/services/anki'
-import { App, FileSystemAdapter, FrontMatterCache, Notice, parseFrontMatterEntry, TFile } from 'obsidian'
-import { Parser } from 'src/services/parser'
-import { ISettings } from 'src/settings'
-import { Card } from 'src/entities/card'
-import { arrayBufferToBase64 } from "src/utils"
-import { Regex } from 'src/regex'
-import { noticeTimeout } from 'src/constants'
-
+import { Anki } from 'services/anki'
+import {
+    App,
+    FileSystemAdapter,
+    FrontMatterCache,
+    Notice,
+    parseFrontMatterEntry,
+    TFile,
+} from 'obsidian'
+import { Parser } from 'services/parser'
+import { ISettings } from 'settings'
+import { Card } from 'entities/card'
+import { arrayBufferToBase64 } from 'utils'
+import { Regex } from 'regex'
+import { noticeTimeout } from 'consts'
 
 export class CardsService {
     private app: App
@@ -35,45 +41,56 @@ export class CardsService {
             await this.anki.ping()
         } catch (err) {
             console.error(err)
-            return ["Error: Anki must be open with AnkiConnect installed."]
+            return ['Error: Anki must be open with AnkiConnect installed.']
         }
 
         // Init for the execute phase
         this.updateFile = false
         this.totalOffset = 0
         this.notifications = []
-        let filePath = activeFile.basename
-        let fileCachedMetadata = this.app.metadataCache.getFileCache(activeFile)
-        let vaultName = this.app.vault.getName()
+        const filePath = activeFile.basename
+        const fileCachedMetadata = this.app.metadataCache.getFileCache(activeFile)
+        const vaultName = this.app.vault.getName()
         let globalTags: string[] = undefined
 
-        // Parse frontmatter 
-        let frontmatter = fileCachedMetadata.frontmatter
+        // Parse frontmatter
+        const frontmatter = fileCachedMetadata.frontmatter
         let deckName = this.settings.deck
         if (frontmatter) {
-            deckName = parseFrontMatterEntry(frontmatter, "cards-deck") || this.settings.deck
+            deckName = parseFrontMatterEntry(frontmatter, 'cards-deck') || this.settings.deck
         }
 
         try {
             this.anki.storeCodeHighlightMedias()
-            await this.anki.createModels(this.settings.sourceSupport, this.settings.codeHighlightSupport)
+            await this.anki.createModels(
+                this.settings.sourceSupport,
+                this.settings.codeHighlightSupport,
+            )
             await this.anki.createDeck(deckName)
             this.file = await this.app.vault.read(activeFile)
             globalTags = this.parseGlobalTags(this.file)
             // TODO with empty check that does not call ankiCards line
-            let ankiBlocks = this.parser.getAnkiIDsBlocks(this.file)
-            let ankiCards = ankiBlocks ? await this.anki.getCards(this.getAnkiIDs(ankiBlocks)) : undefined
+            const ankiBlocks = this.parser.getAnkiIDsBlocks(this.file)
+            const ankiCards = ankiBlocks
+                ? await this.anki.getCards(this.getAnkiIDs(ankiBlocks))
+                : undefined
 
-            let cards: Card[] = this.parser.generateFlashcards(this.file, deckName, vaultName, filePath, globalTags)
-            let [cardsToCreate, cardsToUpdate] = this.filterByUpdate(ankiCards, cards)
-            let cardIds : number[] = this.getCardsIds(ankiCards, cards)
-            let cardsToDelete: number[] = this.parser.getCardsToDelete(this.file)
+            const cards: Card[] = this.parser.generateFlashcards(
+                this.file,
+                deckName,
+                vaultName,
+                filePath,
+                globalTags,
+            )
+            const [cardsToCreate, cardsToUpdate] = this.filterByUpdate(ankiCards, cards)
+            const cardIds: number[] = this.getCardsIds(ankiCards, cards)
+            const cardsToDelete: number[] = this.parser.getCardsToDelete(this.file)
 
-            console.info("Flashcards: Cards to create")
+            console.info('Flashcards: Cards to create')
             console.info(cardsToCreate)
-            console.info("Flashcards: Cards to update")
+            console.info('Flashcards: Cards to update')
             console.info(cardsToUpdate)
-            console.info("Flashcards: Cards to delete")
+            console.info('Flashcards: Cards to delete')
             console.info(cardsToDelete)
 
             this.insertMedias(cards)
@@ -82,14 +99,13 @@ export class CardsService {
             await this.insertCardsOnAnki(cardsToCreate, frontmatter, deckName)
 
             // Update decks if needed
-            let deckNeedToBeChanged = await this.deckNeedToBeChanged(cardIds, deckName)
+            const deckNeedToBeChanged = await this.deckNeedToBeChanged(cardIds, deckName)
             if (deckNeedToBeChanged) {
                 try {
                     this.anki.changeDeck(cardIds, deckName)
-                    this.notifications.push("Cards moved in new deck")
-                }
-                catch {
-                    return ["Error: Could not update deck the file."]
+                    this.notifications.push('Cards moved in new deck')
+                } catch {
+                    return ['Error: Could not update deck the file.']
                 }
             }
 
@@ -98,18 +114,18 @@ export class CardsService {
                 try {
                     this.app.vault.modify(activeFile, this.file)
                 } catch (err) {
-                    Error("Could not update the file.")
-                    return ["Error: Could not update the file."]
+                    Error('Could not update the file.')
+                    return ['Error: Could not update the file.']
                 }
             }
 
             if (!this.notifications.length) {
-                this.notifications.push("Nothing to do. Everything is up to date")
+                this.notifications.push('Nothing to do. Everything is up to date')
             }
             return this.notifications
         } catch (err) {
             console.error(err)
-            Error("Something went wrong")
+            Error('Something went wrong')
         }
     }
 
@@ -121,48 +137,54 @@ export class CardsService {
             await this.anki.storeMediaFiles(cards)
         } catch (err) {
             console.error(err)
-            Error("Error: Could not upload medias")
+            Error('Error: Could not upload medias')
         }
     }
 
     private async generateMediaLinks(cards: Card[]) {
         if (this.app.vault.adapter instanceof FileSystemAdapter) {
             // @ts-ignore: Unreachable code error
-            let attachmentsPath = this.app.vault.config.attachmentFolderPath
+            const attachmentsPath = this.app.vault.config.attachmentFolderPath
 
-            for (let card of cards) {
-                for (let media of card.mediaNames) {
-                    let file: TFile = this.app.vault.getAbstractFileByPath(attachmentsPath + "/" + media) as TFile
+            for (const card of cards) {
+                for (const media of card.mediaNames) {
+                    const file: TFile = this.app.vault.getAbstractFileByPath(
+                        attachmentsPath + '/' + media,
+                    ) as TFile
                     try {
-                        let binaryMedia = await this.app.vault.readBinary(file)
+                        const binaryMedia = await this.app.vault.readBinary(file)
                         card.mediaBase64Encoded.push(arrayBufferToBase64(binaryMedia))
                     } catch (err) {
-                        Error("Error: Could not read media")
+                        Error('Error: Could not read media')
                     }
                 }
-            };
+            }
         }
     }
 
-    private async insertCardsOnAnki(cardsToCreate: Card[], frontmatter: FrontMatterCache, deckName: string): Promise<number> {
+    private async insertCardsOnAnki(
+        cardsToCreate: Card[],
+        frontmatter: FrontMatterCache,
+        deckName: string,
+    ): Promise<number> {
         if (cardsToCreate.length) {
             let insertedCards = 0
             try {
-                let ids = await this.anki.addCards(cardsToCreate)
+                const ids = await this.anki.addCards(cardsToCreate)
                 // Add IDs from response to Flashcard[]
                 ids.map((id: number, index: number) => {
                     cardsToCreate[index].id = id
                 })
 
                 let total = 0
-                cardsToCreate.forEach(card => {
+                cardsToCreate.forEach((card) => {
                     if (card.id === null) {
                         new Notice(`Error, could not add: '${card.initialContent}'`, noticeTimeout)
                     } else {
-                        card.reversed ? insertedCards += 2 : insertedCards++
+                        card.reversed ? (insertedCards += 2) : insertedCards++
                     }
-                    card.reversed ? total += 2 : total++
-                });
+                    card.reversed ? (total += 2) : total++
+                })
 
                 this.updateFrontmatter(frontmatter, deckName)
                 this.writeAnkiBlocks(cardsToCreate)
@@ -171,20 +193,26 @@ export class CardsService {
                 return insertedCards
             } catch (err) {
                 console.error(err)
-                Error("Error: Could not write cards on Anki")
+                Error('Error: Could not write cards on Anki')
             }
         }
     }
 
     private updateFrontmatter(frontmatter: FrontMatterCache, deckName: string) {
-        let newFrontmatter: string = ""
-        let cardsDeckLine: string = `cards-deck: ${deckName}\n`
+        let newFrontmatter = ''
+        const cardsDeckLine = `cards-deck: ${deckName}\n`
         if (frontmatter) {
-            let oldFrontmatter: string = this.file.substring(frontmatter.position.start.offset, frontmatter.position.end.offset)
+            const oldFrontmatter: string = this.file.substring(
+                frontmatter.position.start.offset,
+                frontmatter.position.end.offset,
+            )
             if (!oldFrontmatter.match(this.regex.cardsDeckLine)) {
-                newFrontmatter = oldFrontmatter.substring(0, oldFrontmatter.length - 3) + cardsDeckLine + "---"
+                newFrontmatter =
+                    oldFrontmatter.substring(0, oldFrontmatter.length - 3) + cardsDeckLine + '---'
                 this.totalOffset += cardsDeckLine.length
-                this.file = newFrontmatter + this.file.substring(frontmatter.position.end.offset, this.file.length + 1)
+                this.file =
+                    newFrontmatter +
+                    this.file.substring(frontmatter.position.end.offset, this.file.length + 1)
             }
         } else {
             newFrontmatter = `---\n${cardsDeckLine}---\n\n`
@@ -194,16 +222,19 @@ export class CardsService {
     }
 
     private writeAnkiBlocks(cardsToCreate: Card[]) {
-        for (let card of cardsToCreate) {
+        for (const card of cardsToCreate) {
             // Card.id cannot be null, because if written already previously it has an ID,
             //   if it has been inserted it has an ID too
             if (card.id !== null && !card.inserted) {
-                let id = card.getIdFormat()
+                const id = card.getIdFormat()
                 card.endOffset += this.totalOffset
-                let offset = card.endOffset
+                const offset = card.endOffset
 
                 this.updateFile = true
-                this.file = this.file.substring(0, offset) + id + this.file.substring(offset, this.file.length + 1)
+                this.file =
+                    this.file.substring(0, offset) +
+                    id +
+                    this.file.substring(offset, this.file.length + 1)
                 this.totalOffset += id.length
             }
         }
@@ -213,21 +244,26 @@ export class CardsService {
         if (cards.length) {
             try {
                 this.anki.updateCards(cards)
-                this.notifications.push(`Updated successfully ${cards.length}/${cards.length} cards.`)
+                this.notifications.push(
+                    `Updated successfully ${cards.length}/${cards.length} cards.`,
+                )
             } catch (err) {
                 console.error(err)
-                Error("Error: Could not update cards on Anki")
+                Error('Error: Could not update cards on Anki')
             }
 
             return cards.length
         }
     }
 
-    public async deleteCardsOnAnki(cards: number[], ankiBlocks: RegExpMatchArray[]): Promise<number> {
+    public async deleteCardsOnAnki(
+        cards: number[],
+        ankiBlocks: RegExpMatchArray[],
+    ): Promise<number> {
         if (cards.length) {
             let deletedCards = 0
             for (const block of ankiBlocks) {
-                let id = Number(block[1])
+                const id = Number(block[1])
 
                 // Deletion of cards that need to be deleted (i.e. blocks ID that don't have content)
                 if (cards.includes(id)) {
@@ -236,12 +272,16 @@ export class CardsService {
                         deletedCards++
 
                         this.updateFile = true
-                        this.file = this.file.substring(0, block["index"]) + this.file.substring(block["index"] + block[0].length, this.file.length)
+                        this.file =
+                            this.file.substring(0, block['index']) +
+                            this.file.substring(block['index'] + block[0].length, this.file.length)
                         this.totalOffset -= block[0].length
-                        this.notifications.push(`Deleted successfully ${deletedCards}/${cards.length} cards.`)
+                        this.notifications.push(
+                            `Deleted successfully ${deletedCards}/${cards.length} cards.`,
+                        )
                     } catch (err) {
                         console.error(err)
-                        Error("Error, could not delete the card from Anki")
+                        Error('Error, could not delete the card from Anki')
                     }
                 }
             }
@@ -251,31 +291,31 @@ export class CardsService {
     }
 
     private getAnkiIDs(blocks: RegExpMatchArray[]): number[] {
-        let IDs: number[] = []
-        for (let b of blocks) {
+        const IDs: number[] = []
+        for (const b of blocks) {
             IDs.push(Number(b[1]))
         }
 
         return IDs
     }
 
-
     public filterByUpdate(ankiCards: any, generatedCards: Card[]) {
         let cardsToCreate: Card[] = []
-        let cardsToUpdate: Card[] = []
+        const cardsToUpdate: Card[] = []
 
         if (ankiCards) {
-            for (let flashcard of generatedCards) {
-                // Inserted means that anki blocks are available, that means that the card should 
+            for (const flashcard of generatedCards) {
+                // Inserted means that anki blocks are available, that means that the card should
                 // 	(the user can always delete it) be in Anki
                 let ankiCard = undefined
                 if (flashcard.inserted) {
-                    ankiCard = ankiCards.filter((card: any) => Number(card.noteId) === flashcard.id)[0]
+                    ankiCard = ankiCards.filter(
+                        (card: any) => Number(card.noteId) === flashcard.id,
+                    )[0]
                     if (!flashcard.match(ankiCard)) {
                         flashcard.oldTags = ankiCard.tags
                         cardsToUpdate.push(flashcard)
                     }
-
                 } else {
                     cardsToCreate.push(flashcard)
                 }
@@ -287,9 +327,9 @@ export class CardsService {
         return [cardsToCreate, cardsToUpdate]
     }
 
-    public async deckNeedToBeChanged(cardsIds : number[], deckName: string) {
-        let cardsInfo = await this.anki.cardsInfo(cardsIds)
-        console.log("Flashcards: Cards info")
+    public async deckNeedToBeChanged(cardsIds: number[], deckName: string) {
+        const cardsInfo = await this.anki.cardsInfo(cardsIds)
+        console.log('Flashcards: Cards info')
         console.log(cardsInfo)
         if (cardsInfo.length !== 0) {
             return cardsInfo[0].deckName !== deckName
@@ -298,14 +338,16 @@ export class CardsService {
         return false
     }
 
-    public getCardsIds(ankiCards: any, generatedCards: Card[]) : number[] {
-        let ids : number[] = []
+    public getCardsIds(ankiCards: any, generatedCards: Card[]): number[] {
+        let ids: number[] = []
 
-         if (ankiCards) {
-            for (let flashcard of generatedCards) {
+        if (ankiCards) {
+            for (const flashcard of generatedCards) {
                 let ankiCard = undefined
                 if (flashcard.inserted) {
-                    ankiCard = ankiCards.filter((card: any) => Number(card.noteId) === flashcard.id)[0]
+                    ankiCard = ankiCards.filter(
+                        (card: any) => Number(card.noteId) === flashcard.id,
+                    )[0]
                     ids = ids.concat(ankiCard.cards)
                 }
             }
@@ -314,19 +356,19 @@ export class CardsService {
         return ids
     }
 
-    public parseGlobalTags(file: String) : string[] {
+    public parseGlobalTags(file: string): string[] {
         let globalTags: string[] = []
 
-        let tags = file.match(/(?:cards-)?tags: ?(.*)/im)
+        const tags = file.match(/(?:cards-)?tags: ?(.*)/im)
         globalTags = tags ? tags[1].match(this.regex.globalTagsSplitter) : []
 
         if (globalTags) {
             for (let i = 0; i < globalTags.length; i++) {
-                globalTags[i] = globalTags[i].replace("#", "")
-                globalTags[i] = globalTags[i].replace("/", "::")
+                globalTags[i] = globalTags[i].replace('#', '')
+                globalTags[i] = globalTags[i].replace('/', '::')
                 globalTags[i] = globalTags[i].replace(/\[\[(.*)\]\]/, '$1')
                 globalTags[i] = globalTags[i].trim()
-                globalTags[i] = globalTags[i].replace(/ /g, "-")
+                globalTags[i] = globalTags[i].replace(/ /g, '-')
             }
 
             return globalTags
@@ -334,5 +376,4 @@ export class CardsService {
 
         return []
     }
-
 }
