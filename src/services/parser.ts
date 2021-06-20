@@ -1,4 +1,4 @@
-import { ISettings } from 'settings'
+import { ISettings } from 'settings/settings'
 import * as showdown from 'showdown'
 import { Regex } from 'regex'
 import { Flashcard } from 'entities/flashcard'

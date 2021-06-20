@@ -35,8 +35,4 @@ export class Inlinecard extends Card {
             this.modelName += codeDeckExtension
         }
     }
-
-    public toString = (): string => {
-        return `Q: ${this.fields[0]} \nA: ${this.fields[1]} `
-    }
 }

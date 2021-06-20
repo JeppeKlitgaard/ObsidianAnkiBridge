@@ -1,3 +1,4 @@
+export const pluginName = 'AnkiBridge'
 export const noticeTimeout = 15 * 1000
 export const sourceDeckExtension = '-source'
 export const codeDeckExtension = '-code'

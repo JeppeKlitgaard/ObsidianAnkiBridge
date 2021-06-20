@@ -1,5 +1,6 @@
 import { Notice, PluginSettingTab, Setting } from 'obsidian'
 import { Anki } from 'services/anki'
+import { pluginName } from 'consts'
 
 export class SettingsTab extends PluginSettingTab {
     display(): void {
@@ -7,19 +8,21 @@ export class SettingsTab extends PluginSettingTab {
         const plugin = (this as any).plugin
 
         containerEl.empty()
-        containerEl.createEl('h1', { text: 'AnkiBridge' })
+        containerEl.createEl('h1', { text: pluginName })
 
         new Setting(containerEl)
-            .setName('Test Anki')
-            .setDesc('Test that connection between Anki and Obsidian actually works.')
+            .setName('Test Anki Connection')
+            .setDesc('Test that AnkiBridge is able to connect to Anki')
             .addButton((text) => {
                 text.setButtonText('Test').onClick(() => {
-                    new Anki()
+                    Anki.fromSettings(plugin.settings)
                         .ping()
-                        .then(() => new Notice('Anki works'))
-                        .catch(() => new Notice('Anki is not connected'))
+                        .then(() => new Notice(pluginName + ': Connection succesful'))
+                        .catch(() => new Notice(pluginName + ': Connection failed'))
                 })
             })
+
+        // General settings
         containerEl.createEl('h2', { text: 'General Settings' })
 
         new Setting(containerEl)
@@ -84,6 +87,41 @@ export class SettingsTab extends PluginSettingTab {
                             plugin.saveData(plugin.settings)
                         } else {
                             new Notice('The tag must be at least 1 character long')
+                        }
+                    })
+            })
+
+        // Advanced settings
+        containerEl.createEl('h2', { text: 'Advanced Settings' })
+
+        new Setting(containerEl)
+            .setName('AnkiConnect address')
+            .setDesc('The address on which AnkiConnect is exposed. Usually `127.0.0.1`')
+            .addText((text) => {
+                text.setValue(plugin.settings.ankiConnectAddress)
+                    .setPlaceholder('127.0.0.1')
+                    .onChange((value) => {
+                        if (value) {
+                            plugin.settings.ankiConnectAddress = value
+                            plugin.saveData(plugin.settings)
+                        } else {
+                            new Notice('Please specify an address')
+                        }
+                    })
+            })
+
+        new Setting(containerEl)
+            .setName('AnkiConnect port')
+            .setDesc('The port on which AnkiConnect is exposed. Usually `8765`')
+            .addText((text) => {
+                text.setValue(plugin.settings.ankiConnectPort)
+                    .setPlaceholder('8765')
+                    .onChange((value) => {
+                        if (value) {
+                            plugin.settings.ankiConnectPort = value
+                            plugin.saveData(plugin.settings)
+                        } else {
+                            new Notice('Please specify a port')
                         }
                     })
             })

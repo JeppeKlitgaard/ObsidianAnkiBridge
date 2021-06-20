@@ -45,7 +45,11 @@ export abstract class Card {
         this.modelName = ''
     }
 
-    abstract toString(): string
+    public toString = (): string => {
+        const str = `Q: ${this.fields[0]}\n` + `A: ${this.fields[1]}`
+
+        return str
+    }
 
     public getIdFormat(): string {
         return '^' + this.id.toString() + '\n'

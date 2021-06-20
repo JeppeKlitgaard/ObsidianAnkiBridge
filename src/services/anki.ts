@@ -8,8 +8,31 @@ import {
     codeDeckExtension,
     sourceDeckExtension,
 } from 'consts'
+import AnkiBridge  from 'main'
+import { ISettings } from 'settings/settings'
 
 export class Anki {
+    public ankiAddress: string
+    public ankiPort: number
+
+    constructor(ankiAddress: string, ankiPort: number) {
+        this.ankiAddress = ankiAddress
+        this.ankiPort = ankiPort
+    }
+
+    public static fromSettings(settings: ISettings): Anki {
+        let anki = new Anki(
+            settings.ankiConnectAddress,
+            settings.ankiConnectPort,
+        )
+
+        return anki
+    }
+
+    private getHostString(): string {
+        return `http://${this.ankiAddress}:${this.ankiPort}`
+    }
+
     public async createModels(sourceSupport: boolean, codeHighlightSupport: boolean) {
         let models = this.getModels(sourceSupport, false)
         if (codeHighlightSupport) {
@@ -204,7 +227,7 @@ export class Anki {
                 }
             })
 
-            xhr.open('POST', 'http://127.0.0.1:8765')
+            xhr.open('POST', this.getHostString())
             xhr.send(JSON.stringify({ action, version, params }))
         })
     }

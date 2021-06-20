@@ -8,7 +8,7 @@ import {
     TFile,
 } from 'obsidian'
 import { Parser } from 'services/parser'
-import { ISettings } from 'settings'
+import { ISettings } from 'settings/settings'
 import { Card } from 'entities/card'
 import { arrayBufferToBase64 } from 'utils'
 import { Regex } from 'regex'
@@ -31,7 +31,7 @@ export class CardsService {
         this.settings = settings
         this.regex = new Regex(this.settings)
         this.parser = new Parser(this.regex, this.settings)
-        this.anki = new Anki()
+        this.anki = Anki.fromSettings(this.settings)
     }
 
     public async execute(activeFile: TFile): Promise<string[]> {
