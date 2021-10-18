@@ -8,45 +8,152 @@ import {
     codeDeckExtension,
     sourceDeckExtension,
 } from 'consts'
-import AnkiBridge  from 'main'
 import { ISettings } from 'settings/settings'
+import {
+    AddNoteRequest,
+    AddNoteResponse,
+    AddTagsRequest,
+    CardsInfoRequest,
+    CardsInfoResponse,
+    ChangeDeckRequest,
+    ChangeDeckResponse,
+    DeleteNoteResponse,
+    DeleteNotesRequest,
+    NotesInfoRequest,
+    NotesInfoResponseEntity,
+    RemoveTagsRequest,
+    RemoveTagsResponse,
+    ResponseEntity,
+    UpdateNoteFieldsRequest,
+    UpdateNoteFieldsResponse,
+} from 'entities/network'
+import { NoteBase } from 'notes/base'
+import _ from 'lodash'
+import { App } from 'obsidian'
+import AnkiBridgePlugin from 'main'
 
 export class Anki {
-    public ankiAddress: string
-    public ankiPort: number
+    private static version = 6
 
-    constructor(ankiAddress: string, ankiPort: number) {
-        this.ankiAddress = ankiAddress
-        this.ankiPort = ankiPort
-    }
-
-    public static fromSettings(settings: ISettings): Anki {
-        let anki = new Anki(
-            settings.ankiConnectAddress,
-            settings.ankiConnectPort,
-        )
-
-        return anki
-    }
+    // See: https://github.com/FooSoft/anki-connect
+    constructor(public app: App, public plugin: AnkiBridgePlugin) {}
 
     private getHostString(): string {
-        return `http://${this.ankiAddress}:${this.ankiPort}`
+        const str = `http://${this.plugin.settings.ankiConnectAddress}:${this.plugin.settings.ankiConnectPort}`
+
+        return str
     }
 
-    public async createModels(sourceSupport: boolean, codeHighlightSupport: boolean) {
-        let models = this.getModels(sourceSupport, false)
-        if (codeHighlightSupport) {
-            models = models.concat(this.getModels(sourceSupport, true))
+    // public async createModels(sourceSupport: boolean, codeHighlightSupport: boolean) {
+    //     let models = this.getModels(sourceSupport, false)
+    //     if (codeHighlightSupport) {
+    //         models = models.concat(this.getModels(sourceSupport, true))
+    //     }
+
+    //     return this.invoke('multi', 6, { actions: models })
+    // }
+
+    // Network Commands
+    public async cardsInfo(cardIds: Array<number>): Promise<CardsInfoResponse> {
+        const params: CardsInfoRequest = {
+            cards: cardIds,
         }
 
-        return this.invoke('multi', 6, { actions: models })
+        return await this.invoke('cardsInfo', Anki.version, params)
     }
 
-    public async createDeck(deckName: string): Promise<any> {
-        return this.invoke('createDeck', 6, { deck: deckName })
+    public async changeDeck(cardIds: Array<number>, deck: string): Promise<ChangeDeckResponse> {
+        const params: ChangeDeckRequest = {
+            cards: cardIds,
+            deck: deck,
+        }
+
+        return await this.invoke('changeDeck', Anki.version, params)
     }
 
-    public async storeMediaFiles(cards: Card[]) {
+    public async addNote(
+        note: NoteBase,
+        deckName: string,
+        modelName: string,
+        fields: Record<string, string>,
+    ): Promise<AddNoteResponse> {
+        const params: AddNoteRequest = {
+            note: {
+                deckName: deckName,
+                modelName: modelName,
+                fields: fields,
+                tags: note.tags || [],
+            },
+        }
+
+        return await this.invoke('addNote', Anki.version, params)
+    }
+
+    public async deleteNote(note: NoteBase): Promise<DeleteNoteResponse> {
+        const params: DeleteNotesRequest = {
+            notes: [note.id],
+        }
+
+        return await this.invoke('deleteNotes', Anki.version, params)
+    }
+
+    public async updateNoteFields(
+        note: NoteBase,
+        fields: Record<string, string>,
+    ): Promise<UpdateNoteFieldsResponse> {
+        const params: UpdateNoteFieldsRequest = {
+            note: {
+                id: note.id,
+                fields: fields,
+            },
+        }
+
+        return await this.invoke('updateNoteFields', Anki.version, params)
+    }
+
+    public async noteInfo(note: NoteBase): Promise<NotesInfoResponseEntity> {
+        const params: NotesInfoRequest = {
+            notes: [note.id],
+        }
+
+        const response = await this.invoke('notesInfo', Anki.version, params)
+        return response[0]
+    }
+
+    public async addTags(note: NoteBase, tags: Array<string>): Promise<AddTagsRequest> {
+        const params: AddTagsRequest = {
+            notes: [note.id],
+            tags: tags.join(' '),
+        }
+
+        return await this.invoke('addTags', Anki.version, params)
+    }
+
+    public async removeTags(note: NoteBase, tags: Array<string>): Promise<RemoveTagsRequest> {
+        const params: RemoveTagsRequest = {
+            notes: [note.id],
+            tags: tags.join(' '),
+        }
+
+        return await this.invoke('removeTags', Anki.version, params)
+    }
+
+    public async setTags(note: NoteBase, tags: Array<string>): Promise<RemoveTagsRequest> {
+        const alreadySetTags: Array<string> = (await this.noteInfo(note)).tags
+        const tagsToAdd = _.difference(tags, alreadySetTags)
+        const tagsToRemove = _.difference(alreadySetTags, tags)
+
+        if (tagsToAdd.length) {
+            await this.addTags(note, tagsToAdd)
+        }
+        if (tagsToRemove.length) {
+            await this.removeTags(note, tagsToRemove)
+        }
+
+        return null
+    }
+
+    public async storeMediaFile(cards: Card[]) {
         const actions: any[] = []
 
         for (const card of cards) {
@@ -98,7 +205,7 @@ export class Anki {
         }
     }
 
-    public async addCards(cards: Card[]): Promise<number[]> {
+    public async addCards(cards: Card[]): Promise<ResponseEntity> {
         const notes: any = []
 
         cards.forEach((card) => notes.push(card.getCard(false)))
@@ -149,14 +256,6 @@ export class Anki {
         return this.invoke('multi', 6, { actions: updateActions })
     }
 
-    public async changeDeck(ids: number[], deckName: string) {
-        return await this.invoke('changeDeck', 6, { cards: ids, deck: deckName })
-    }
-
-    public async cardsInfo(ids: number[]) {
-        return await this.invoke('cardsInfo', 6, { cards: ids })
-    }
-
     public async getCards(ids: number[]) {
         return await this.invoke('notesInfo', 6, { notes: ids })
     }
@@ -202,7 +301,7 @@ export class Anki {
         return actions
     }
 
-    private invoke(action: string, version = 6, params = {}): any {
+    private invoke(action: string, version = 6, params: Record<string, any> = {}): Promise<any> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest()
             xhr.addEventListener('error', () => reject('failed to issue request'))
@@ -230,92 +329,5 @@ export class Anki {
             xhr.open('POST', this.getHostString())
             xhr.send(JSON.stringify({ action, version, params }))
         })
-    }
-
-    private getModels(sourceSupport: boolean, codeHighlightSupport: boolean): object[] {
-        let sourceFieldContent = ''
-        let codeScriptContent = ''
-        let sourceExtension = ''
-        let codeExtension = ''
-        if (sourceSupport) {
-            sourceFieldContent = '\r\n' + sourceField
-            sourceExtension = sourceDeckExtension
-        }
-
-        if (codeHighlightSupport) {
-            codeScriptContent = '\r\n' + codeScript + '\r\n'
-            codeExtension = codeDeckExtension
-        }
-
-        const css =
-            '.card {\r\n font-family: arial;\r\n font-size: 20px;\r\n text-align: center;\r\n color: black;\r\n background-color: white;\r\n}\r\n\r\n.tag::before {\r\n\tcontent: "#";\r\n}\r\n\r\n.tag {\r\n  color: white;\r\n  background-color: #9F2BFF;\r\n  border: none;\r\n  font-size: 11px;\r\n  font-weight: bold;\r\n  padding: 1px 8px;\r\n  margin: 0px 3px;\r\n  text-align: center;\r\n  text-decoration: none;\r\n  cursor: pointer;\r\n  border-radius: 14px;\r\n  display: inline;\r\n  vertical-align: middle;\r\n}\r\n'
-        const front = `{{Front}}\r\n<p class=\"tags\">{{Tags}}<\/p>\r\n\r\n<script>\r\n    var tagEl = document.querySelector(\'.tags\');\r\n    var tags = tagEl.innerHTML.split(\' \');\r\n    var html = \'\';\r\n    tags.forEach(function(tag) {\r\n\tif (tag) {\r\n\t    var newTag = \'<span class=\"tag\">\' + tag + \'<\/span>\';\r\n           html += newTag;\r\n    \t    tagEl.innerHTML = html;\r\n\t}\r\n    });\r\n    \r\n<\/script>${codeScriptContent}`
-        const back = `{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}${sourceFieldContent}`
-        const frontReversed = `{{Back}}\r\n<p class=\"tags\">{{Tags}}<\/p>\r\n\r\n<script>\r\n    var tagEl = document.querySelector(\'.tags\');\r\n    var tags = tagEl.innerHTML.split(\' \');\r\n    var html = \'\';\r\n    tags.forEach(function(tag) {\r\n\tif (tag) {\r\n\t    var newTag = \'<span class=\"tag\">\' + tag + \'<\/span>\';\r\n           html += newTag;\r\n    \t    tagEl.innerHTML = html;\r\n\t}\r\n    });\r\n    \r\n<\/script>${codeScriptContent}`
-        const backReversed = `{{FrontSide}}\n\n<hr id=answer>\n\n{{Front}}${sourceFieldContent}`
-        const prompt = `{{Prompt}}\r\n<p class=\"tags\">🧠spaced {{Tags}}<\/p>\r\n\r\n<script>\r\n    var tagEl = document.querySelector(\'.tags\');\r\n    var tags = tagEl.innerHTML.split(\' \');\r\n    var html = \'\';\r\n    tags.forEach(function(tag) {\r\n\tif (tag) {\r\n\t    var newTag = \'<span class=\"tag\">\' + tag + \'<\/span>\';\r\n           html += newTag;\r\n    \t    tagEl.innerHTML = html;\r\n\t}\r\n    });\r\n    \r\n<\/script>${codeScriptContent}`
-        const promptBack = `{{FrontSide}}\n\n<hr id=answer>🧠 Review done.${sourceField}`
-
-        let classicFields = ['Front', 'Back']
-        let promptFields = ['Prompt']
-        if (sourceSupport) {
-            classicFields = classicFields.concat('Source')
-            promptFields = promptFields.concat('Source')
-        }
-
-        const obsidianBasic = {
-            action: 'createModel',
-            params: {
-                modelName: `Obsidian-basic${sourceExtension}${codeExtension}`,
-                inOrderFields: classicFields,
-                css: css,
-                cardTemplates: [
-                    {
-                        Name: 'Front / Back',
-                        Front: front,
-                        Back: back,
-                    },
-                ],
-            },
-        }
-
-        const obsidianBasicReversed = {
-            action: 'createModel',
-            params: {
-                modelName: `Obsidian-basic-reversed${sourceExtension}${codeExtension}`,
-                inOrderFields: classicFields,
-                css: css,
-                cardTemplates: [
-                    {
-                        Name: 'Front / Back',
-                        Front: front,
-                        Back: back,
-                    },
-                    {
-                        Name: 'Back / Front',
-                        Front: frontReversed,
-                        Back: backReversed,
-                    },
-                ],
-            },
-        }
-
-        const obsidianSpaced = {
-            action: 'createModel',
-            params: {
-                modelName: `Obsidian-spaced${sourceExtension}${codeExtension}`,
-                inOrderFields: promptFields,
-                css: css,
-                cardTemplates: [
-                    {
-                        Name: 'Spaced',
-                        Front: prompt,
-                        Back: promptBack,
-                    },
-                ],
-            },
-        }
-
-        return [obsidianBasic, obsidianBasicReversed, obsidianSpaced]
     }
 }

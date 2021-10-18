@@ -1,35 +1,48 @@
 {
-  "name": "ankibridge",
+  "name": "obsidian-ankibridge",
   "version": "0.2.0",
   "description": "Yet Another Anki Bridge.",
   "main": "main.js",
   "scripts": {
     "dev": "rollup --config rollup.config.js -w",
     "build": "rollup --config rollup.config.js",
-    "lint": "eslint 'src/**/*.{js,ts,tsx}' --quiet --fix"
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --quiet --fix"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^15.1.0",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@rollup/plugin-typescript": "^6.0.0",
+    "@types/js-yaml": "^4.0.3",
+    "@types/lodash": "^4.14.175",
+    "@types/markdown-it": "^12.2.3",
     "@types/node": "^14.14.41",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
+    "markdown-it": "^12.2.0",
     "obsidian": "https://github.com/obsidianmd/obsidian-api/tarball/master",
     "prettier": "^2.3.1",
     "rollup": "^2.45.2",
+    "rollup-plugin-copy": "^3.4.0",
     "ts-node": "^9.1.0",
     "tslib": "^2.2.0",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "yup": "^0.32.11"
   },
   "dependencies": {
     "@types/showdown": "^1.9.3",
-    "showdown": "^1.9.1"
+    "peggy": "^1.2.0",
+    "rollup-plugin-pegjs": "^2.1.3",
+    "showdown": "^1.9.1",
+    "ts-pegjs": "^1.2.1",
+    "tspeg": "^3.2.0"
   }
 }

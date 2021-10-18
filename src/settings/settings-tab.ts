@@ -1,8 +1,16 @@
-import { Notice, PluginSettingTab, Setting } from 'obsidian'
+import { Notice, PluginSettingTab, Setting, App } from 'obsidian'
 import { Anki } from 'services/anki'
 import { pluginName } from 'consts'
+import { BLUEPRINTS, getBlueprintById } from 'blueprints'
+import { Blueprint } from 'blueprints/base'
+import AnkiBridgePlugin from 'main'
+import { getPostprocessorById, POSTPROCESSORS } from 'postprocessors'
 
 export class SettingsTab extends PluginSettingTab {
+    constructor(public app: App, private plugin: AnkiBridgePlugin) {
+        super(app, plugin)
+    }
+
     display(): void {
         const { containerEl } = this
         const plugin = (this as any).plugin
@@ -125,5 +133,60 @@ export class SettingsTab extends PluginSettingTab {
                         }
                     })
             })
+
+        this.addBlueprints()
+        this.addPostprocessors()
+    }
+
+    addBlueprints(): void {
+        this.containerEl.createEl('h2', { text: 'Blueprint Settings' })
+
+        const blueprintSettingsConst = Object.fromEntries(
+            BLUEPRINTS.map((bp) => {
+                return [bp.id, false]
+            }),
+        )
+
+        const blueprintSettings: Record<string, boolean> = Object.assign(
+            {},
+            blueprintSettingsConst,
+            this.plugin.settings.blueprints,
+        )
+
+        for (const [id, enabled] of Object.entries(blueprintSettings)) {
+            const bp = getBlueprintById(id)
+            new Setting(this.containerEl).setName(bp.displayName).addToggle((toggle) => {
+                toggle.setValue(enabled).onChange((newState) => {
+                    this.plugin.settings.blueprints[id] = newState
+                    this.plugin.saveSettings()
+                })
+            })
+        }
+    }
+
+    addPostprocessors(): void {
+        this.containerEl.createEl('h2', { text: 'Postprocessor Settings' })
+
+        const postprocessorSettingsConst = Object.fromEntries(
+            POSTPROCESSORS.map((pp) => {
+                return [pp.id, false]
+            }),
+        )
+
+        const postprocessorSettings: Record<string, boolean> = Object.assign(
+            {},
+            postprocessorSettingsConst,
+            this.plugin.settings.postprocessors,
+        )
+
+        for (const [id, enabled] of Object.entries(postprocessorSettings)) {
+            const pp = getPostprocessorById(id)
+            new Setting(this.containerEl).setName(pp.displayName).addToggle((toggle) => {
+                toggle.setValue(enabled).onChange((newState) => {
+                    this.plugin.settings.postprocessors[id] = newState
+                    this.plugin.saveSettings()
+                })
+            })
+        }
     }
 }

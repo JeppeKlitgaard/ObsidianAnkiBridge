@@ -1,3 +1,5 @@
+import { Notice } from 'obsidian'
+
 export function arrayBufferToBase64(buffer: ArrayBuffer): string {
     let binary = ''
     const bytes = new Uint8Array(buffer)
@@ -23,7 +25,7 @@ export function arraysEqual(a: string[], b: string[]) {
 }
 
 export function escapeMarkdown(string: string, skips: string[] = []) {
-    const replacements: any = [
+    const replacements: Array<[RegExp, string, string]> = [
         [/\*/g, '\\*', 'asterisks'],
         [/#/g, '\\#', 'number signs'],
         [/\//g, '\\/', 'slashes'],
@@ -43,4 +45,17 @@ export function escapeMarkdown(string: string, skips: string[] = []) {
             ? string
             : string.replace(replacement[0], replacement[1])
     }, string)
+}
+
+/**
+ * Replaces \r with nothing.
+ * @param {string} text - Text to strip
+ * @return {string} Stripped text
+ */
+export function stripCr(text: string): string {
+    return text.replace(/\r/g, '')
+}
+
+export function showError(message: string): void {
+    new Notice('AnkiBridge Error: ' + message)
 }

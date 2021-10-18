@@ -1,6 +1,8 @@
 import typescript from '@rollup/plugin-typescript';
 import {nodeResolve} from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import copy from 'rollup-plugin-copy'
+import json from '@rollup/plugin-json';
 
 const isProd = (process.env.BUILD === 'production');
 
@@ -26,5 +28,11 @@ export default {
     typescript(),
     nodeResolve({browser: true}),
     commonjs(),
+    copy({
+      targets: [
+        { src: 'src/grammars/*.pegjs', dest: 'dist/grammars'},
+      ]
+    }),
+    json()
   ]
 };
