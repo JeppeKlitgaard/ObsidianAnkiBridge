@@ -171,7 +171,7 @@ export class SettingsTab extends PluginSettingTab {
 
         const postprocessorSettingsConst = Object.fromEntries(
             POSTPROCESSORS.map((pp) => {
-                return [pp.id, false]
+                return [pp.id, pp.defaultConfigState]
             }),
         )
 

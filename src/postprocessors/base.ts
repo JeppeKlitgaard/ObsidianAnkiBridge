@@ -5,6 +5,7 @@ export abstract class Postprocessor {
     public static readonly id: string
     public static readonly displayName: string
     public static readonly weight: number // Lower is first
+    public static readonly defaultConfigState: boolean
 
     constructor(public app: App, public plugin: AnkiBridgePlugin) {}
 
