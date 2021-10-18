@@ -1,11 +1,4 @@
 export interface ISettings {
-    contextAwareMode: boolean
-    sourceSupport: boolean
-    codeHighlightSupport: boolean
-    contextSeparator: string
-    deck: string
-    flashcardsTag: string
-
     defaultDeck: string
     defaultModel: string
 
@@ -23,13 +16,6 @@ export interface ISettings {
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
-    contextAwareMode: true,
-    sourceSupport: false,
-    codeHighlightSupport: false,
-    contextSeparator: ' > ',
-    deck: 'Default',
-    flashcardsTag: 'card',
-
     defaultDeck: 'Default',
     defaultModel: 'Basic',
 
