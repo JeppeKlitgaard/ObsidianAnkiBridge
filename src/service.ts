@@ -1,4 +1,3 @@
-import { ISettings } from 'settings/settings'
 import { App, TFile } from 'obsidian'
 import AnkiBridgePlugin from 'main'
 import { Anki } from 'services/anki'

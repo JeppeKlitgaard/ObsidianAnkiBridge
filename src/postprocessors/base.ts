@@ -1,6 +1,5 @@
 import AnkiBridgePlugin from 'main'
 import { App } from 'obsidian'
-import { Anki } from 'services/anki'
 
 export abstract class Postprocessor {
     public static readonly id: string

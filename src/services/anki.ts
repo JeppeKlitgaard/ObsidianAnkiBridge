@@ -1,14 +1,5 @@
 import { Card } from 'entities/card'
-import {
-    sourceField,
-    codeScript,
-    highlightjsBase64,
-    hihglightjsInitBase64,
-    highlightCssBase64,
-    codeDeckExtension,
-    sourceDeckExtension,
-} from 'consts'
-import { ISettings } from 'settings/settings'
+import { highlightjsBase64, hihglightjsInitBase64, highlightCssBase64 } from 'consts'
 import {
     AddNoteRequest,
     AddNoteResponse,
@@ -22,7 +13,6 @@ import {
     NotesInfoRequest,
     NotesInfoResponseEntity,
     RemoveTagsRequest,
-    RemoveTagsResponse,
     ResponseEntity,
     UpdateNoteFieldsRequest,
     UpdateNoteFieldsResponse,

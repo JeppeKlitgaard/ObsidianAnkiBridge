@@ -5,7 +5,6 @@ import { App } from 'obsidian'
 import { Parser } from 'peggy'
 import { Postprocessor } from 'postprocessors/base'
 
-
 export abstract class Blueprint {
     public static readonly displayName: string
     public static readonly id: string
@@ -24,15 +23,14 @@ export abstract class Blueprint {
         this.plugin = plugin
 
         this.config = DefaultBlueprintConfig
-
     }
 
-    public async setup(): Promise<void>{
+    public async setup(): Promise<void> {
         await this.setupParser()
     }
 
     public static renderAsText(note: NoteBase): string {
-        throw Error("Not implemented!")
+        throw Error('Not implemented!')
     }
 
     protected abstract setupParser(): Promise<void>

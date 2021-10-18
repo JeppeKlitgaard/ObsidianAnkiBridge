@@ -1,4 +1,4 @@
-import { App, DataAdapter, Plugin, Vault } from 'obsidian'
+import { Plugin, Vault } from 'obsidian'
 
 export async function makeGrammar(
     grammar: string,

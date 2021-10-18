@@ -1,5 +1,3 @@
-import AnkiBridgePlugin from 'main'
-import { App } from 'obsidian'
 import { escapeMarkdown } from 'utils'
 import { Postprocessor } from './base'
 

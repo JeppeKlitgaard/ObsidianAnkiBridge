@@ -25,6 +25,7 @@
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-unused-imports": "^1.1.5",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "markdown-it": "^12.2.0",

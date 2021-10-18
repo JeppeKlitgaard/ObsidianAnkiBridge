@@ -1,6 +1,5 @@
 import { Blueprint } from 'blueprints/base'
 import { FieldEntity } from 'entities/network'
-import _ from 'lodash'
 import { LineInterval } from 'entities/note'
 
 export abstract class NoteBase {

@@ -1,6 +1,6 @@
 import { getBlueprintById } from 'blueprints'
 import { Blueprint } from 'blueprints/base'
-import { Fragment, FragmentProcessingResult } from 'entities/note'
+import { FragmentProcessingResult } from 'entities/note'
 import AnkiBridgePlugin from 'main'
 import { NoteBase } from 'notes/base'
 import { App, TFile } from 'obsidian'

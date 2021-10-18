@@ -1,7 +1,6 @@
 import { NoteBase } from './base'
 import { SourceDescriptor } from 'entities/note'
 import * as yup from 'yup'
-import { dump } from 'js-yaml'
 import { Blueprint } from 'blueprints/base'
 
 export const ConfigSchema = yup.object({

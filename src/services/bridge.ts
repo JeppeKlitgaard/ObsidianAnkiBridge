@@ -1,4 +1,3 @@
-import { FragmentProcessingResult } from 'entities/note'
 import AnkiBridgePlugin from 'main'
 import { NoteBase } from 'notes/base'
 import { App } from 'obsidian'
@@ -7,7 +6,6 @@ import * as _ from 'lodash'
 import { Postprocessor } from 'postprocessors/base'
 import { getPostprocessorById } from 'postprocessors'
 import { NotesInfoResponseEntity } from 'entities/network'
-import { sourceField } from 'consts'
 
 interface NotePairDelta {
     shouldUpdate: boolean

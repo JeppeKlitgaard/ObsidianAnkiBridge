@@ -2,7 +2,6 @@ import { Notice, PluginSettingTab, Setting, App } from 'obsidian'
 import { Anki } from 'services/anki'
 import { pluginName } from 'consts'
 import { BLUEPRINTS, getBlueprintById } from 'blueprints'
-import { Blueprint } from 'blueprints/base'
 import AnkiBridgePlugin from 'main'
 import { getPostprocessorById, POSTPROCESSORS } from 'postprocessors'
 
