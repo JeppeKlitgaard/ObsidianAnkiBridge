@@ -1,6 +1,6 @@
 {
   "name": "obsidian-ankibridge",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "Yet Another Anki Bridge.",
   "main": "main.js",
   "scripts": {
