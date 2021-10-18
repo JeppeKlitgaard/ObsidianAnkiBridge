@@ -4,8 +4,6 @@ import { SettingsTab } from 'settings/settings-tab'
 import { CardsService } from 'services/cards'
 import { Anki } from 'services/anki'
 import { noticeTimeout, flashcardsIcon, pluginName } from 'consts'
-import { SandwichBlueprint } from 'blueprints/sandwich'
-import { stripCr } from 'utils'
 import { Reader } from 'services/reader'
 import { Bridge } from 'services/bridge'
 
@@ -17,72 +15,55 @@ export default class AnkiBridgePlugin extends Plugin {
     private reader: Reader
     private bridge: Bridge
 
+    private statusbar: HTMLElement
+
     async onload() {
         addIcon('flashcards', flashcardsIcon)
 
         await this.loadSettings()
 
-        // TODO test when file did not insert flashcards, but one of them is in Anki already
         this.anki = new Anki(this.app, this)
         this.reader = new Reader(this.app, this)
         this.bridge = new Bridge(this.app, this)
 
         await this.reader.setup()
 
-        const statusBar = this.addStatusBarItem()
+        this.statusbar = this.addStatusBarItem()
 
         this.addCommand({
-            id: 'test-command',
-            name: 'Test Command',
+            id: 'anki-bridge-sync-open-file',
+            name: 'Sync file with Anki',
             callback: async () => {
                 const activeFile = this.app.workspace.getActiveFile()
-                const elements = await this.reader.readFile(activeFile)
-                await this.bridge.processFileResults(elements)
-                console.log(elements)
-                const blueprint = new SandwichBlueprint(this.app, this)
-                await blueprint.setup()
-                const text = stripCr(await this.app.vault.read(activeFile))
-                // let cards = await blueprint.processText(text)
-                // console.log(cards)
+                if (activeFile) {
+                    await this.syncFile(activeFile)
+                    new Notice("Synced with Anki ✔")
+                } else {
+                    new Notice("Please open a file first")
+                }
             },
         })
 
         this.addCommand({
-            id: 'generate-flashcard-current-file',
-            name: 'Generate for the current file',
-            checkCallback: (checking: boolean) => {
-                const activeFile = this.app.workspace.getActiveFile()
-                if (activeFile) {
-                    if (!checking) {
-                        this.generateCards(activeFile)
-                    }
-                    return true
-                }
-                return false
+            id: 'anki-bridge-sync-all-files',
+            name: 'Sync all files with Anki',
+            callback: async () => {
+                new Notice("Syncing all files with Anki...")
+                await Promise.all(this.app.vault.getMarkdownFiles().map(async (file) => {
+                    await this.syncFile(file)
+                }))
+
+                new Notice ("Synced all files with Anki ✔")
             },
         })
 
-        this.addCommand({
-            id: 'anki-bridge-process-current-file',
-            name: 'Process Current File',
-            checkCallback: (checking: boolean) => {
-                const activeFile = this.app.workspace.getActiveFile()
-                if (activeFile) {
-                    if (!checking) {
-                        this.processFile(activeFile)
-                    }
-                    return true
-                }
-                return false
-            },
-        })
-
-        this.addRibbonIcon('flashcards', 'Generate flashcards', () => {
+        this.addRibbonIcon('flashcards', 'Sync with Anki', async () => {
             const activeFile = this.app.workspace.getActiveFile()
             if (activeFile) {
-                this.generateCards(activeFile)
+                await this.syncFile(activeFile)
+                new Notice("Synced with Anki ✔")
             } else {
-                new Notice('Open a file before')
+                new Notice('Please open a file first')
             }
         })
 
@@ -93,9 +74,9 @@ export default class AnkiBridgePlugin extends Plugin {
                 () =>
                     this.anki
                         .ping()
-                        .then(() => statusBar.setText('Anki ⚡️'))
-                        .catch(() => statusBar.setText('')),
-                15 * 1000,
+                        .then(() => this.statusbar.setText('Anki ✔'))
+                        .catch(() => this.statusbar.setText('Anki ❌')),
+                this.settings.pollInterval,
             ),
         )
     }
@@ -114,33 +95,16 @@ export default class AnkiBridgePlugin extends Plugin {
 
     public debug(text: string): void {
         if (this.settings.debug) {
-            console.log(pluginName + ': ' + text)
+            console.log(this.manifest.name + ': ' + text)
         }
     }
 
     public error(text: string): void {
-        console.error(pluginName + ': ' + text)
+        console.error(this.manifest.name + ': ' + text)
     }
 
-    private generateCards(activeFile: TFile) {
-        this.cardsService
-            .execute(activeFile)
-            .then((res) => {
-                new Notice(res.join(' '), noticeTimeout)
-            })
-            .catch((err) => {
-                Error(err)
-            })
+    private async syncFile(file: TFile): Promise<void> {
+        const elements = await this.reader.readFile(file)
+        await this.bridge.processFileResults(elements)
     }
-
-    // public processFile(file: TFile) {
-    //     this.bridgeService
-    //         .processFile(file)
-    //         .then((res) => {
-    //             new Notice('Hello')
-    //         })
-    //         .catch((err) => {
-    //             Error(err)
-    //         })
-    // }
 }
