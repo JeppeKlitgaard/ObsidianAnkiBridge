@@ -14,36 +14,68 @@ Both of these projects are worthwhile alternatives to AnkiBridge if the approach
 
 ## Features
 
-🗃️ Simple flashcards with **#card**  
-🎴 Reversed flashcards with **#card-reverse**  
-📅 Spaced-only cards with **#card-spaced**  
-✍️ Inline style with **Question::Answer**  
-✍️ Inline style reversed with **Question:::Answer**  
-🧠 **Context-aware** mode  
-🏷️ Global and local **tags**  
-🔢 Support for **LaTeX**  
-🖼️ Support for **images**  
-🔗 Support for **Obsidian URI**  
-⚓ Support for **reference to note**  
-📟 Support for **code syntax highlight**
+While AnkiBridge is still under active development, it already has a few handy
+features and is in use by me personally.
+### 📘 Blueprints
 
-## How it works?
+Parsing is done using 'blueprints' allowing for easy customisation and extension.
 
-The following is a demo where the three main operations are shown:
+Unlike other projects AnkiBridge uses a powerful PEG parser instead of a `regex` approach.  
+This makes parsing easier to debug and should make it very extensible too.
 
-1. **Insertion** of cards;
-2. **Update** of cards;
-3. **Deletion** of cards.
+Directly in the Obsidian Vault you can specify:
+- Anki Tags
+- Anki Deck
+- Anki Model to use (experimental)
 
-![Demo image](docs/demo.gif)
+Currently implemented blueprints:
+- 🥪 Sandwich Card with #anki/start, #anki/---, #anki/end
 
-## How to use it?
+### 📊 Rendering
+- 🧮 Math rendering
+- ⬇ Standard Markdown rendering
 
-The wiki explains in detail [how to use it](https://github.com/reuseman/flashcards-obsidian/wiki).
+### 🧠 Intuitive usage
+
+AnkiBridge should be intuitive to use and its codebase should be clean and free
+of too many tricks.
+
+### 🔏 Never lose data
+
+Data is always stored in Obsidian and the syncing is just one-way. 
+If a note is updated or changed in Obsidian, it will be reflected in Anki after
+the next sync.
+
+You can still have flashcards that only exist in Anki.
+
+This means that your Obsidian vault represents the truth and your Anki decks 
+are always update to reflect the vault perfectly.
+
+- 🚮 Delete notes from Obsidian via the `delete: true` key
+- ➡ Automatically moves cards to appropriate deck
+- 🤖 Automatically updates tags and field content when syncing 
+
+
+__Note: AnkiBridge considers the Obsidian Vault to be the 'ground truth'. Any
+changes to bridged notes in Anki will be reverted upon sync.__
+
+## Upcoming features
+
+- Improved error handling when Anki is not available
+- Stop cluttering `console`
+- 🔗 Link rendering (with Obsidian URI support)
+- 🖼 Image rendering
+- 👩‍💻 Code syntax highlighting
+- 🔉 Audio rendering
+- 📹 Video rendering
+- 🌉 Syncing of Mathjax preamples (advanced feature)
+- 📦 Improved installation
+- 📦 Available through Community Plugins
+- ⚓ Linking to source from Anki
 
 ## How to install
 
-1. Install this plugin on Obsidian
+1. Install this plugin on Obsidian (__NOTE: NOT YET AVAILABLE THROUGH COMMUNITY PLUGINS WINDOW. USE ALTERNATIVE INSTALLATION FOR NOW__)
 
     From Obsidian v0.9.8+, you can activate this plugin within Obsidian by doing the following:
 
