@@ -30,7 +30,7 @@ export default {
     commonjs(),
     copy({
       targets: [
-        { src: 'src/grammars/*.pegjs', dest: 'dist/grammars'},
+        { src: 'src/grammars/*{.pegjs,.js}', dest: 'dist/grammars'},
       ]
     }),
     json()
