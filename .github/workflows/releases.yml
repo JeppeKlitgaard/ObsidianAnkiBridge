@@ -80,8 +80,8 @@ jobs:
                   asset_path: ./styles.css
                   asset_name: styles.css
                   asset_content_type: application/json
-            - name: Upload styles.css
-              id: upload-styles
+            - name: Upload assets.zip
+              id: upload-assets
               uses: actions/upload-release-asset@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
