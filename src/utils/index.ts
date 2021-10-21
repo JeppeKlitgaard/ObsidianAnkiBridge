@@ -1,4 +1,4 @@
-import { Notice, Vault } from 'obsidian'
+import { MarkdownRenderer, Notice, Vault } from 'obsidian'
 
 export function arrayBufferToBase64(buffer: ArrayBuffer): string {
     let binary = ''
@@ -75,4 +75,25 @@ export function renderObsidianURIOpen(vault: Vault, file?: string, path?: string
     const uri = `obsidian://open?vault=${vaultStr}&${selector}`
 
     return uri
+}
+
+interface RenderedLink {
+    uri: string
+    text: string
+}
+
+export function markdownLinkToTextAndHref(vault: Vault, markdownLink: string): RenderedLink {
+    const el = document.createElement('div')
+    MarkdownRenderer.renderMarkdown(markdownLink, el, '', undefined)
+    const anchor = el.firstElementChild.firstElementChild
+
+    const linkText = anchor.textContent
+    const linkAddr = anchor.getAttribute('href')
+
+    const uri = renderObsidianURIOpen(vault, linkAddr)
+
+    return {
+        uri: uri,
+        text: linkText,
+    }
 }

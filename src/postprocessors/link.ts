@@ -1,4 +1,5 @@
 import { NoteBase } from 'notes/base'
+import { markdownLinkToTextAndHref } from 'utils'
 import { Postprocessor, PostprocessorContext } from './base'
 
 export class LinkPostprocessor extends Postprocessor {
@@ -10,17 +11,9 @@ export class LinkPostprocessor extends Postprocessor {
     public process(note: NoteBase, text: string, ctx: PostprocessorContext): string {
         const regex = /(\[\[.*\]\])/g
         text = text.replace(regex, (match, group1) => {
-            const el = document.createElement('div')
-            MarkdownRenderer.renderMarkdown(group1, el, '', undefined)
-            const anchor = el.firstElementChild.firstElementChild
+            const link = markdownLinkToTextAndHref(this.app.vault, group1)
 
-            const linkText = anchor.textContent
-            const linkAddr = anchor.getAttribute('href')
-
-            const uri = renderObsidianURIOpen(this.app.vault, linkAddr)
-            const elementStr = `<a href="${uri}">${linkText}</a>`
-
-            return elementStr
+            return `<a href="${link.uri}">${link.text}</a>`
         })
 
         return text
