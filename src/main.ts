@@ -32,6 +32,18 @@ export default class AnkiBridgePlugin extends Plugin {
         this.statusbar = this.addStatusBarItem()
 
         this.addCommand({
+            id: 'anki-bridge-ping',
+            name: 'Ping Anki',
+            callback: async () => {
+                if (await this.pingAnki()) {
+                    new Notice('Connection succesful ✔')
+                } else {
+                    new Notice('Connection failed ❌')
+                }
+            },
+        })
+
+        this.addCommand({
             id: 'anki-bridge-sync-open-file',
             name: 'Sync file with Anki',
             callback: async () => {
