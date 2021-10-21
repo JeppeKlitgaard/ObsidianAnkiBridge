@@ -28,11 +28,6 @@ export default {
     typescript(),
     nodeResolve({browser: true}),
     commonjs(),
-    copy({
-      targets: [
-        { src: 'src/grammars/*{.pegjs,.js}', dest: 'dist/grammars'},
-      ]
-    }),
     json()
   ]
 };
