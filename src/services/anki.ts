@@ -44,6 +44,7 @@ export class Anki {
     // }
 
     // Network Commands
+
     public async cardsInfo(cardIds: Array<number>): Promise<CardsInfoResponse> {
         const params: CardsInfoRequest = {
             cards: cardIds,

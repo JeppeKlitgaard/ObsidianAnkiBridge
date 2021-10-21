@@ -1,6 +1,5 @@
 import { Notice, PluginSettingTab, Setting, App } from 'obsidian'
 import { Anki } from 'services/anki'
-import { pluginName } from 'consts'
 import { BLUEPRINTS, getBlueprintById } from 'blueprints'
 import AnkiBridgePlugin from 'main'
 import { getPostprocessorById, POSTPROCESSORS } from 'postprocessors'
@@ -13,7 +12,6 @@ export class SettingsTab extends PluginSettingTab {
     display(): void {
         this.containerEl.empty()
         this.containerEl.createEl('h1', { text: this.plugin.manifest.name })
-
 
         this.addTester()
         this.addGeneral()
@@ -121,13 +119,13 @@ export class SettingsTab extends PluginSettingTab {
                             new Notice('Please specify an address')
                         }
                     })
-                })
+            })
 
-                new Setting(this.containerEl)
-                .setName('AnkiConnect port')
-                .setDesc('The port on which AnkiConnect is exposed. Usually `8765`')
-                .addText((text) => {
-                    text.setValue(String(this.plugin.settings.ankiConnectPort))
+        new Setting(this.containerEl)
+            .setName('AnkiConnect port')
+            .setDesc('The port on which AnkiConnect is exposed. Usually `8765`')
+            .addText((text) => {
+                text.setValue(String(this.plugin.settings.ankiConnectPort))
                     .setPlaceholder('8765')
                     .onChange((value) => {
                         if (value) {
