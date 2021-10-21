@@ -1,6 +1,6 @@
 import AnkiBridgePlugin from 'main'
 import { NoteBase } from 'notes/base'
-import { App } from 'obsidian'
+import { App, Notice } from 'obsidian'
 import { ProcessedFileResult } from './reader'
 import * as _ from 'lodash'
 import { Postprocessor, PostprocessorContext } from 'postprocessors/base'
@@ -95,8 +95,28 @@ export class Bridge {
         }
     }
 
-    public async processFileResults(results: ProcessedFileResult): Promise<void> {
+    private displayError(e: string, note: NoteBase): void {
+        new Notice(`For note with ID: ${note.id}, we got error:\n\n${_.capitalize(e)}`)
+    }
+
+    /**
+     * Returns true if error is not fatal for that note
+     */
+    private handleError(e: string, note: NoteBase): boolean {
+        if (e.startsWith('deck was not found')) {
+            this.displayError(e, note)
+            return false
+        } else if (e === 'cannot create note because it is a duplicate') {
+            this.displayError(e, note)
+            return false
+        }
+
+        throw e
+    }
+
+    public async processFileResults(results: ProcessedFileResult): Promise<number> {
         let shouldUpdateSource = false
+        let numberOfErrors = 0
 
         // Pass over all elements
         for (const element of results.elements) {
@@ -131,16 +151,22 @@ export class Bridge {
             // If note has no id, create note and assign id
             if (element.id == null) {
                 // We must create note
-                const id = await this.plugin.anki.addNote(
-                    element,
-                    deckName,
-                    modelName,
-                    this.renderFields(element),
-                )
-                element.id = id
+                try {
+                    const id = await this.plugin.anki.addNote(
+                        element,
+                        deckName,
+                        modelName,
+                        this.renderFields(element),
+                    )
+                    element.id = id
 
-                await this.plugin.anki.setTags(element, tagsToSet)
-
+                    await this.plugin.anki.setTags(element, tagsToSet)
+                } catch (e) {
+                    if (!this.handleError(e, element)) {
+                        numberOfErrors++
+                        continue
+                    }
+                }
                 // Note already has id
             } else {
                 const noteInfo = await this.plugin.anki.noteInfo(element)
@@ -196,5 +222,7 @@ export class Bridge {
 
             await this.app.vault.modify(results.sourceFile, newContent)
         }
+
+        return numberOfErrors
     }
 }

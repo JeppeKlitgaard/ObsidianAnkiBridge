@@ -6,6 +6,7 @@ import { Anki } from 'services/anki'
 import { flashcardsIcon } from 'consts'
 import { Reader } from 'services/reader'
 import { Bridge } from 'services/bridge'
+import { SyncResult } from 'entities/other'
 
 export default class AnkiBridgePlugin extends Plugin {
     public settings: ISettings
@@ -126,31 +127,54 @@ export default class AnkiBridgePlugin extends Plugin {
     /**
      * Can raise an error
      */
-    private async syncFileRoutine(file: TFile): Promise<void> {
+    private async syncFileRoutine(file: TFile): Promise<number> {
         const elements = await this.reader.readFile(file)
-        await this.bridge.processFileResults(elements)
+        const numberOfErrors = await this.bridge.processFileResults(elements)
+        return numberOfErrors
     }
 
-    private handleSyncFileError(error: string): void {
-        if (error == 'failed to issue request') {
-            this.setConnectionStatus(false)
-            this.printFailedConnection()
+    private handleSyncResult(result: SyncResult): void {
+        if (result.fatalError) {
+            if (result.fatalErrorString === 'failed to issue request') {
+                this.setConnectionStatus(false)
+                this.printFailedConnection()
+            } else {
+                new Notice(
+                    '⚠ Unexpected error occured. Please inform maintainer on GitHub and include console output!',
+                )
+                throw result.fatalErrorString
+            }
+        } else if (result.numberOfNonFatalErrors === 0) {
+            new Notice('✔ Synced with Anki')
         } else {
-            throw error
+            const errNumStr =
+                result.numberOfNonFatalErrors > 0
+                    ? String(result.numberOfNonFatalErrors)
+                    : 'an unknown amount of'
+            new Notice(`🟡 Synced with Anki but with ${errNumStr} error(s).`)
         }
     }
 
-    private async syncFile(file: TFile): Promise<boolean> {
+    private async syncFile(file: TFile): Promise<SyncResult> {
         let hasErrored: boolean
+        let numberOfNonFatalErrors = -1
+        let fatalErrorString: string
+
         try {
-            await this.syncFileRoutine(file)
+            numberOfNonFatalErrors = await this.syncFileRoutine(file)
             hasErrored = false
         } catch (e) {
             hasErrored = true
-            this.handleSyncFileError(e)
+            fatalErrorString = e
         }
 
-        return !hasErrored
+        const result: SyncResult = {
+            fatalError: hasErrored,
+            fatalErrorString: fatalErrorString,
+            numberOfNonFatalErrors: numberOfNonFatalErrors,
+        }
+
+        return result
     }
 
     private async syncActiveFile(): Promise<void> {
@@ -160,9 +184,8 @@ export default class AnkiBridgePlugin extends Plugin {
                 this.printFailedConnection()
                 return
             }
-            if (await this.syncFile(activeFile)) {
-                new Notice('Synced with Anki ✔')
-            }
+            const result = await this.syncFile(activeFile)
+            this.handleSyncResult(result)
         } else {
             new Notice('Please open a file first')
         }
@@ -177,21 +200,28 @@ export default class AnkiBridgePlugin extends Plugin {
         }
 
         let hasErrored: boolean
+        let numberOfNonFatalErrors = 0
+        let fatalErrorString: string
+
         try {
             await Promise.all(
                 this.app.vault.getMarkdownFiles().map(async (file) => {
-                    await this.syncFileRoutine(file)
+                    numberOfNonFatalErrors += await this.syncFileRoutine(file)
                 }),
             )
 
             hasErrored = false
         } catch (e) {
             hasErrored = true
-            this.handleSyncFileError(e)
-        } finally {
-            if (!hasErrored) {
-                new Notice('Synced all files with Anki ✔')
-            }
+            fatalErrorString = e
         }
+
+        const result: SyncResult = {
+            fatalError: hasErrored,
+            fatalErrorString: fatalErrorString,
+            numberOfNonFatalErrors: numberOfNonFatalErrors,
+        }
+
+        this.handleSyncResult(result)
     }
 }
