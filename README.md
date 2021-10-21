@@ -34,6 +34,7 @@ Currently implemented blueprints:
 ### 📊 Rendering
 - 🧮 Math rendering
 - ⬇ Standard Markdown rendering
+- 🔗 Link rendering (with Obsidian URI support)
 
 ### 🧠 Intuitive usage
 
@@ -61,9 +62,6 @@ changes to bridged notes in Anki will be reverted upon sync.__
 
 ## Upcoming features
 
-- Improved error handling when Anki is not available
-- Stop cluttering `console`
-- 🔗 Link rendering (with Obsidian URI support)
 - 🖼 Image rendering
 - 👩‍💻 Code syntax highlighting
 - 🔉 Audio rendering
