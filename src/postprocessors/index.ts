@@ -3,6 +3,7 @@ import { App } from 'obsidian'
 import { Postprocessor } from './base'
 import { HtmlPostprocessor } from './html'
 import { LinkPostprocessor } from './link'
+import { LinkToSourcePostprocessor } from './link-to-source'
 import { MathPostprocessor } from './math'
 
 type PostprocessorConstructor = {
@@ -13,6 +14,7 @@ export const POSTPROCESSORS: Array<PostprocessorConstructor> = [
     MathPostprocessor,
     HtmlPostprocessor,
     LinkPostprocessor,
+    LinkToSourcePostprocessor,
 ]
 
 export function getPostprocessorById(id: string): PostprocessorConstructor {
