@@ -1,6 +1,5 @@
-import { MarkdownRenderer } from 'obsidian'
-import { renderObsidianURIOpen } from 'utils'
-import { Postprocessor } from './base'
+import { NoteBase } from 'notes/base'
+import { Postprocessor, PostprocessorContext } from './base'
 
 export class LinkPostprocessor extends Postprocessor {
     static id = 'LinkPostprocessor'
@@ -8,7 +7,7 @@ export class LinkPostprocessor extends Postprocessor {
     static weight = 50
     static defaultConfigState: true
 
-    public process(text: string): string {
+    public process(note: NoteBase, text: string, ctx: PostprocessorContext): string {
         const regex = /(\[\[.*\]\])/g
         text = text.replace(regex, (match, group1) => {
             const el = document.createElement('div')

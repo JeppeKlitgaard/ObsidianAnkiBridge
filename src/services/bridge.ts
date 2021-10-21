@@ -3,7 +3,7 @@ import { NoteBase } from 'notes/base'
 import { App } from 'obsidian'
 import { ProcessedFileResult } from './reader'
 import * as _ from 'lodash'
-import { Postprocessor } from 'postprocessors/base'
+import { Postprocessor, PostprocessorContext } from 'postprocessors/base'
 import { getPostprocessorById } from 'postprocessors'
 import { NotesInfoResponseEntity } from 'entities/network'
 
@@ -34,22 +34,29 @@ export class Bridge {
         ])
     }
 
-    public postprocessField(field: string): string {
+    public postprocessField(note: NoteBase, field: string, ctx: PostprocessorContext): string {
         for (const pp of this.postprocessors) {
-            field = pp.process(field)
+            field = pp.process(note, field, ctx)
         }
 
         return field
     }
 
-    public postprocessFields(fields: Record<string, string>): Record<string, string> {
-        return _.mapValues(fields, (field) => {
-            return this.postprocessField(field)
+    public postprocessFields(
+        note: NoteBase,
+        fields: Record<string, string>,
+    ): Record<string, string> {
+        return _.transform(fields, (result, field, fieldName) => {
+            const ctx: PostprocessorContext = {
+                fieldName: fieldName,
+            }
+
+            result[fieldName] = this.postprocessField(note, field, ctx)
         })
     }
 
     public renderFields(note: NoteBase): Record<string, string> {
-        return this.postprocessFields(note.renderFields())
+        return this.postprocessFields(note, note.renderFields())
     }
 
     private async notePairChanges(

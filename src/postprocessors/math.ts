@@ -1,5 +1,6 @@
+import { NoteBase } from 'notes/base'
 import { escapeMarkdown } from 'utils'
-import { Postprocessor } from './base'
+import { Postprocessor, PostprocessorContext } from './base'
 
 export class MathPostprocessor extends Postprocessor {
     static id = 'MathPostprocessor'
@@ -7,7 +8,7 @@ export class MathPostprocessor extends Postprocessor {
     static weight = 40
     static defaultConfigState: true
 
-    public process(text: string): string {
+    public process(note: NoteBase, text: string, ctx: PostprocessorContext): string {
         const mathBlockRegex = /\$\$(.*?)\$\$/gis
         text = text.replace(mathBlockRegex, (match, group1) => {
             return String.raw`\\(` + escapeMarkdown(group1) + String.raw` \\)`
