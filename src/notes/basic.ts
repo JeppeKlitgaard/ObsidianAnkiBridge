@@ -42,21 +42,6 @@ export class BasicNote extends NoteBase {
         )
     }
 
-    // renderAsEntity(): NoteEntity {
-
-    // }
-    public static isValidateConfig(config: Record<string, any>): config is Config {
-        // Check that it has ID
-        if (!('id' in config)) {
-            return false
-        }
-        if (typeof config['deck'] !== 'string') {
-            return false
-        }
-
-        return true
-    }
-
     renderAsText(): string {
         return this.blueprint.renderAsText(this)
     }
