@@ -13,7 +13,6 @@ import {
     NotesInfoRequest,
     NotesInfoResponseEntity,
     RemoveTagsRequest,
-    ResponseEntity,
     UpdateNoteFieldsRequest,
     UpdateNoteFieldsResponse,
 } from 'entities/network'
@@ -33,15 +32,6 @@ export class Anki {
 
         return str
     }
-
-    // public async createModels(sourceSupport: boolean, codeHighlightSupport: boolean) {
-    //     let models = this.getModels(sourceSupport, false)
-    //     if (codeHighlightSupport) {
-    //         models = models.concat(this.getModels(sourceSupport, true))
-    //     }
-
-    //     return this.invoke('multi', 6, { actions: models })
-    // }
 
     // Network Commands
 
@@ -196,100 +186,8 @@ export class Anki {
         }
     }
 
-    public async addCards(cards: Card[]): Promise<ResponseEntity> {
-        const notes: any = []
-
-        cards.forEach((card) => notes.push(card.getCard(false)))
-
-        return this.invoke('addNotes', 6, {
-            notes: notes,
-        })
-    }
-
-    /**
-     * Given the new cards with an optional deck name, it updates all the cards on Anki.
-     *
-     * Be aware of https://github.com/FooSoft/anki-connect/issues/82. If the Browse pane is opened on Anki,
-     * the update does not change all the cards.
-     * @param cards the new cards.
-     * @param deckName the new deck name.
-     */
-    public async updateCards(cards: Card[]): Promise<any> {
-        let updateActions: any[] = []
-
-        // Unfortunately https://github.com/FooSoft/anki-connect/issues/183
-        // This means that the delta from the current tags on Anki and the generated one should be added/removed
-        // That's what the current approach does, but in the future if the API it is made more consistent
-        //  then mergeTags(...) is not needed anymore
-        const ids: number[] = []
-
-        for (const card of cards) {
-            updateActions.push({
-                action: 'updateNoteFields',
-                params: {
-                    note: card.getCard(true),
-                },
-            })
-
-            updateActions = updateActions.concat(this.mergeTags(card.oldTags, card.tags, card.id))
-            ids.push(card.id)
-        }
-
-        // Update deck
-        updateActions.push({
-            action: 'changeDeck',
-            params: {
-                cards: ids,
-                deck: cards[0].deckName,
-            },
-        })
-
-        return this.invoke('multi', 6, { actions: updateActions })
-    }
-
-    public async getCards(ids: number[]) {
-        return await this.invoke('notesInfo', 6, { notes: ids })
-    }
-
-    public async deleteCards(ids: number[]) {
-        return this.invoke('deleteNotes', 6, { notes: ids })
-    }
-
     public async ping(): Promise<boolean> {
         return (await this.invoke('version', 6)) === 6
-    }
-
-    private mergeTags(oldTags: string[], newTags: string[], cardId: number) {
-        const actions = []
-
-        // Find tags to Add
-        for (const tag of newTags) {
-            const index = oldTags.indexOf(tag)
-            if (index > -1) {
-                oldTags.splice(index, 1)
-            } else {
-                actions.push({
-                    action: 'addTags',
-                    params: {
-                        notes: [cardId],
-                        tags: tag,
-                    },
-                })
-            }
-        }
-
-        // All Tags to delete
-        for (const tag of oldTags) {
-            actions.push({
-                action: 'removeTags',
-                params: {
-                    notes: [cardId],
-                    tags: tag,
-                },
-            })
-        }
-
-        return actions
     }
 
     private invoke(action: string, version = 6, params: Record<string, any> = {}): Promise<any> {
@@ -302,10 +200,10 @@ export class Anki {
                     if (Object.getOwnPropertyNames(response).length != 2) {
                         throw 'response has an unexpected number of fields'
                     }
-                    if (!response.hasOwnProperty('error')) {
+                    if (!Object.prototype.hasOwnProperty.call(response, 'error')) {
                         throw 'response is missing required error field'
                     }
-                    if (!response.hasOwnProperty('result')) {
+                    if (!Object.prototype.hasOwnProperty.call(response, 'result')) {
                         throw 'response is missing required result field'
                     }
                     if (response.error) {
