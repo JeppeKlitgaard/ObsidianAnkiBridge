@@ -8,14 +8,14 @@ export class MathPostprocessor extends Postprocessor {
     static defaultConfigState: true
 
     public process(text: string): string {
-        const mathBlockRegex = /(\$\$)(.*?)(\$\$)/gis
-        text = text.replace(mathBlockRegex, function (match, p1, p2) {
-            return '\\\\(' + escapeMarkdown(p2) + ' \\\\)'
+        const mathBlockRegex = /\$\$(.*?)\$\$/gis
+        text = text.replace(mathBlockRegex, (match, group1) => {
+            return String.raw`\\(` + escapeMarkdown(group1) + String.raw` \\)`
         })
 
-        const mathInlineRegex = /(\$)(.*?)(\$)/gi
-        text = text.replace(mathInlineRegex, function (match, p1, p2) {
-            return '\\\\(' + escapeMarkdown(p2) + '\\\\)'
+        const mathInlineRegex = /\$(.*?)\$/gi
+        text = text.replace(mathInlineRegex, (match, group1) => {
+            return String.raw`\\(` + escapeMarkdown(group1) + String.raw` \\)`
         })
 
         return text
