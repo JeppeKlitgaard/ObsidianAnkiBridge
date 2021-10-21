@@ -6,7 +6,7 @@ import { Postprocessor } from './base'
 export class HtmlPostprocessor extends Postprocessor {
     static id = 'HtmlPostprocessor'
     static displayName = 'HtmlPostprocessor'
-    static weight = 50
+    static weight = 60
     static defaultConfigState: true
 
     private markdownit: MarkdownIt
@@ -15,7 +15,7 @@ export class HtmlPostprocessor extends Postprocessor {
         super(app, plugin)
 
         this.markdownit = new MarkdownIt({
-            html: false,
+            html: true,
             xhtmlOut: false,
             breaks: true,
             linkify: true,

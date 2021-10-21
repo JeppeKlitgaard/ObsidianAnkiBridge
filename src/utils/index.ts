@@ -1,4 +1,4 @@
-import { Notice } from 'obsidian'
+import { Notice, Vault } from 'obsidian'
 
 export function arrayBufferToBase64(buffer: ArrayBuffer): string {
     let binary = ''
@@ -58,4 +58,21 @@ export function stripCr(text: string): string {
 
 export function showError(message: string): void {
     new Notice('AnkiBridge Error: ' + message)
+}
+
+export function renderObsidianURIOpen(vault: Vault, file?: string, path?: string): string {
+    const vaultStr = vault.getName()
+
+    let selector: string
+    if (file) {
+        selector = 'file=' + encodeURIComponent(file)
+    } else if (path) {
+        selector = 'path=' + encodeURIComponent(path)
+    } else {
+        throw 'Must have either file or path'
+    }
+
+    const uri = `obsidian://open?vault=${vaultStr}&${selector}`
+
+    return uri
 }
