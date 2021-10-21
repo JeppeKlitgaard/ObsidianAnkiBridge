@@ -71,8 +71,12 @@ changes to bridged notes in Anki will be reverted upon sync.__
 - 📦 Improved installation
 - 📦 Available through Community Plugins
 - ♻ Sync on save
+- 📄 Documentation
 
 ## Gotchas
+
+There are some gotchas that arise from the slightly fiddly nature of meshing Obsidian
+and Anki together.
 
 ### Notes not updating when Note Browser is open
 Due to a bug in Anki/AnkiConnect it isn't possible to update the deck in some instances
