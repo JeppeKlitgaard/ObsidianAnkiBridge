@@ -6,7 +6,7 @@ export async function makeGrammar(
     vault: Vault,
     plugin: Plugin,
 ): Promise<string> {
-    const utilsJs = await vault.adapter.read(plugin.manifest.dir + '/src/grammars/utils.js')
+    const utilsJs = await vault.adapter.read(plugin.manifest.dir + '/assets/grammars/utils.js')
 
     let finalGrammar = ''
     finalGrammar += '{{\n'
@@ -36,7 +36,7 @@ export async function readGrammar(
     grammarName: string,
 ): Promise<string> {
     const grammar = await vault.adapter.read(
-        plugin.manifest.dir + '/src/grammars/' + grammarName + '.pegjs',
+        plugin.manifest.dir + '/assets/grammars/' + grammarName + '.pegjs',
     )
     return grammar
 }

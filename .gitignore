@@ -13,7 +13,6 @@ package-lock.json
 main.js
 *.js.map
 data.json
-dist/
 
 # scripts
 move.sh
