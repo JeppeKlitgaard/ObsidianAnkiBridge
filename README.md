@@ -35,6 +35,7 @@ Currently implemented blueprints:
 - 🧮 Math rendering
 - ⬇ Standard Markdown rendering
 - 🔗 Link rendering (with Obsidian URI support)
+- ⚓ Linking to source from Anki
 
 ### 🧠 Intuitive usage
 
@@ -69,7 +70,6 @@ changes to bridged notes in Anki will be reverted upon sync.__
 - 🌉 Syncing of Mathjax preamples (advanced feature)
 - 📦 Improved installation
 - 📦 Available through Community Plugins
-- ⚓ Linking to source from Anki
 
 ## How to install
 
