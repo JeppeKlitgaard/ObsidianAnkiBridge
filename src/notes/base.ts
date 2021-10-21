@@ -1,13 +1,13 @@
 import { Blueprint } from 'blueprints/base'
 import { FieldEntity } from 'entities/network'
-import { LineInterval } from 'entities/note'
+import { SourceDescriptor } from 'entities/note'
 
 export abstract class NoteBase {
     constructor(
         public blueprint: typeof Blueprint,
         public id: number | null,
         public fields: Record<string, string>,
-        public source: LineInterval,
+        public source: SourceDescriptor,
         public sourceText: string,
         public deckName?: string,
         public modelName?: string,

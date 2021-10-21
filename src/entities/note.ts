@@ -1,12 +1,9 @@
 import { NoteBase } from 'notes/base'
 import { TFile } from 'obsidian'
 
-export interface LineInterval {
+export interface SourceDescriptor {
     from: number
     to: number
-}
-
-export interface SourceDescriptor extends LineInterval {
     file: TFile
 }
 
