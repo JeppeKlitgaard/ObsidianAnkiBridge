@@ -23,11 +23,7 @@ export default class AnkiBridgePlugin extends Plugin {
 
         await this.loadSettings()
 
-        this.anki = new Anki(this.app, this)
-        this.reader = new Reader(this.app, this)
-        this.bridge = new Bridge(this.app, this)
-
-        await this.reader.setup()
+        await this.initiateServices()
 
         this.statusbar = this.addStatusBarItem()
 
@@ -70,6 +66,14 @@ export default class AnkiBridgePlugin extends Plugin {
 
     async onunload() {
         await this.saveData(this.settings)
+    }
+
+    async initiateServices(): Promise<void> {
+        this.anki = new Anki(this.app, this)
+        this.reader = new Reader(this.app, this)
+        this.bridge = new Bridge(this.app, this)
+
+        await this.reader.setup()
     }
 
     async loadSettings() {

@@ -185,6 +185,7 @@ export class SettingsTab extends PluginSettingTab {
                 toggle.setValue(enabled).onChange((newState) => {
                     this.plugin.settings.postprocessors[id] = newState
                     this.plugin.saveSettings()
+                    this.plugin.initiateServices()
                 })
             })
         }
