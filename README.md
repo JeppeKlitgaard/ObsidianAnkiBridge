@@ -71,6 +71,14 @@ changes to bridged notes in Anki will be reverted upon sync.__
 - 📦 Improved installation
 - 📦 Available through Community Plugins
 
+## Gotchas
+
+### Notes not updating when Note Browser is open
+Due to a bug in Anki/AnkiConnect it isn't possible to update the deck in some instances
+when the Note Browser is open.
+
+See relevant discussion over at [https://github.com/FooSoft/anki-connect/issues/82](AnkiConnect#82)
+
 ## How to install
 
 1. Install this plugin on Obsidian (__NOTE: NOT YET AVAILABLE THROUGH COMMUNITY PLUGINS WINDOW. USE ALTERNATIVE INSTALLATION FOR NOW__)
