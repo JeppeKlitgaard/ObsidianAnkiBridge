@@ -70,6 +70,7 @@ changes to bridged notes in Anki will be reverted upon sync.__
 - 🌉 Syncing of Mathjax preamples (advanced feature)
 - 📦 Improved installation
 - 📦 Available through Community Plugins
+- ♻ Sync on save
 
 ## Gotchas
 
