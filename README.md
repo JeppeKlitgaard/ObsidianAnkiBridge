@@ -72,6 +72,8 @@ changes to bridged notes in Anki will be reverted upon sync.__
 - 📦 Available through Community Plugins
 - ♻ Sync on save
 - 📄 Documentation
+- 🗃 Default deck matching
+- 📘 More blueprints
 
 ## Gotchas
 
@@ -88,7 +90,7 @@ See relevant discussion over at [https://github.com/FooSoft/anki-connect/issues/
 
 1. Install this plugin on Obsidian (__NOTE: NOT YET AVAILABLE THROUGH COMMUNITY PLUGINS WINDOW. USE ALTERNATIVE INSTALLATION FOR NOW__)
 
-    From Obsidian v0.9.8+, you can activate this plugin within Obsidian by doing the following:
+    You can activate this plugin within Obsidian by doing the following:
 
     - Open Settings > Third-party plugin
     - Make sure Safe mode is off
@@ -99,9 +101,9 @@ See relevant discussion over at [https://github.com/FooSoft/anki-connect/issues/
 
     Alternatively you can do a manual installation:
     
-    - Download the latest `main.js` & `mainfest.json` from releases.
+    - Download the latest `ObsidianAnkiBridge-X.Y.Z.zip` from GitHub releases.
     - Create a new folder named `AnkiBridge`
-    - Place the files in the folder
+    - Extract the files within the zip file into `AnkiBridge`
     - Place the folder in your .obsidian/plugins directory
     - Reload plugins (the easiest way is just restarting Obsidian)
     - Activate the plugin as normal.
