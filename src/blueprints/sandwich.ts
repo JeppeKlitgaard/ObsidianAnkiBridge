@@ -45,7 +45,7 @@ export class SandwichBlueprint extends Blueprint {
                 const to: number = result['location']['end']['line'] + fragment.sourceOffset
                 const front: string = result['front']
                 const back: string = result['back']
-                const config: Record<string, any> = load(result['config']) || {}
+                let config: Record<string, any> = load(result['config']) || {}
 
                 const source: SourceDescriptor = { from: from, to: to, file: fragment.sourceFile }
                 const sourceText =
@@ -56,26 +56,26 @@ export class SandwichBlueprint extends Blueprint {
 
                 // Validate configuration
                 try {
-                    ConfigSchema.validateSync(config)
+                    config = ConfigSchema.validateSync(config)
                 } catch (e) {
                     for (const error of e.errors) {
                         console.warn(error)
                         showError(error)
-
-                        elements.push(newFragment)
-                        newFragment = {
-                            text: '',
-                            sourceFile: fragment.sourceFile,
-                            sourceOffset: to + 1,
-                        }
-
-                        // If invalid push back this part of the file as a whole fragment
-                        elements.push({
-                            text: sourceText,
-                            sourceFile: fragment.sourceFile,
-                            sourceOffset: from,
-                        })
                     }
+
+                    elements.push(newFragment)
+                    newFragment = {
+                        text: '',
+                        sourceFile: fragment.sourceFile,
+                        sourceOffset: to + 1,
+                    }
+                    // If invalid push back this part of the file as a whole fragment
+                    elements.push({
+                        text: sourceText,
+                        sourceFile: fragment.sourceFile,
+                        sourceOffset: from,
+                    })
+
                     continue
                 }
 

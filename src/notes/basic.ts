@@ -1,15 +1,15 @@
 import { NoteBase } from './base'
 import { SourceDescriptor } from 'entities/note'
-import * as yup from 'yup'
+import yup from 'utils/yup'
 import { Blueprint } from 'blueprints/base'
 
 export const ConfigSchema = yup.object({
     id: yup.number().nullable(),
-    deck: yup.string(),
-    model: yup.string(),
-    tags: yup.array().of(yup.string()),
-    delete: yup.boolean(),
-    enabled: yup.boolean(),
+    deck: yup.string().emptyAsUndefined().nullAsUndefined(),
+    model: yup.string().emptyAsUndefined().nullAsUndefined(),
+    tags: yup.array().of(yup.string().emptyAsUndefined().nullAsUndefined()),
+    delete: yup.boolean().nullAsUndefined(),
+    enabled: yup.boolean().nullAsUndefined(),
 })
 
 export type Config = yup.Asserts<typeof ConfigSchema>
