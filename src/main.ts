@@ -240,7 +240,7 @@ export default class AnkiBridgePlugin extends Plugin {
                 const result = await this.syncFile(activeFile)
                 this.handleSyncResult(result, displayOnSuccess)
             } else {
-                new Notice('This file is configured to be ignored')
+                new Notice('❌ This file is configured to be ignored')
             }
         } else {
             new Notice('Please open a file first')
