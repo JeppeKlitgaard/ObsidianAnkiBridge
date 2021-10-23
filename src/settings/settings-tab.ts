@@ -87,6 +87,67 @@ export class SettingsTab extends PluginSettingTab {
                         }
                     })
             })
+
+        // Folders to ignore
+        new Setting(this.containerEl)
+            .setName('Add New')
+            .setDesc('Add new folder to ignore.')
+            .addButton((button: ButtonComponent): ButtonComponent => {
+                const b = button
+                    .setTooltip('Add additional folder to ignore')
+                    .setButtonText('+')
+                    .setCta()
+                    .onClick(() => {
+                        this.plugin.settings.foldersToIgnore.push('')
+                        this.display()
+                    })
+
+                return b
+            })
+
+        this.plugin.settings.foldersToIgnore.forEach((folder, index) => {
+            const s = new Setting(this.containerEl)
+                .addSearch((cb) => {
+                    new FolderSuggest(this.app, cb.inputEl)
+                    cb.setPlaceholder('Folder')
+                        .setValue(folder)
+                        .onChange(async (newFolder) => {
+                            this.plugin.settings.foldersToIgnore[index] = newFolder
+                            await this.plugin.saveSettings()
+                        })
+                    // @ts-ignore
+                    cb.containerEl.addClass('ankibridge-search')
+                })
+                .addExtraButton((cb) => {
+                    cb.setIcon('up-chevron-glyph')
+                        .setTooltip('Move up')
+                        .onClick(async () => {
+                            arraymove(this.plugin.settings.foldersToIgnore, index, index - 1)
+                            await this.plugin.saveSettings()
+                            this.display()
+                        })
+                })
+                .addExtraButton((cb) => {
+                    cb.setIcon('down-chevron-glyph')
+                        .setTooltip('Move down')
+                        .onClick(async () => {
+                            arraymove(this.plugin.settings.foldersToIgnore, index, index + 1)
+                            await this.plugin.saveSettings()
+                            this.display()
+                        })
+                })
+                .addExtraButton((cb) => {
+                    cb.setIcon('cross')
+                        .setTooltip('Delete')
+                        .onClick(async () => {
+                            this.plugin.settings.foldersToIgnore.splice(index, 1)
+                            await this.plugin.saveSettings()
+                            this.display()
+                        })
+                })
+
+            s.infoEl.remove()
+        })
     }
 
     addDefaultDeck(): void {

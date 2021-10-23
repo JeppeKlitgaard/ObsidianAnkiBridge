@@ -124,6 +124,22 @@ export default class AnkiBridgePlugin extends Plugin {
         new Notice(errMsg)
     }
 
+    private shouldIgnoreFile(file: TFile): boolean {
+        let folder = file.parent
+
+        do {
+            const match = this.settings.foldersToIgnore.find((e) => e == folder.path)
+
+            if (match) {
+                return true
+            }
+
+            folder = folder.parent
+        } while (folder)
+
+        return false
+    }
+
     /**
      * Can raise an error
      */
@@ -180,12 +196,16 @@ export default class AnkiBridgePlugin extends Plugin {
     private async syncActiveFile(): Promise<void> {
         const activeFile = this.app.workspace.getActiveFile()
         if (activeFile) {
-            if (!(await this.pingAnki())) {
-                this.printFailedConnection()
-                return
+            if (!this.shouldIgnoreFile(activeFile)) {
+                if (!(await this.pingAnki())) {
+                    this.printFailedConnection()
+                    return
+                }
+                const result = await this.syncFile(activeFile)
+                this.handleSyncResult(result)
+            } else {
+                new Notice('This file is configured to be ignored')
             }
-            const result = await this.syncFile(activeFile)
-            this.handleSyncResult(result)
         } else {
             new Notice('Please open a file first')
         }
@@ -206,7 +226,9 @@ export default class AnkiBridgePlugin extends Plugin {
         try {
             await Promise.all(
                 this.app.vault.getMarkdownFiles().map(async (file) => {
-                    numberOfNonFatalErrors += await this.syncFileRoutine(file)
+                    if (!this.shouldIgnoreFile(file)) {
+                        numberOfNonFatalErrors += await this.syncFileRoutine(file)
+                    }
                 }),
             )
 

@@ -1,9 +1,9 @@
-import { DefaultDeckMap } from "entities/other";
+import { DefaultDeckMap } from 'entities/other'
 
 export interface ISettings {
     defaultModel: string
-
     tagInAnki: string
+    foldersToIgnore: Array<string>
 
     fallbackDeck: string
     defaultDeckMaps: Array<DefaultDeckMap>
@@ -20,8 +20,8 @@ export interface ISettings {
 
 export const DEFAULT_SETTINGS: ISettings = {
     defaultModel: 'Basic',
-
     tagInAnki: 'obsidian',
+    foldersToIgnore: [],
 
     fallbackDeck: 'Default',
     defaultDeckMaps: [],

@@ -56,7 +56,12 @@ are always update to reflect the vault perfectly.
 - 🚮 Delete notes from Obsidian via the `delete: true` key
 - ➡ Automatically moves cards to appropriate deck
 - 🤖 Automatically updates tags and field content when syncing 
+
+### 💪 Other features
+
 - 🗃 Default deck matching
+- 📂 Ignore folders
+
 
 
 __Note: AnkiBridge considers the Obsidian Vault to be the 'ground truth'. Any
@@ -74,7 +79,7 @@ changes to bridged notes in Anki will be reverted upon sync.__
 - ♻ Sync on save
 - 📄 Documentation
 - 📘 More blueprints
-- 📂 Ignore folders
+- 🧪 Unit testing
 
 ## Gotchas
 
