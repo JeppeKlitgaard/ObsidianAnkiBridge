@@ -1,8 +1,12 @@
+import { DefaultDeckMap } from "entities/other";
+
 export interface ISettings {
-    defaultDeck: string
     defaultModel: string
 
     tagInAnki: string
+
+    fallbackDeck: string
+    defaultDeckMaps: Array<DefaultDeckMap>
 
     blueprints: Record<string, boolean>
     postprocessors: Record<string, boolean>
@@ -15,10 +19,12 @@ export interface ISettings {
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
-    defaultDeck: 'Default',
     defaultModel: 'Basic',
 
     tagInAnki: 'obsidian',
+
+    fallbackDeck: 'Default',
+    defaultDeckMaps: [],
 
     blueprints: {},
     postprocessors: {},

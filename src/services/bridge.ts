@@ -81,7 +81,7 @@ export class Bridge {
         // Cannot actually update modelName - skip checking
         const cardsInfos = await this.plugin.anki.cardsInfo(noteInfo.cards)
         const cardsInfosToUpdate = _.filter(cardsInfos, (value) => {
-            return value.deckName !== (note.deckName || this.plugin.settings.defaultDeck)
+            return value.deckName !== note.getDeckName(this.plugin)
         })
         cardsToUpdate = _.map(cardsInfosToUpdate, 'cardId')
 
@@ -125,7 +125,7 @@ export class Bridge {
                 continue
             }
 
-            const deckName = element.deckName || this.plugin.settings.defaultDeck
+            const deckName = element.getDeckName(this.plugin)
             const modelName = element.modelName || this.plugin.settings.defaultModel
             const tagsToSet = [
                 this.plugin.settings.tagInAnki,

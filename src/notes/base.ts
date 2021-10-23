@@ -1,6 +1,9 @@
 import { Blueprint } from 'blueprints/base'
 import { FieldEntity } from 'entities/network'
 import { SourceDescriptor } from 'entities/note'
+import AnkiBridgePlugin from 'main'
+import { App } from 'obsidian'
+import { getDefaultDeckForFolder } from 'utils/file'
 
 export abstract class NoteBase {
     constructor(
@@ -29,5 +32,24 @@ export abstract class NoteBase {
 
     public shouldUpdateFile(): boolean {
         return this.renderAsText() !== this.sourceText
+    }
+
+    /**
+     * Returns the resolved deck name
+     */
+    public getDeckName(plugin: AnkiBridgePlugin): string {
+        // Use in-note configured deck
+        if (this.deckName) {
+            return this.deckName
+        }
+
+        // Try to resolve based on default deck mappings
+        const resolvedDefaultDeck = getDefaultDeckForFolder(this.source.file.parent, plugin.settings.defaultDeckMaps)
+        if (resolvedDefaultDeck) {
+            return resolvedDefaultDeck
+        }
+
+        // Fallback if no deck was found
+        return plugin.settings.fallbackDeck
     }
 }

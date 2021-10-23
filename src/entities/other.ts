@@ -3,3 +3,8 @@ export interface SyncResult {
     fatalError: boolean
     numberOfNonFatalErrors: number
 }
+
+export interface DefaultDeckMap {
+    folder: string
+    deck: string
+}
