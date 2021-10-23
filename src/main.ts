@@ -60,6 +60,8 @@ export default class AnkiBridgePlugin extends Plugin {
             await this.syncActiveFile()
         })
 
+        this.setupSaveWatcher()
+
         this.addSettingTab(new SettingsTab(this.app, this))
 
         await this.pingAnki()
@@ -124,6 +126,25 @@ export default class AnkiBridgePlugin extends Plugin {
         new Notice(errMsg)
     }
 
+    private setupSaveWatcher() {
+        // Source for save setting
+        // https://github.com/hipstersmoothie/obsidian-plugin-prettier/blob/main/src/main.ts
+        const saveCommandDefinition = (this.app as any).commands?.commands?.['editor:save-file']
+        const save = saveCommandDefinition?.callback
+
+        if (typeof save === 'function') {
+            saveCommandDefinition.callback = async () => {
+                if (this.settings.syncOnSave) {
+                    const file = this.app.workspace.getActiveFile()
+
+                    if (this.getConnectionStatus() && file && !this.shouldIgnoreFile(file)) {
+                        await this.syncActiveFile(this.settings.displaySyncOnSave)
+                    }
+                }
+            }
+        }
+    }
+
     private shouldIgnoreFile(file: TFile): boolean {
         let folder = file.parent
 
@@ -149,7 +170,7 @@ export default class AnkiBridgePlugin extends Plugin {
         return numberOfErrors
     }
 
-    private handleSyncResult(result: SyncResult): void {
+    private handleSyncResult(result: SyncResult, displayOnSuccess: boolean = true): void {
         if (result.fatalError) {
             if (result.fatalErrorString === 'failed to issue request') {
                 this.setConnectionStatus(false)
@@ -161,7 +182,9 @@ export default class AnkiBridgePlugin extends Plugin {
                 throw result.fatalErrorString
             }
         } else if (result.numberOfNonFatalErrors === 0) {
-            new Notice('✔ Synced with Anki')
+            if (displayOnSuccess) {
+                new Notice('✔ Synced with Anki')
+            }
         } else {
             const errNumStr =
                 result.numberOfNonFatalErrors > 0
@@ -193,7 +216,7 @@ export default class AnkiBridgePlugin extends Plugin {
         return result
     }
 
-    private async syncActiveFile(): Promise<void> {
+    private async syncActiveFile(displayOnSuccess: boolean = true): Promise<void> {
         const activeFile = this.app.workspace.getActiveFile()
         if (activeFile) {
             if (!this.shouldIgnoreFile(activeFile)) {
@@ -202,7 +225,7 @@ export default class AnkiBridgePlugin extends Plugin {
                     return
                 }
                 const result = await this.syncFile(activeFile)
-                this.handleSyncResult(result)
+                this.handleSyncResult(result, displayOnSuccess)
             } else {
                 new Notice('This file is configured to be ignored')
             }

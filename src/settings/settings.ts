@@ -5,6 +5,9 @@ export interface ISettings {
     tagInAnki: string
     foldersToIgnore: Array<string>
 
+    syncOnSave: boolean
+    displaySyncOnSave: boolean
+
     fallbackDeck: string
     defaultDeckMaps: Array<DefaultDeckMap>
 
@@ -22,6 +25,9 @@ export const DEFAULT_SETTINGS: ISettings = {
     defaultModel: 'Basic',
     tagInAnki: 'obsidian',
     foldersToIgnore: [],
+
+    syncOnSave: false,
+    displaySyncOnSave: false,
 
     fallbackDeck: 'Default',
     defaultDeckMaps: [],

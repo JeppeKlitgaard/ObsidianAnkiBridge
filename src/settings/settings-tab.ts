@@ -88,6 +88,32 @@ export class SettingsTab extends PluginSettingTab {
                     })
             })
 
+        // Sync on save
+        new Setting(this.containerEl)
+            .setName('Sync on save')
+            .setDesc(
+                'Sync when explicitly saving a file provided there is a connection to Anki. Respects folders to ignore.',
+            )
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.syncOnSave).onChange((newState) => {
+                    this.plugin.settings.syncOnSave = newState
+                    this.plugin.saveSettings()
+                })
+            })
+
+        new Setting(this.containerEl)
+            .setName('Display message when syncing on save')
+            .setDesc(
+                'Displays a little notice message on successful syncs.',
+            )
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.displaySyncOnSave).onChange((newState) => {
+                    this.plugin.settings.displaySyncOnSave = newState
+                    this.plugin.saveSettings()
+                })
+            })
+
+
         // Folders to ignore
         new Setting(this.containerEl)
             .setName('Add New')
