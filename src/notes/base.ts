@@ -2,7 +2,6 @@ import { Blueprint } from 'blueprints/base'
 import { FieldEntity } from 'entities/network'
 import { SourceDescriptor } from 'entities/note'
 import AnkiBridgePlugin from 'main'
-import { App } from 'obsidian'
 import { getDefaultDeckForFolder } from 'utils/file'
 
 export abstract class NoteBase {
@@ -44,7 +43,10 @@ export abstract class NoteBase {
         }
 
         // Try to resolve based on default deck mappings
-        const resolvedDefaultDeck = getDefaultDeckForFolder(this.source.file.parent, plugin.settings.defaultDeckMaps)
+        const resolvedDefaultDeck = getDefaultDeckForFolder(
+            this.source.file.parent,
+            plugin.settings.defaultDeckMaps,
+        )
         if (resolvedDefaultDeck) {
             return resolvedDefaultDeck
         }

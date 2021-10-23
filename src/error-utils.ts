@@ -1,24 +1,24 @@
-import { AnkiBridgeError } from "error";
-import { logError } from "log";
+import { AnkiBridgeError } from 'error'
+import { logError } from 'log'
 
 export async function errorWrapper<T>(fn: () => Promise<T>, msg: string): Promise<T> {
     try {
-        return await fn();
-    } catch(e) {
+        return await fn()
+    } catch (e) {
         if (!(e instanceof AnkiBridgeError)) {
-            logError(new AnkiBridgeError(msg, e.message));
+            logError(new AnkiBridgeError(msg, e.message))
         } else {
-            logError(e);
+            logError(e)
         }
-        return null;
+        return null
     }
 }
 
 export function errorWrapperSync<T>(fn: () => T, msg: string): T {
     try {
-        return fn();
-    } catch(e) {
-        logError(new AnkiBridgeError(msg, e.message));
-        return null;
+        return fn()
+    } catch (e) {
+        logError(new AnkiBridgeError(msg, e.message))
+        return null
     }
 }

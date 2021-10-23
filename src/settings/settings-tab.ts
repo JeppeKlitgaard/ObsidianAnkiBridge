@@ -90,144 +90,129 @@ export class SettingsTab extends PluginSettingTab {
     }
 
     addDefaultDeck(): void {
-        this.containerEl.createEl('h2', { text: 'Default Deck Mapping'})
+        this.containerEl.createEl('h2', { text: 'Default Deck Mapping' })
 
-        const logicDesc = document.createElement("ol")
+        const logicDesc = document.createElement('ol')
         const logicsDesc = [
-            "Value specified by deck key of in-note config",
-            "Deepest match specified in mappings below",
-            "Fallback deck"
+            'Value specified by deck key of in-note config',
+            'Deepest match specified in mappings below',
+            'Fallback deck',
         ]
 
         logicsDesc.forEach((value) => {
-            const li = document.createElement("li")
+            const li = document.createElement('li')
             li.innerText = value
             logicDesc.appendChild(li)
         })
 
-        const descHeading = document.createDocumentFragment();
+        const descHeading = document.createDocumentFragment()
         descHeading.append(
-            "Default decks are mapped based on the following logic, using the first match:",
+            'Default decks are mapped based on the following logic, using the first match:',
             logicDesc,
-        );
-
-        new Setting(this.containerEl).setDesc(descHeading);
-
-        new Setting(this.containerEl)
-        .setName('Fallback deck')
-        .setDesc(
-            'The name of the deck where the cards will be added when no folder mapping could be found.',
         )
-        .addText((text) => {
-            text.setValue(this.plugin.settings.fallbackDeck)
-                .setPlaceholder('deck::subdeck')
-                .onChange((value) => {
-                    if (value.length) {
-                        this.plugin.settings.fallbackDeck = value
-                        this.plugin.saveSettings()
-                    } else {
-                        new Notice('The deck name must be at least 1 character long')
-                    }
-                })
-        })
+
+        new Setting(this.containerEl).setDesc(descHeading)
 
         new Setting(this.containerEl)
-        .setName("Add New")
-        .setDesc("Add new default deck map")
-        .addButton((button: ButtonComponent) => {
-            button
-                .setTooltip("Add additional default deck map")
-                .setButtonText("+")
-                .setCta()
-                .onClick(() => {
-                    this.plugin.settings.defaultDeckMaps.push({
-                        folder: "",
-                        deck: "",
-                    });
-                    this.plugin.saveSettings();
-                    this.display();
-                });
-        });
+            .setName('Fallback deck')
+            .setDesc(
+                'The name of the deck where the cards will be added when no folder mapping could be found.',
+            )
+            .addText((text) => {
+                text.setValue(this.plugin.settings.fallbackDeck)
+                    .setPlaceholder('deck::subdeck')
+                    .onChange((value) => {
+                        if (value.length) {
+                            this.plugin.settings.fallbackDeck = value
+                            this.plugin.saveSettings()
+                        } else {
+                            new Notice('The deck name must be at least 1 character long')
+                        }
+                    })
+            })
 
-    this.plugin.settings.defaultDeckMaps.forEach(
-        (defaultDeckMap, index) => {
+        new Setting(this.containerEl)
+            .setName('Add New')
+            .setDesc('Add new default deck map')
+            .addButton((button: ButtonComponent) => {
+                button
+                    .setTooltip('Add additional default deck map')
+                    .setButtonText('+')
+                    .setCta()
+                    .onClick(() => {
+                        this.plugin.settings.defaultDeckMaps.push({
+                            folder: '',
+                            deck: '',
+                        })
+                        this.plugin.saveSettings()
+                        this.display()
+                    })
+            })
+
+        this.plugin.settings.defaultDeckMaps.forEach((defaultDeckMap, index) => {
             const s = new Setting(this.containerEl)
                 .addSearch((cb) => {
-                    new FolderSuggest(this.app, cb.inputEl);
-                    cb.setPlaceholder("Folder")
+                    new FolderSuggest(this.app, cb.inputEl)
+                    cb.setPlaceholder('Folder')
                         .setValue(defaultDeckMap.folder)
                         .onChange((newFolder) => {
                             if (
                                 newFolder &&
                                 this.plugin.settings.defaultDeckMaps.some(
-                                    (e) => e.folder == newFolder
+                                    (e) => e.folder == newFolder,
                                 )
                             ) {
                                 logError(
                                     new AnkiBridgeError(
-                                        `${newFolder} already has a deck associated with it`
-                                    )
-                                );
-                                cb.setValue("")
-                                return;
+                                        `${newFolder} already has a deck associated with it`,
+                                    ),
+                                )
+                                cb.setValue('')
+                                return
                             }
 
-                            this.plugin.settings.defaultDeckMaps[
-                                index
-                            ].folder = newFolder;
-                            this.plugin.saveSettings();
-                        });
+                            this.plugin.settings.defaultDeckMaps[index].folder = newFolder
+                            this.plugin.saveSettings()
+                        })
                     // @ts-ignore
-                    cb.containerEl.addClass("ankibridge-search");
+                    cb.containerEl.addClass('ankibridge-search')
                 })
                 .addText((text) => {
                     text.setValue(defaultDeckMap.deck)
-                        .setPlaceholder("deck::subdeck")
+                        .setPlaceholder('deck::subdeck')
                         .onChange((newDeck) => {
                             this.plugin.settings.defaultDeckMaps[index].deck = newDeck
                         })
                 })
                 .addExtraButton((cb) => {
-                    cb.setIcon("up-chevron-glyph")
-                        .setTooltip("Move up")
+                    cb.setIcon('up-chevron-glyph')
+                        .setTooltip('Move up')
                         .onClick(() => {
-                            arraymove(
-                                this.plugin.settings.defaultDeckMaps,
-                                index,
-                                index - 1
-                            );
-                            this.plugin.saveSettings();
-                            this.display();
-                        });
+                            arraymove(this.plugin.settings.defaultDeckMaps, index, index - 1)
+                            this.plugin.saveSettings()
+                            this.display()
+                        })
                 })
                 .addExtraButton((cb) => {
-                    cb.setIcon("down-chevron-glyph")
-                        .setTooltip("Move down")
+                    cb.setIcon('down-chevron-glyph')
+                        .setTooltip('Move down')
                         .onClick(() => {
-                            arraymove(
-                                this.plugin.settings.defaultDeckMaps,
-                                index,
-                                index + 1
-                            );
-                            this.plugin.saveSettings();
-                            this.display();
-                        });
+                            arraymove(this.plugin.settings.defaultDeckMaps, index, index + 1)
+                            this.plugin.saveSettings()
+                            this.display()
+                        })
                 })
                 .addExtraButton((cb) => {
-                    cb.setIcon("cross")
-                        .setTooltip("Delete")
+                    cb.setIcon('cross')
+                        .setTooltip('Delete')
                         .onClick(() => {
-                            this.plugin.settings.defaultDeckMaps.splice(
-                                index,
-                                1
-                            );
-                            this.plugin.saveSettings();
-                            this.display();
-                        });
-                });
-            s.infoEl.remove();
-        }
-    );
+                            this.plugin.settings.defaultDeckMaps.splice(index, 1)
+                            this.plugin.saveSettings()
+                            this.display()
+                        })
+                })
+            s.infoEl.remove()
+        })
     }
 
     addNetworking(): void {
