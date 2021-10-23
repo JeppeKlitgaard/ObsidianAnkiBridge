@@ -149,7 +149,7 @@ export class Bridge {
             }
 
             // If note has no id, create note and assign id
-            if (element.id == null) {
+            if (element.id === null) {
                 // We must create note
                 try {
                     const id = await this.plugin.anki.addNote(
