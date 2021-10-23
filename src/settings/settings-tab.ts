@@ -135,8 +135,12 @@ export class SettingsTab extends PluginSettingTab {
                 e.inputEl.style.marginRight = '20px'
                 e.onChange((value) => {
                     const interval = Number(value)
-                    if (isNaN(interval) || interval <= 0.0) {
+                    if ((isNaN(interval) && value) || interval < 0.0) {
                         this.display()
+                        return
+                    }
+
+                    if (interval === 0) {
                         return
                     }
 
@@ -150,16 +154,6 @@ export class SettingsTab extends PluginSettingTab {
                     new Notice(
                         'Note: This change will only take effect after Obsidian has been reloaded.',
                     )
-                })
-            })
-
-        new Setting(this.containerEl)
-            .setName('Display message when syncing on save')
-            .setDesc('Displays a little notice message on successful syncs.')
-            .addToggle((toggle) => {
-                toggle.setValue(this.plugin.settings.displaySyncOnSave).onChange((newState) => {
-                    this.plugin.settings.displaySyncOnSave = newState
-                    this.plugin.saveSettings()
                 })
             })
 
