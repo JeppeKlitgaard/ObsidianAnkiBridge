@@ -62,6 +62,8 @@ export default class AnkiBridgePlugin extends Plugin {
 
         this.setupSaveWatcher()
 
+        this.setupPeriodicPing()
+
         this.addSettingTab(new SettingsTab(this.app, this))
 
         await this.pingAnki()
@@ -145,6 +147,17 @@ export default class AnkiBridgePlugin extends Plugin {
         }
     }
 
+    private setupPeriodicPing() {
+        if (this.settings.periodicPingEnabled) {
+            this.registerInterval(
+                window.setInterval(
+                    async () => await this.pingAnki(),
+                    this.settings.periodicPingInterval * 1000,
+                ),
+            )
+        }
+    }
+
     private shouldIgnoreFile(file: TFile): boolean {
         let folder = file.parent
 
@@ -170,7 +183,7 @@ export default class AnkiBridgePlugin extends Plugin {
         return numberOfErrors
     }
 
-    private handleSyncResult(result: SyncResult, displayOnSuccess: boolean = true): void {
+    private handleSyncResult(result: SyncResult, displayOnSuccess = true): void {
         if (result.fatalError) {
             if (result.fatalErrorString === 'failed to issue request') {
                 this.setConnectionStatus(false)
@@ -216,7 +229,7 @@ export default class AnkiBridgePlugin extends Plugin {
         return result
     }
 
-    private async syncActiveFile(displayOnSuccess: boolean = true): Promise<void> {
+    private async syncActiveFile(displayOnSuccess = true): Promise<void> {
         const activeFile = this.app.workspace.getActiveFile()
         if (activeFile) {
             if (!this.shouldIgnoreFile(activeFile)) {

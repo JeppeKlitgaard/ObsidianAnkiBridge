@@ -62,6 +62,7 @@ are always update to reflect the vault perfectly.
 - 🗃 Default deck matching
 - 📂 Ignore folders
 - ♻ Sync on save
+- 🏓 Ping connection
 
 __Note: AnkiBridge considers the Obsidian Vault to be the 'ground truth'. Any
 changes to bridged notes in Anki will be reverted upon sync.__
@@ -78,7 +79,6 @@ changes to bridged notes in Anki will be reverted upon sync.__
 - 📄 Documentation
 - 📘 More blueprints
 - 🧪 Unit testing
-- 🏓 Ping connection
 
 ## Gotchas
 

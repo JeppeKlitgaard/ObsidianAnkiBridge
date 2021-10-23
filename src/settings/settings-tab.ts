@@ -89,11 +89,17 @@ export class SettingsTab extends PluginSettingTab {
             })
 
         // Sync on save
+        const syncOnSaveDesc = document.createDocumentFragment()
+        syncOnSaveDesc.append(
+            'Sync when explicitly saving a file provided there is a connection to Anki.',
+            document.createElement('br'),
+            'Respects folders to ignore.',
+            document.createElement('br'),
+            'Best used with periodic ping set up to ensure connection status is updated.',
+        )
         new Setting(this.containerEl)
             .setName('Sync on save')
-            .setDesc(
-                'Sync when explicitly saving a file provided there is a connection to Anki. Respects folders to ignore.',
-            )
+            .setDesc(syncOnSaveDesc)
             .addToggle((toggle) => {
                 toggle.setValue(this.plugin.settings.syncOnSave).onChange((newState) => {
                     this.plugin.settings.syncOnSave = newState
@@ -103,9 +109,7 @@ export class SettingsTab extends PluginSettingTab {
 
         new Setting(this.containerEl)
             .setName('Display message when syncing on save')
-            .setDesc(
-                'Displays a little notice message on successful syncs.',
-            )
+            .setDesc('Displays a little notice message on successful syncs.')
             .addToggle((toggle) => {
                 toggle.setValue(this.plugin.settings.displaySyncOnSave).onChange((newState) => {
                     this.plugin.settings.displaySyncOnSave = newState
@@ -113,6 +117,51 @@ export class SettingsTab extends PluginSettingTab {
                 })
             })
 
+        // Periodic ping
+        const periodicPingDesc = document.createDocumentFragment()
+        periodicPingDesc.append(
+            'Pings Anki periodically at the set interval in seconds.',
+            document.createElement('br'),
+            'Note: Due to a shortcoming in Electron this will produce a lot of errors',
+            'in console when pings are failing. These are harmless and safe to ignore, ',
+            'but cannot be suppresed.',
+        )
+        new Setting(this.containerEl)
+            .setName('Periodic ping')
+            .setDesc(periodicPingDesc)
+            .addText((e) => {
+                e.setValue(String(this.plugin.settings.periodicPingInterval))
+                e.setPlaceholder('Seconds')
+                e.inputEl.style.marginRight = '20px'
+                e.onChange((value) => {
+                    const interval = Number(value)
+                    if (isNaN(interval) || interval <= 0.0) {
+                        this.display()
+                        return
+                    }
+
+                    this.plugin.settings.periodicPingInterval = interval
+                })
+            })
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.periodicPingEnabled).onChange((newState) => {
+                    this.plugin.settings.periodicPingEnabled = newState
+                    this.plugin.saveSettings()
+                    new Notice(
+                        'Note: This change will only take effect after Obsidian has been reloaded.',
+                    )
+                })
+            })
+
+        new Setting(this.containerEl)
+            .setName('Display message when syncing on save')
+            .setDesc('Displays a little notice message on successful syncs.')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.displaySyncOnSave).onChange((newState) => {
+                    this.plugin.settings.displaySyncOnSave = newState
+                    this.plugin.saveSettings()
+                })
+            })
 
         // Folders to ignore
         new Setting(this.containerEl)

@@ -8,6 +8,9 @@ export interface ISettings {
     syncOnSave: boolean
     displaySyncOnSave: boolean
 
+    periodicPingEnabled: boolean
+    periodicPingInterval: number
+
     fallbackDeck: string
     defaultDeckMaps: Array<DefaultDeckMap>
 
@@ -28,6 +31,9 @@ export const DEFAULT_SETTINGS: ISettings = {
 
     syncOnSave: false,
     displaySyncOnSave: false,
+
+    periodicPingEnabled: false,
+    periodicPingInterval: 30, // Seconds
 
     fallbackDeck: 'Default',
     defaultDeckMaps: [],
