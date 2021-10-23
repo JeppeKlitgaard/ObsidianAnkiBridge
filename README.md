@@ -80,6 +80,11 @@ changes to bridged notes in Anki will be reverted upon sync.__
 - 📘 More blueprints
 - 🧪 Unit testing
 
+## Demonstration
+
+Eventually this plugin will be documented much better, but for now please
+refer to the [demo.md](docs/demo.md) file.
+
 ## Gotchas
 
 There are some gotchas that arise from the slightly fiddly nature of meshing Obsidian
