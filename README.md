@@ -98,9 +98,15 @@ See relevant discussion over at [https://github.com/FooSoft/anki-connect/issues/
 
 ## How to install
 
-1. Install this plugin on Obsidian (__NOTE: NOT YET AVAILABLE THROUGH COMMUNITY PLUGINS WINDOW. USE MANUAL INSTALLATION FOR NOW__)
+First install the Obsidian plugin via one of the three methods described below.
 
-    You can activate this plugin within Obsidian by doing the following:
+**Then install AnkiConnect and configure it as described below.**
+
+### Community Plugins
+
+Install this plugin via the Obsidian Community Plugin interface (**Currently not yet released**)
+
+You can activate this plugin within Obsidian by doing the following:
 
     - Open Settings > Third-party plugin
     - Make sure Safe mode is off
@@ -108,6 +114,18 @@ See relevant discussion over at [https://github.com/FooSoft/anki-connect/issues/
     - Search for "**AnkiBridge**"
     - Click Install
     - Once installed, close the community plugins window and activate the newly installed plugin
+
+### BRAT
+
+If you have [Obsidian BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin installed you can install AnkiBridge by doing the following:
+
+    - Open `Command Palette`
+    - Select the `Obsidian42 - BRAT: Add a beta plugin for testing` command
+    - Paste in `JeppeKlitgaard/ObsidianAnkiBridge` into the text field
+    - Press `Add Plugin`
+    - Activate the plugin now found under the `Settings → Community Plugins` menu
+
+### Manual Installation
 
     Alternatively you can do a manual installation:
     
@@ -118,13 +136,15 @@ See relevant discussion over at [https://github.com/FooSoft/anki-connect/issues/
     - Reload plugins (the easiest way is just restarting Obsidian)
     - Activate the plugin as normal.
 
+### Installing AnkiConnect
+
 2. Install [AnkiConnect](https://ankiweb.net/shared/info/2055492159) on Anki
 
    - Tools > Add-ons -> Get Add-ons...
    - Paste the code **2055492159** > Ok
    - Select the plugin > Config > Paste the configuration below
 
-### AnkiConnect Configuration
+#### AnkiConnect Configuration
 
 ```json
 {
