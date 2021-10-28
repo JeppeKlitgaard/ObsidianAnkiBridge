@@ -29,7 +29,7 @@ Directly in the Obsidian Vault you can specify:
 - Anki Model to use (experimental)
 
 Currently implemented blueprints:
-- 🥪 Sandwich Card with #anki/start, #anki/---, #anki/end
+- 🥪 Sandwich Card with `#anki/start`, `#anki/---`, `#anki/end`
 
 ### 📊 Rendering
 - 🧮 Math rendering
@@ -98,7 +98,7 @@ See relevant discussion over at [https://github.com/FooSoft/anki-connect/issues/
 
 ## How to install
 
-1. Install this plugin on Obsidian (__NOTE: NOT YET AVAILABLE THROUGH COMMUNITY PLUGINS WINDOW. USE ALTERNATIVE INSTALLATION FOR NOW__)
+1. Install this plugin on Obsidian (__NOTE: NOT YET AVAILABLE THROUGH COMMUNITY PLUGINS WINDOW. USE MANUAL INSTALLATION FOR NOW__)
 
     You can activate this plugin within Obsidian by doing the following:
 
@@ -112,8 +112,8 @@ See relevant discussion over at [https://github.com/FooSoft/anki-connect/issues/
     Alternatively you can do a manual installation:
     
     - Download the latest `ObsidianAnkiBridge-X.Y.Z.zip` from GitHub releases.
-    - Create a new folder named `AnkiBridge`
-    - Extract the files within the zip file into `AnkiBridge`
+    - Create a new folder named `ObsidianAnkiBridge`
+    - Extract the files within the zip file into `ObsidianAnkiBridge` folder
     - Place the folder in your .obsidian/plugins directory
     - Reload plugins (the easiest way is just restarting Obsidian)
     - Activate the plugin as normal.
