@@ -29,7 +29,7 @@ Directly in the Obsidian Vault you can specify:
 - Anki Model to use (experimental)
 
 Currently implemented blueprints:
-- 🥪 Sandwich Card with #anki/start, #anki/---, #anki/end
+- 🥪 Sandwich Card with `#anki/start`, `#anki/---`, `#anki/end`
 
 ### 📊 Rendering
 - 🧮 Math rendering
