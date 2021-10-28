@@ -1,6 +1,10 @@
+import libGrammar from "grammars/Lib.pegjs"
+
 export const pluginName = 'AnkiBridge'
 
-export const GRAMMAR_LIBRARIES = ['lib']
+export const GRAMMAR_LIBRARIES = {
+    "lib": libGrammar,
+}
 
 export const noticeTimeout = 15 * 1000
 export const sourceDeckExtension = '-source'

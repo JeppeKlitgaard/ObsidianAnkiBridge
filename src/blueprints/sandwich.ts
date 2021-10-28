@@ -1,12 +1,13 @@
 import { Blueprint } from 'blueprints/base'
 import { GRAMMAR_LIBRARIES } from 'consts'
-import { makeGrammar, readGrammar } from 'utils/grammar'
+import { makeGrammar } from 'utils/grammar'
 import { generate } from 'peggy'
 import { BasicNote, ConfigSchema } from 'notes/basic'
 import { SourceDescriptor, Fragment, FragmentProcessingResult } from 'entities/note'
 import { dump, load } from 'js-yaml'
 import { showError } from 'utils'
 import { NoteBase } from 'notes/base'
+import sandwichGrammar from 'grammars/CardSandwich.pegjs'
 
 export class SandwichBlueprint extends Blueprint {
     static id = 'Sandwich'
@@ -14,12 +15,9 @@ export class SandwichBlueprint extends Blueprint {
     static weight = 50
 
     protected async setupParser(): Promise<void> {
-        const cardGrammar = await readGrammar(this.app.vault, this.plugin, 'CardSandwich')
         const grammar = await makeGrammar(
-            cardGrammar,
+            sandwichGrammar,
             GRAMMAR_LIBRARIES,
-            this.app.vault,
-            this.plugin,
         )
 
         this.parser = generate(grammar)

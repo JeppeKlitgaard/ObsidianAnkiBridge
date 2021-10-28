@@ -1,12 +1,9 @@
-import { Plugin, Vault } from 'obsidian'
+import utilsJs from "grammars/utils.js.static"
 
 export async function makeGrammar(
     grammar: string,
-    libraries: Array<string>,
-    vault: Vault,
-    plugin: Plugin,
+    libraries: Record<string, string>,
 ): Promise<string> {
-    const utilsJs = await vault.adapter.read(plugin.manifest.dir + '/assets/grammars/utils.js')
 
     let finalGrammar = ''
     finalGrammar += '{{\n'
@@ -19,24 +16,10 @@ export async function makeGrammar(
 
     finalGrammar += '\n\n'
 
-    await Promise.all(
-        libraries.map(async (grammarName) => {
-            const libGrammar = await readGrammar(vault, plugin, grammarName)
-            finalGrammar += `// LIBRARY: ${grammarName}\n`
-            finalGrammar += libGrammar
-        }),
-    )
+    for (let [grammarName, grammar] of Object.entries(libraries)) {
+        finalGrammar += `// LIBRARY: ${grammarName}\n`
+        finalGrammar += grammar
+    }
 
     return finalGrammar
-}
-
-export async function readGrammar(
-    vault: Vault,
-    plugin: Plugin,
-    grammarName: string,
-): Promise<string> {
-    const grammar = await vault.adapter.read(
-        plugin.manifest.dir + '/assets/grammars/' + grammarName + '.pegjs',
-    )
-    return grammar
 }
