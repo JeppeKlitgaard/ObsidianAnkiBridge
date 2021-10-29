@@ -136,22 +136,22 @@ export class Bridge {
                 continue
             }
 
-            // If delete is set
-            if (element.delete_) {
-                this.plugin.anki.deleteNote(element)
-                element.delete_ = undefined
-                element.enabled = false
-                element.id = undefined
+            try {
+                // If delete is set
+                if (element.delete_) {
+                    this.plugin.anki.deleteNote(element)
+                    element.delete_ = undefined
+                    element.enabled = false
+                    element.id = undefined
 
-                shouldUpdateSource = true
+                    shouldUpdateSource = true
 
-                continue
-            }
+                    continue
+                }
 
-            // If note has no id, create note and assign id
-            if (element.id === null) {
-                // We must create note
-                try {
+                // If note has no id, create note and assign id
+                if (element.id === null) {
+                    // We must create note
                     const id = await this.plugin.anki.addNote(
                         element,
                         deckName,
@@ -161,19 +161,12 @@ export class Bridge {
                     element.id = id
 
                     await this.plugin.anki.setTags(element, tagsToSet)
-                } catch (e) {
-                    if (!this.handleError(e, element)) {
-                        numberOfErrors++
-                        continue
-                    }
-                }
-                // Note already has id
-            } else {
-                const noteInfo = await this.plugin.anki.noteInfo(element)
+                    // Note already has id
+                } else {
+                    const noteInfo = await this.plugin.anki.noteInfo(element)
 
-                // No note with that ID found. Make it
-                if (_.isEmpty(noteInfo)) {
-                    try {
+                    // No note with that ID found. Make it
+                    if (_.isEmpty(noteInfo)) {
                         const id = await this.plugin.anki.addNote(
                             element,
                             deckName,
@@ -181,33 +174,36 @@ export class Bridge {
                             this.renderFields(element),
                         )
                         element.id = id
-                    } catch (e) {
-                        if (!this.handleError(e, element)) {
-                            numberOfErrors++
-                            continue
+
+                        // Note pair found
+                    } else {
+                        const notePairDelta = await this.notePairChanges(element, noteInfo)
+                        // Note pair changed
+                        if (notePairDelta.shouldUpdate) {
+                            if (notePairDelta.shouldUpdateFields) {
+                                await this.plugin.anki.updateNoteFields(
+                                    element,
+                                    this.renderFields(element),
+                                )
+                            }
+
+                            if (notePairDelta.shouldUpdateTags) {
+                                await this.plugin.anki.setTags(element, tagsToSet)
+                            }
+
+                            if (notePairDelta.cardsToUpdate.length) {
+                                await this.plugin.anki.changeDeck(
+                                    notePairDelta.cardsToUpdate,
+                                    deckName,
+                                )
+                            }
                         }
                     }
-
-                    // Note pair found
-                } else {
-                    const notePairDelta = await this.notePairChanges(element, noteInfo)
-                    // Note pair changed
-                    if (notePairDelta.shouldUpdate) {
-                        if (notePairDelta.shouldUpdateFields) {
-                            await this.plugin.anki.updateNoteFields(
-                                element,
-                                this.renderFields(element),
-                            )
-                        }
-
-                        if (notePairDelta.shouldUpdateTags) {
-                            await this.plugin.anki.setTags(element, tagsToSet)
-                        }
-
-                        if (notePairDelta.cardsToUpdate.length) {
-                            await this.plugin.anki.changeDeck(notePairDelta.cardsToUpdate, deckName)
-                        }
-                    }
+                }
+            } catch (e) {
+                if (!this.handleError(e, element)) {
+                    numberOfErrors++
+                    continue
                 }
             }
 
