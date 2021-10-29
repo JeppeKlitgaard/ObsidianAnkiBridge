@@ -15,10 +15,7 @@ export class SandwichBlueprint extends Blueprint {
     static weight = 50
 
     protected async setupParser(): Promise<void> {
-        const grammar = await makeGrammar(
-            sandwichGrammar,
-            GRAMMAR_LIBRARIES,
-        )
+        const grammar = await makeGrammar(sandwichGrammar, GRAMMAR_LIBRARIES)
 
         this.parser = generate(grammar)
     }

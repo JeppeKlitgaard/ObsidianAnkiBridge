@@ -188,9 +188,10 @@ export default class AnkiBridgePlugin extends Plugin {
                 this.printFailedConnection()
             } else {
                 new Notice(
-                    '⚠ Unexpected error occured. Please inform maintainer on GitHub and include console output!'
-                    + '\n\n'
-                    + "Error: " + result.fatalErrorString,
+                    '⚠ Unexpected error occured. Please inform maintainer on GitHub and include console output!' +
+                        '\n\n' +
+                        'Error: ' +
+                        result.fatalErrorString,
                 )
                 throw result.fatalErrorString
             }
