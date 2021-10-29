@@ -188,7 +188,7 @@ export class Bridge {
                         }
                     }
 
-                // Note pair found
+                    // Note pair found
                 } else {
                     const notePairDelta = await this.notePairChanges(element, noteInfo)
                     // Note pair changed

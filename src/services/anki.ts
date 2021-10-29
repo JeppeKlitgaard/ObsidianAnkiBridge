@@ -18,6 +18,7 @@ import { NoteBase } from 'notes/base'
 import _ from 'lodash'
 import { App } from 'obsidian'
 import AnkiBridgePlugin from 'main'
+import { PLUGIN_NAME } from 'consts'
 
 export class Anki {
     private static version = 6
@@ -133,13 +134,27 @@ export class Anki {
     }
 
     public async ping(): Promise<boolean> {
-        return (await this.invoke('version', 6)) === 6
+        return (await this.invoke('version', 6, {}, 2)) === 6
     }
 
-    private invoke(action: string, version = 6, params: Record<string, any> = {}): Promise<any> {
+    private invoke(
+        action: string,
+        version = 6,
+        params: Record<string, any> = {},
+        retries = 5,
+    ): Promise<any> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest()
-            xhr.addEventListener('error', () => reject('failed to issue request'))
+
+            xhr.addEventListener('error', () => {
+                if (retries--) {
+                    console.log(PLUGIN_NAME + `: Failed to issue request, retrying... (${retries})`)
+                    resolve(this.invoke(action, version, params, retries))
+                } else {
+                    reject('failed to issue request')
+                }
+            })
+
             xhr.addEventListener('load', () => {
                 try {
                     const response = JSON.parse(xhr.responseText)
@@ -161,8 +176,10 @@ export class Anki {
                 }
             })
 
+            const payload = JSON.stringify({ action, version, params })
+
             xhr.open('POST', this.getHostString())
-            xhr.send(JSON.stringify({ action, version, params }))
+            xhr.send(payload)
         })
     }
 }
