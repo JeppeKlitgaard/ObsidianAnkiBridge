@@ -8,6 +8,7 @@
   "main": "main.js",
   "scripts": {
     "build": "node esbuild.config.mjs production",
+    "version": "json -I -f manifest.json -e \"this.version='$npm_package_version'\" && json -I -f versions.json -e \"this['$npm_package_version']='$(cat manifest.json | json minAppVersion)'\" && git add .",
     "check": "tsc --noEmit --watch",
     "dev": "node esbuild.config.mjs",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --quiet --fix"
