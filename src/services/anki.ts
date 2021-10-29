@@ -1,5 +1,3 @@
-import { Card } from 'entities/card'
-import { highlightjsBase64, hihglightjsInitBase64, highlightCssBase64 } from 'consts'
 import {
     AddNoteRequest,
     AddNoteResponse,
@@ -132,58 +130,6 @@ export class Anki {
         }
 
         return null
-    }
-
-    public async storeMediaFile(cards: Card[]) {
-        const actions: any[] = []
-
-        for (const card of cards) {
-            for (const media of card.getMedias()) {
-                actions.push({
-                    action: 'storeMediaFile',
-                    params: media,
-                })
-            }
-        }
-
-        if (actions) {
-            return this.invoke('multi', 6, { actions: actions })
-        } else {
-            return {}
-        }
-    }
-
-    public async storeCodeHighlightMedias() {
-        const fileExists = await this.invoke('retrieveMediaFile', 6, {
-            filename: '_highlightInit.js',
-        })
-
-        if (!fileExists) {
-            const highlightjs = {
-                action: 'storeMediaFile',
-                params: {
-                    filename: '_highlight.js',
-                    data: highlightjsBase64,
-                },
-            }
-            const highlightjsInit = {
-                action: 'storeMediaFile',
-                params: {
-                    filename: '_highlightInit.js',
-                    data: hihglightjsInitBase64,
-                },
-            }
-            const highlightjcss = {
-                action: 'storeMediaFile',
-                params: {
-                    filename: '_highlight.css',
-                    data: highlightCssBase64,
-                },
-            }
-            return this.invoke('multi', 6, {
-                actions: [highlightjs, highlightjsInit, highlightjcss],
-            })
-        }
     }
 
     public async ping(): Promise<boolean> {

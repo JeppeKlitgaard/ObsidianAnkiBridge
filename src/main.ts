@@ -1,7 +1,6 @@
 import { addIcon, Notice, Plugin, TFile } from 'obsidian'
 import { ISettings, DEFAULT_SETTINGS } from 'settings/settings'
 import { SettingsTab } from 'settings/settings-tab'
-import { CardsService } from 'services/cards'
 import { Anki } from 'services/anki'
 import flashcardsIcon from 'assets/flashcard.svg_content'
 import { Reader } from 'services/reader'
@@ -12,7 +11,6 @@ export default class AnkiBridgePlugin extends Plugin {
     public settings: ISettings
 
     public anki: Anki
-    public cardsService: CardsService
     private reader: Reader
     private bridge: Bridge
 

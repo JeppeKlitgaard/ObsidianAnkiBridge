@@ -1,15 +1,5 @@
 import { MarkdownRenderer, Notice, Vault } from 'obsidian'
 
-export function arrayBufferToBase64(buffer: ArrayBuffer): string {
-    let binary = ''
-    const bytes = new Uint8Array(buffer)
-    const len = bytes.byteLength
-    for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i])
-    }
-    return window.btoa(binary)
-}
-
 export function arraysEqual(a: string[], b: string[]) {
     if (a === b) return true
     if (a == null || b == null) return false
