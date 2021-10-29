@@ -12,7 +12,6 @@ yup.addMethod<yup.StringSchema>(yup.string, 'nullAsUndefined', function () {
 
 yup.addMethod<yup.NumberSchema>(yup.number, 'nullAsUndefined', function () {
     return this.transform((value) => {
-        console.log(value)
         value === null ? undefined : value
     })
 })

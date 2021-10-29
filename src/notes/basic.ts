@@ -4,7 +4,7 @@ import yup from 'utils/yup'
 import { Blueprint } from 'blueprints/base'
 
 export const ConfigSchema = yup.object({
-    id: yup.number().nullable(),
+    id: yup.number().nullable().defined().default(null),
     deck: yup.string().emptyAsUndefined().nullAsUndefined(),
     model: yup.string().emptyAsUndefined().nullAsUndefined(),
     tags: yup.array().of(yup.string().emptyAsUndefined().nullAsUndefined()),

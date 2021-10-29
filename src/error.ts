@@ -1,7 +1,5 @@
 // Credit: SilentVoid13's Templater
 
-// Fix: captureStackTrace not defined on ErrorConstructor
-
 export class AnkiBridgeError extends Error {
     constructor(msg: string, public console_msg?: string) {
         super(msg)

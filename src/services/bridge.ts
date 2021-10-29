@@ -173,18 +173,25 @@ export class Bridge {
 
                 // No note with that ID found. Make it
                 if (_.isEmpty(noteInfo)) {
-                    const id = await this.plugin.anki.addNote(
-                        element,
-                        deckName,
-                        modelName,
-                        this.renderFields(element),
-                    )
-                    element.id = id
+                    try {
+                        const id = await this.plugin.anki.addNote(
+                            element,
+                            deckName,
+                            modelName,
+                            this.renderFields(element),
+                        )
+                        element.id = id
+                    } catch (e) {
+                        if (!this.handleError(e, element)) {
+                            numberOfErrors++
+                            continue
+                        }
+                    }
 
-                    // Note pair found
+                // Note pair found
                 } else {
-                    // Note pair changed
                     const notePairDelta = await this.notePairChanges(element, noteInfo)
+                    // Note pair changed
                     if (notePairDelta.shouldUpdate) {
                         if (notePairDelta.shouldUpdateFields) {
                             await this.plugin.anki.updateNoteFields(
