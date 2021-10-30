@@ -1,7 +1,12 @@
-export interface SyncResult {
+export interface FileProcessingResult {
+    nonFatalErrors: number
+    notesProcessed: number
+    notesSynced: number
+}
+
+export interface SyncResult extends FileProcessingResult {
     fatalErrorString?: string
     fatalError: boolean
-    numberOfNonFatalErrors: number
 }
 
 export interface DefaultDeckMap {

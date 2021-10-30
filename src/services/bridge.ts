@@ -6,6 +6,7 @@ import * as _ from 'lodash'
 import { Postprocessor, PostprocessorContext } from 'postprocessors/base'
 import { getPostprocessorById } from 'postprocessors'
 import { NotesInfoResponseEntity } from 'entities/network'
+import { FileProcessingResult } from 'entities/other'
 
 interface NotePairDelta {
     shouldUpdate: boolean
@@ -114,9 +115,12 @@ export class Bridge {
         throw e
     }
 
-    public async processFileResults(results: ProcessedFileResult): Promise<number> {
+    public async processFileResults(results: ProcessedFileResult): Promise<FileProcessingResult> {
         let shouldUpdateSource = false
-        let numberOfErrors = 0
+
+        let nonFatalErrors = 0
+        let notesProcessed = 0
+        let notesSynced = 0
 
         // Pass over all elements
         for (const element of results.elements) {
@@ -124,6 +128,8 @@ export class Bridge {
             if (!(element instanceof NoteBase)) {
                 continue
             }
+
+            notesProcessed++
 
             const deckName = element.getDeckName(this.plugin)
             const modelName = element.modelName || this.plugin.settings.defaultModel
@@ -146,6 +152,7 @@ export class Bridge {
 
                     shouldUpdateSource = true
 
+                    notesSynced++
                     continue
                 }
 
@@ -161,6 +168,9 @@ export class Bridge {
                     element.id = id
 
                     await this.plugin.anki.setTags(element, tagsToSet)
+
+                    notesSynced++
+
                     // Note already has id
                 } else {
                     const noteInfo = await this.plugin.anki.noteInfo(element)
@@ -174,6 +184,8 @@ export class Bridge {
                             this.renderFields(element),
                         )
                         element.id = id
+
+                        notesSynced++
 
                         // Note pair found
                     } else {
@@ -197,12 +209,14 @@ export class Bridge {
                                     deckName,
                                 )
                             }
+
+                            notesSynced++
                         }
                     }
                 }
             } catch (e) {
                 if (!this.handleError(e, element)) {
-                    numberOfErrors++
+                    nonFatalErrors++
                     continue
                 }
             }
@@ -226,6 +240,12 @@ export class Bridge {
             await this.app.vault.modify(results.sourceFile, newContent)
         }
 
-        return numberOfErrors
+        const result: FileProcessingResult = {
+            nonFatalErrors: nonFatalErrors,
+            notesProcessed: notesProcessed,
+            notesSynced: notesSynced,
+        }
+
+        return result
     }
 }
