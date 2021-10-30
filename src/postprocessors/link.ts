@@ -8,9 +8,11 @@ export class LinkPostprocessor extends Postprocessor {
     static weight = 50
     static defaultConfigState: true
 
+    static linkRegex = /(\[\[.*?\]\])/g
+
     public process(note: NoteBase, text: string, ctx: PostprocessorContext): string {
-        const regex = /(\[\[.*\]\])/g
-        text = text.replace(regex, (match, group1) => {
+
+        text = text.replace(LinkPostprocessor.linkRegex, (match, group1) => {
             const link = markdownLinkToTextAndHref(this.app.vault, group1)
 
             return `<a href="${link.uri}">${link.text}</a>`
