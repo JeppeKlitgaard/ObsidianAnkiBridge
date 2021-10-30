@@ -26,7 +26,7 @@ export abstract class NoteBase {
     }
 
     public normaliseNoteInfoFields(fields: Record<string, FieldEntity>): Record<string, string> {
-        return { front: fields['Front'].value, back: fields['Back'].value }
+        return { Front: fields['Front'].value, Back: fields['Back'].value }
     }
 
     public shouldUpdateFile(): boolean {

@@ -85,7 +85,7 @@ export class Bridge {
         })
         cardsToUpdate = _.map(cardsInfosToUpdate, 'cardId')
 
-        const shouldUpdate = shouldUpdateFields || shouldUpdateTags || !_.isEmpty(cardsInfos)
+        const shouldUpdate = shouldUpdateFields || shouldUpdateTags || !_.isEmpty(cardsToUpdate)
 
         return {
             shouldUpdate: shouldUpdate,
