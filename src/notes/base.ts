@@ -18,8 +18,9 @@ export abstract class NoteBase {
         public enabled?: boolean,
     ) {}
 
-    // public abstract renderAsEntity(): NoteEntity
-    public abstract renderAsText(): string
+    public renderAsText(): string {
+        return this.blueprint.renderAsText(this)
+    }
 
     public renderFields(): Record<string, string> {
         return { Front: this.fields['front'], Back: this.fields['back'] }

@@ -41,8 +41,4 @@ export class BasicNote extends NoteBase {
             enabled,
         )
     }
-
-    renderAsText(): string {
-        return this.blueprint.renderAsText(this)
-    }
 }
