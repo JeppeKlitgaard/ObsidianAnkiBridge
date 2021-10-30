@@ -44,6 +44,6 @@ export const DEFAULT_SETTINGS: ISettings = {
     ankiConnectAddress: '127.0.0.1',
     ankiConnectPort: 8765,
 
-    debug: true,
+    debug: false,
     debugNetwork: false,
 }

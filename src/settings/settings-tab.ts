@@ -23,6 +23,7 @@ export class SettingsTab extends PluginSettingTab {
         this.addNetworking()
         this.addBlueprints()
         this.addPostprocessors()
+        this.addDebugging()
     }
 
     addTester(): void {
@@ -432,5 +433,29 @@ export class SettingsTab extends PluginSettingTab {
                 })
             })
         }
+    }
+
+    addDebugging(): void {
+        this.containerEl.createEl('h2', { text: 'Debugging Settings' })
+
+        new Setting(this.containerEl)
+            .setName('Enabling debug logging')
+            .setDesc('Useful when developing or reporting errors to the developers.')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.debug).onChange((newState) => {
+                    this.plugin.settings.debug = newState
+                    this.plugin.saveSettings()
+                })
+            })
+
+        new Setting(this.containerEl)
+            .setName('Enabling networking debug logging')
+            .setDesc('Useful when developing or reporting errors to the developers.')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.debugNetwork).onChange((newState) => {
+                    this.plugin.settings.debugNetwork = newState
+                    this.plugin.saveSettings()
+                })
+            })
     }
 }
