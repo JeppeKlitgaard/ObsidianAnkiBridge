@@ -260,7 +260,11 @@ export default class AnkiBridgePlugin extends Plugin {
             return
         }
 
-        const result: Partial<SyncResult> = {}
+        const result: Partial<SyncResult> = {
+            nonFatalErrors: 0,
+            notesProcessed: 0,
+            notesSynced: 0
+        }
 
         try {
             await Promise.all(
