@@ -197,6 +197,7 @@ export default class AnkiBridgePlugin extends Plugin {
                 throw result.fatalErrorString
             }
         } else if (result.nonFatalErrors === 0) {
+            if (displayOnSuccess && result.notesProcessed) {
                 new Notice(
                     '✔ Synced with Anki\n' +
                         '\n' +
