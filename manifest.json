@@ -1,7 +1,7 @@
 {
   "id": "obsidian-ankibridge",
   "name": "AnkiBridge",
-  "version": "0.2.18",
+  "version": "0.2.19",
   "minAppVersion": "0.12.19",
   "description": "Yet Another Anki Bridge",
   "author": "Jeppe Klitgaard",
