@@ -18,7 +18,7 @@ export default class AnkiBridgePlugin extends Plugin {
     public connectionStatus = false
 
     async onload() {
-        console.log("Loading " + this.manifest.name)
+        console.log('Loading ' + this.manifest.name)
 
         addIcon('flashcards', flashcardsIcon)
 
@@ -70,7 +70,7 @@ export default class AnkiBridgePlugin extends Plugin {
     }
 
     async onunload() {
-        console.log("Unloading " + this.manifest.name)
+        console.log('Unloading ' + this.manifest.name)
 
         await this.saveData(this.settings)
     }
@@ -263,7 +263,7 @@ export default class AnkiBridgePlugin extends Plugin {
         const result: Partial<SyncResult> = {
             nonFatalErrors: 0,
             notesProcessed: 0,
-            notesSynced: 0
+            notesSynced: 0,
         }
 
         try {
