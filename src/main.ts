@@ -41,10 +41,17 @@ export default class AnkiBridgePlugin extends Plugin {
         })
 
         this.addCommand({
-            id: 'anki-bridge-sync-open-file',
+            id: 'anki-bridge-sync-active-file',
             name: 'Sync file with Anki',
             callback: async () => {
                 await this.syncActiveFile()
+            },
+        })
+        this.addCommand({
+            id: 'anki-bridge-silent-sync-active-file',
+            name: 'Sync file with Anki (Silent)',
+            callback: async () => {
+                await this.syncActiveFile(false, false)
             },
         })
 
@@ -186,18 +193,27 @@ export default class AnkiBridgePlugin extends Plugin {
         return result
     }
 
-    private handleSyncResult(result: SyncResult, displayOnSuccess = true): void {
+    private handleSyncResult(
+        result: SyncResult,
+        displayOnSuccess = true,
+        displayOnFailure = true,
+    ): void {
         if (result.fatalError) {
             if (result.fatalErrorString === 'failed to issue request') {
                 this.setConnectionStatus(false)
-                this.printFailedConnection()
+                if (displayOnFailure) {
+                    this.printFailedConnection()
+                }
             } else {
-                new Notice(
-                    '⚠ Unexpected error occured. Please inform maintainer on GitHub and include console output!' +
-                        '\n\n' +
-                        'Error: ' +
-                        result.fatalErrorString,
-                )
+                if (displayOnFailure) {
+                    new Notice(
+                        '⚠ Unexpected error occured. Please inform maintainer on GitHub and include console output!' +
+                            '\n\n' +
+                            'Error: ' +
+                            result.fatalErrorString,
+                    )
+                }
+
                 throw result.fatalErrorString
             }
         } else if (result.nonFatalErrors === 0) {
@@ -210,13 +226,15 @@ export default class AnkiBridgePlugin extends Plugin {
                 )
             }
         } else {
-            new Notice(
-                '🟡 Synced with Anki\n' +
-                    '\n' +
-                    `Notes failed: ${result.nonFatalErrors}\n` +
-                    `Notes processed: ${result.notesProcessed}\n` +
-                    `Notes synced: ${result.notesSynced}`,
-            )
+            if (displayOnFailure) {
+                new Notice(
+                    '🟡 Synced with Anki\n' +
+                        '\n' +
+                        `Notes failed: ${result.nonFatalErrors}\n` +
+                        `Notes processed: ${result.notesProcessed}\n` +
+                        `Notes synced: ${result.notesSynced}`,
+                )
+            }
         }
     }
 
@@ -234,21 +252,25 @@ export default class AnkiBridgePlugin extends Plugin {
         return result as SyncResult
     }
 
-    private async syncActiveFile(displayOnSuccess = true): Promise<void> {
+    private async syncActiveFile(displayOnSuccess = true, displayOnFailure = true): Promise<void> {
         const activeFile = this.app.workspace.getActiveFile()
         if (activeFile) {
             if (!this.shouldIgnoreFile(activeFile)) {
                 if (!(await this.pingAnki())) {
-                    this.printFailedConnection()
+                    if (displayOnFailure) {
+                        this.printFailedConnection()
+                    }
                     return
                 }
                 const result = await this.syncFile(activeFile)
-                this.handleSyncResult(result, displayOnSuccess)
+                this.handleSyncResult(result, displayOnSuccess, displayOnFailure)
             } else {
-                new Notice('❌ This file is configured to be ignored')
+                this.debug('File configured to be ignored.')
+                if (displayOnFailure) new Notice('❌ This file is configured to be ignored')
             }
         } else {
-            new Notice('Please open a file first')
+            this.debug('No file opened')
+            if (displayOnFailure) new Notice('Please open a file first')
         }
     }
 
