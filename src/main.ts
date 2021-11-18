@@ -16,7 +16,9 @@ export default class AnkiBridgePlugin extends Plugin {
 
     private statusbar: HTMLElement
     public connectionStatus = false
+
     private periodicPingIntervalId: number
+    private saveCommandDefinition: any
 
     async onload() {
         console.log('Loading ' + this.manifest.name)
@@ -81,7 +83,9 @@ export default class AnkiBridgePlugin extends Plugin {
         console.log('Unloading ' + this.manifest.name)
 
         await this.saveData(this.settings)
+
         this.teardownPeriodicPing()
+        this.teardownSaveWatcher()
     }
 
     async initiateServices(): Promise<void> {
@@ -139,14 +143,16 @@ export default class AnkiBridgePlugin extends Plugin {
         new Notice(errMsg)
     }
 
-    private setupSaveWatcher() {
+    public setupSaveWatcher() {
         // Source for save setting
         // https://github.com/hipstersmoothie/obsidian-plugin-prettier/blob/main/src/main.ts
-        const saveCommandDefinition = (this.app as any).commands?.commands?.['editor:save-file']
-        const save = saveCommandDefinition?.callback
+        this.saveCommandDefinition = (this.app as any).commands?.commands?.['editor:save-file']
+        const save = this.saveCommandDefinition?.callback
+
+        this.teardownSaveWatcher()
 
         if (typeof save === 'function') {
-            saveCommandDefinition.callback = async () => {
+            this.saveCommandDefinition.callback = async () => {
                 if (this.settings.syncOnSave) {
                     const file = this.app.workspace.getActiveFile()
 
@@ -156,6 +162,10 @@ export default class AnkiBridgePlugin extends Plugin {
                 }
             }
         }
+    }
+
+    private teardownSaveWatcher() {
+        delete this.saveCommandDefinition.callback
     }
 
     public setupPeriodicPing(): void {
@@ -171,7 +181,7 @@ export default class AnkiBridgePlugin extends Plugin {
         }
     }
 
-    public teardownPeriodicPing(): void {
+    private teardownPeriodicPing(): void {
         if (this.periodicPingIntervalId !== undefined) {
             window.clearInterval(this.periodicPingIntervalId)
         }

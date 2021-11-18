@@ -105,6 +105,7 @@ export class SettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.syncOnSave).onChange((newState) => {
                     this.plugin.settings.syncOnSave = newState
                     this.plugin.saveSettings()
+                    this.plugin.setupSaveWatcher()
                 })
             })
 
