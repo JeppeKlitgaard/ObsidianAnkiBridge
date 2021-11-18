@@ -146,15 +146,15 @@ export class SettingsTab extends PluginSettingTab {
                     }
 
                     this.plugin.settings.periodicPingInterval = interval
+                    this.plugin.saveSettings()
+                    this.plugin.setupPeriodicPing()
                 })
             })
             .addToggle((toggle) => {
                 toggle.setValue(this.plugin.settings.periodicPingEnabled).onChange((newState) => {
                     this.plugin.settings.periodicPingEnabled = newState
                     this.plugin.saveSettings()
-                    new Notice(
-                        'Note: This change will only take effect after Obsidian has been reloaded.',
-                    )
+                    this.plugin.setupPeriodicPing()
                 })
             })
 

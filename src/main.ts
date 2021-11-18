@@ -16,6 +16,7 @@ export default class AnkiBridgePlugin extends Plugin {
 
     private statusbar: HTMLElement
     public connectionStatus = false
+    private periodicPingIntervalId: number
 
     async onload() {
         console.log('Loading ' + this.manifest.name)
@@ -80,6 +81,7 @@ export default class AnkiBridgePlugin extends Plugin {
         console.log('Unloading ' + this.manifest.name)
 
         await this.saveData(this.settings)
+        this.teardownPeriodicPing()
     }
 
     async initiateServices(): Promise<void> {
@@ -156,14 +158,22 @@ export default class AnkiBridgePlugin extends Plugin {
         }
     }
 
-    private setupPeriodicPing() {
+    public setupPeriodicPing(): void {
+        this.teardownPeriodicPing()
+
         if (this.settings.periodicPingEnabled) {
-            this.registerInterval(
-                window.setInterval(
-                    async () => await this.pingAnki(),
-                    this.settings.periodicPingInterval * 1000,
-                ),
+            this.periodicPingIntervalId = window.setInterval(
+                async () => await this.pingAnki(),
+                this.settings.periodicPingInterval * 1000,
             )
+
+            this.registerInterval(this.periodicPingIntervalId)
+        }
+    }
+
+    public teardownPeriodicPing(): void {
+        if (this.periodicPingIntervalId !== undefined) {
+            window.clearInterval(this.periodicPingIntervalId)
         }
     }
 
