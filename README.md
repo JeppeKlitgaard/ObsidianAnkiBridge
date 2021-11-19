@@ -74,9 +74,9 @@ changes to bridged notes in Anki will be reverted upon sync.__
 - 🔉 Audio rendering
 - 📹 Video rendering
 - 🌉 Syncing of Mathjax preamples (advanced feature)
-- 📦 Improved installation
 - 📦 Available through Community Plugins
 - 📄 Documentation
+- ❔ Cloze deletion
 - 📘 More blueprints
 - 🧪 Unit testing
 
