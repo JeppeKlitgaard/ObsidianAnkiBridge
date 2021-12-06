@@ -1,9 +1,6 @@
 import utilsJs from 'grammars/utils.js.static'
 
-export function makeGrammar(
-    grammar: string,
-    libraries: Record<string, string>,
-): string {
+export function makeGrammar(grammar: string, libraries: Record<string, string>): string {
     let finalGrammar = ''
     finalGrammar += '{{\n'
     finalGrammar += utilsJs
