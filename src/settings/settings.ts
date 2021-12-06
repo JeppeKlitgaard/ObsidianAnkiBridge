@@ -5,9 +5,6 @@ export interface ISettings {
     tagInAnki: string
     foldersToIgnore: Array<string>
 
-    syncOnSave: boolean
-    displaySyncOnSave: boolean
-
     periodicPingEnabled: boolean
     periodicPingInterval: number
 
@@ -28,9 +25,6 @@ export const DEFAULT_SETTINGS: ISettings = {
     defaultModel: 'Basic',
     tagInAnki: 'obsidian',
     foldersToIgnore: [],
-
-    syncOnSave: false,
-    displaySyncOnSave: false,
 
     periodicPingEnabled: false,
     periodicPingInterval: 30, // Seconds

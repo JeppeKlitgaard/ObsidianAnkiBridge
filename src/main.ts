@@ -18,7 +18,6 @@ export default class AnkiBridgePlugin extends Plugin {
     public connectionStatus = false
 
     private periodicPingIntervalId: number
-    private saveCommandDefinition: any
 
     async onload() {
         console.log('Loading ' + this.manifest.name)
@@ -70,8 +69,6 @@ export default class AnkiBridgePlugin extends Plugin {
             await this.syncActiveFile()
         })
 
-        this.setupSaveWatcher()
-
         this.setupPeriodicPing()
 
         this.addSettingTab(new SettingsTab(this.app, this))
@@ -85,7 +82,6 @@ export default class AnkiBridgePlugin extends Plugin {
         await this.saveData(this.settings)
 
         this.teardownPeriodicPing()
-        this.teardownSaveWatcher()
     }
 
     async initiateServices(): Promise<void> {
@@ -141,31 +137,6 @@ export default class AnkiBridgePlugin extends Plugin {
     private printFailedConnection(): void {
         const errMsg = 'Failed to connect to Anki ❌\n\nIs it running?'
         new Notice(errMsg)
-    }
-
-    public setupSaveWatcher() {
-        // Source for save setting
-        // https://github.com/hipstersmoothie/obsidian-plugin-prettier/blob/main/src/main.ts
-        this.saveCommandDefinition = (this.app as any).commands?.commands?.['editor:save-file']
-        const save = this.saveCommandDefinition?.callback
-
-        this.teardownSaveWatcher()
-
-        if (typeof save === 'function') {
-            this.saveCommandDefinition.callback = async () => {
-                if (this.settings.syncOnSave) {
-                    const file = this.app.workspace.getActiveFile()
-
-                    if (this.getConnectionStatus() && file && !this.shouldIgnoreFile(file)) {
-                        await this.syncActiveFile(this.settings.displaySyncOnSave)
-                    }
-                }
-            }
-        }
-    }
-
-    private teardownSaveWatcher() {
-        delete this.saveCommandDefinition.callback
     }
 
     public setupPeriodicPing(): void {

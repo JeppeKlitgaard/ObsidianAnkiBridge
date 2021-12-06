@@ -89,36 +89,6 @@ export class SettingsTab extends PluginSettingTab {
                     })
             })
 
-        // Sync on save
-        const syncOnSaveDesc = document.createDocumentFragment()
-        syncOnSaveDesc.append(
-            'Sync when explicitly saving a file provided there is a connection to Anki.',
-            document.createElement('br'),
-            'Respects folders to ignore.',
-            document.createElement('br'),
-            'Best used with periodic ping set up to ensure connection status is updated.',
-        )
-        new Setting(this.containerEl)
-            .setName('Sync on save')
-            .setDesc(syncOnSaveDesc)
-            .addToggle((toggle) => {
-                toggle.setValue(this.plugin.settings.syncOnSave).onChange((newState) => {
-                    this.plugin.settings.syncOnSave = newState
-                    this.plugin.saveSettings()
-                    this.plugin.setupSaveWatcher()
-                })
-            })
-
-        new Setting(this.containerEl)
-            .setName('Display message when syncing on save')
-            .setDesc('Displays a little notice message on successful syncs.')
-            .addToggle((toggle) => {
-                toggle.setValue(this.plugin.settings.displaySyncOnSave).onChange((newState) => {
-                    this.plugin.settings.displaySyncOnSave = newState
-                    this.plugin.saveSettings()
-                })
-            })
-
         // Periodic ping
         const periodicPingDesc = document.createDocumentFragment()
         periodicPingDesc.append(
