@@ -12,7 +12,9 @@
     "check": "tsc --noEmit --watch",
     "dev": "node esbuild.config.mjs",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --quiet --fix",
-    "test": "jest"
+    "test": "jest",
+    "test:dev": "jest --watch",
+    "test:ci": "jest --ci --reporters='default' --reporters='./.github/github-actions-reporter'"
   },
   "dependencies": {},
   "devDependencies": {

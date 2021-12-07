@@ -1,12 +1,11 @@
+// jest.mock('obsidian')
+
 import { Fragment } from 'entities/note'
 import * as fs from 'fs'
 import glob from 'glob'
-import { mocked } from 'jest-mock'
 import { FileStats, TFile, TFolder, Vault } from 'obsidian'
 import * as path from 'path'
 import { stripCr } from 'utils/file'
-
-jest.mock('obsidian')
 
 export interface TestDataFile {
     contents: string
@@ -15,10 +14,17 @@ export interface TestDataFile {
 
 export class TestingDatabase {
     private testMdFiles: { [name: string]: TestDataFile } = {}
+    private testObjects: { [name: string]: any } = {}
+
+    private testDataDir = path.resolve('.', 'src', 'test', 'data')
 
     constructor() {
-        const testDataDir = path.resolve('.', 'src', 'test', 'data')
-        const testDataGlob = path.resolve(testDataDir, '*.md')
+        this.loadTestMdFiles()
+        this.loadTestObjects()
+    }
+
+    private loadTestMdFiles(): void {
+        const testDataGlob = path.resolve(this.testDataDir, '*.md')
 
         const filenames = glob.sync(testDataGlob.replace(/\\/g, '/'))
 
@@ -32,12 +38,28 @@ export class TestingDatabase {
         })
     }
 
-    getData(id: string): TestDataFile {
+    private loadTestObjects(): void {
+        const testDataGlob = path.resolve(this.testDataDir, '*.json')
+
+        const filenames = glob.sync(testDataGlob.replace(/\\/g, '/'))
+
+        filenames.forEach((fn, idx, arr) => {
+            const handle = path.basename(arr[idx], '.json')
+            const contents = stripCr(fs.readFileSync(fn, 'utf-8'))
+            this.testObjects[handle] = JSON.parse(contents)
+        })
+    }
+
+    getTestObject(id: string): any {
+        return this.testObjects[id]
+    }
+
+    getTestFile(id: string): TestDataFile {
         return this.testMdFiles[id]
     }
 
-    getDataAsFragment(id: string): Fragment {
-        const testData = this.getData(id)
+    getTestFileAsFragment(id: string): Fragment {
+        const testData = this.getTestFile(id)
 
         const frag: Fragment = {
             text: testData.contents,

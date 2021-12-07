@@ -1,0 +1,61 @@
+[
+  {
+    "text": "---\ncreated: 2021-10-26T10:55\nmodified: 2021-10-26T10:55\n\ntags:\n- physics/optics\n\naliases:\n- Jones Matrices\n---\n\n# Jones Matrices\n \nJones Matrices describe the effect of a [[Linear Optical Element]] on a [[40 💫 Physics/Optics/Polarisation|polarised]] [[Electromagnetic Wave|Wave]].\n\n```ad-warning\nOnly works on [[40 💫 Physics/Optics/Polarisation|polarised]] light\n``` \n\n",
+    "sourceFile": {
+      "vault": {},
+      "name": "sandwich-pure",
+      "parent": {},
+      "basename": "sandwich-pure.md",
+      "extension": ".md",
+      "stat": {
+        "ctime": 1638832881382.5625,
+        "mtime": 1638832881382,
+        "size": 627
+      }
+    },
+    "sourceOffset": 0
+  },
+  {
+    "id": 1635543498317,
+    "fields": {
+      "front": "A [[Jones Matrix]] is applied to an incoming [[Electromagnetic Wave|Wave]] by:\n\n",
+      "back": "$$\n\\v E_t = \\m J \\v E_i\n$$\n"
+    },
+    "source": {
+      "from": 20,
+      "to": 33,
+      "file": {
+        "vault": {},
+        "name": "sandwich-pure",
+        "parent": {},
+        "basename": "sandwich-pure.md",
+        "extension": ".md",
+        "stat": {
+          "ctime": 1638832881382.5625,
+          "mtime": 1638832881382,
+          "size": 627
+        }
+      }
+    },
+    "sourceText": "#anki/start\n```anki\nid: 1635543498317\ntags:\n  - equation\n```\nA [[Jones Matrix]] is applied to an incoming [[Electromagnetic Wave|Wave]] by:\n\n#anki/---\n$$\n\\v E_t = \\m J \\v E_i\n$$\n#anki/end\n",
+    "tags": [
+      "equation"
+    ]
+  },
+  {
+    "text": "\n#todo Common Jones Matrices\n",
+    "sourceFile": {
+      "vault": {},
+      "name": "sandwich-pure",
+      "parent": {},
+      "basename": "sandwich-pure.md",
+      "extension": ".md",
+      "stat": {
+        "ctime": 1638832881382.5625,
+        "mtime": 1638832881382,
+        "size": 627
+      }
+    },
+    "sourceOffset": 34
+  }
+]
