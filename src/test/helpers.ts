@@ -74,12 +74,10 @@ export class TestingDatabase {
 export function filepathToTFile(filepath: string): TFile {
     const pth = path.parse(filepath)
 
-    const stats = fs.statSync(filepath)
-
     const filestats: FileStats = {
-        ctime: stats.ctimeMs,
-        mtime: stats.mtimeMs,
-        size: stats.size,
+        ctime: 1638832881382.5625, // Just some number
+        mtime: 1638832881382, // Just some number
+        size: 627, // Just some number
     }
 
     const tfile: TFile = {
