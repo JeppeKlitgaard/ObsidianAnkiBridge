@@ -12,6 +12,19 @@ It has also been inspired by the `Obsidian_to_Anki` project by [Rubaiyat Khondak
 
 Both of these projects are worthwhile alternatives to AnkiBridge if the approach of this project isn't to your liking.
 
+## **Alpha development stage**
+
+Please note that AnkiBridge is still in the alpha stage.
+Polite feedback is much appreciated, but know that I am aware that usage documentation is currently
+not great.
+
+Once the features mentioned below in `Upcoming features` have all been implemented
+AnkiBridge will enter a beta phase (versions `0.3.x` … `0.y.x`). 
+
+**AnkiBridge does contain portions of code that modify files in your vault.
+It could therefore delete data through a bug (though this _should_ never happen).
+Having a recent backup of your data is _strongly_ encouraged.**
+
 ## Features
 
 While AnkiBridge is still under active development, it already has a few handy
@@ -29,7 +42,7 @@ Directly in the Obsidian Vault you can specify:
 - Anki Model to use (experimental)
 
 Currently implemented blueprints:
-- 🥪 Sandwich Card with `#anki/start`, `#anki/---`, `#anki/end`
+- 🥪 Sandwich Blueprint with `#anki/start`, `#anki/---`, `#anki/end`
 
 ### 📊 Rendering
 - 🧮 Math rendering
@@ -61,8 +74,9 @@ are always update to reflect the vault perfectly.
 
 - 🗃 Default deck matching
 - 📂 Ignore folders
-- ♻ Sync on save
 - 🏓 Ping connection
+- 📦 Available through Community Plugins
+- 🧪 Unit testing of blueprints
 
 __Note: AnkiBridge considers the Obsidian Vault to be the 'ground truth'. Any
 changes to bridged notes in Anki will be reverted upon sync.__
@@ -74,11 +88,9 @@ changes to bridged notes in Anki will be reverted upon sync.__
 - 🔉 Audio rendering
 - 📹 Video rendering
 - 🌉 Syncing of Mathjax preamples (advanced feature)
-- 📦 Available through Community Plugins
 - 📄 Documentation
 - ❔ Cloze deletion
 - 📘 More blueprints
-- 🧪 Unit testing
 
 ## Demonstration
 
