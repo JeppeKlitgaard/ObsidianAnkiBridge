@@ -11,11 +11,15 @@ beforeAll(async () => {
 
 describe('Sandwich Blueprint', () => {
     it('parses basic file', async () => {
-        const rootFragment = tdb.getTestFileAsFragment('sandwich-pure')
-        const rootObject = tdb.getTestObject('sandwich-pure')
+        const target = 'sandwich-pure'
+
+        const rootContent = tdb.getTestFile(target).contents
+        const rootFragment = tdb.getTestFileAsFragment(target)
+        const rootObject = tdb.getTestObject(target)
 
         const processResult = bp.processFragment(rootFragment)
 
+        expect(processResult.renderAsText()).toBe(rootContent)
         expect(processResult).toMatchObject(rootObject)
         expect(processResult.length).toBe(3)
     })

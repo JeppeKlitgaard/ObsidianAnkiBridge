@@ -13,4 +13,19 @@ export interface Fragment {
     sourceOffset: number
 }
 
-export type FragmentProcessingResult = Array<NoteBase | Fragment>
+export class FragmentProcessingResult extends Array<NoteBase | Fragment> {
+    public renderAsText(): string {
+        let text = ''
+
+        for (const element of this) {
+            if (!(element instanceof NoteBase)) {
+                text += element['text']
+                continue
+            }
+
+            text += element.renderAsText()
+        }
+
+        return text
+    }
+}

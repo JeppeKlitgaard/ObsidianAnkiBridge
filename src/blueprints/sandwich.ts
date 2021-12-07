@@ -21,7 +21,7 @@ export class SandwichBlueprint extends Blueprint {
     }
 
     public processFragment(fragment: Fragment): FragmentProcessingResult {
-        const elements: Array<BasicNote | Fragment> = []
+        const elements = new FragmentProcessingResult()
 
         const results: Array<Record<string, any>> = this.parser.parse(fragment.text)
 

@@ -1,6 +1,6 @@
 import { getBlueprintById } from 'blueprints'
 import { Blueprint } from 'blueprints/base'
-import { FragmentProcessingResult } from 'entities/note'
+import { Fragment, FragmentProcessingResult } from 'entities/note'
 import AnkiBridgePlugin from 'main'
 import { NoteBase } from 'notes/base'
 import { App, TFile } from 'obsidian'
@@ -38,17 +38,17 @@ export class Reader {
     async readFile(file: TFile): Promise<ProcessedFileResult> {
         const fileContent = stripCr(await this.app.vault.read(file))
 
-        let elements: FragmentProcessingResult = [
-            {
-                text: fileContent,
-                sourceFile: file,
-                sourceOffset: 0,
-            },
-        ]
+        const initialFragment: Fragment = {
+            text: fileContent,
+            sourceFile: file,
+            sourceOffset: 0,
+        }
+
+        let elements = new FragmentProcessingResult(initialFragment)
 
         for (const blueprint of this.blueprints) {
             const elementsToProcess = [...elements] // Clone
-            elements = []
+            elements = new FragmentProcessingResult()
 
             while (elementsToProcess.length) {
                 const element = elementsToProcess.pop()

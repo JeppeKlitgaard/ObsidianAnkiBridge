@@ -226,18 +226,7 @@ export class Bridge {
 
         // Update file if content has changed
         if (shouldUpdateSource) {
-            let newContent = ''
-
-            for (const element of results.elements) {
-                if (!(element instanceof NoteBase)) {
-                    newContent += element['text']
-                    continue
-                }
-
-                newContent += element.renderAsText()
-            }
-
-            await this.app.vault.modify(results.sourceFile, newContent)
+            await this.app.vault.modify(results.sourceFile, results.elements.renderAsText())
         }
 
         const result: FileProcessingResult = {
