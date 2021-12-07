@@ -58,3 +58,12 @@ export function getDefaultDeckForFolder(folder: TFolder, maps: Array<DefaultDeck
         folder = folder.parent
     } while (folder)
 }
+
+/**
+ * Replaces \r with nothing.
+ * @param {string} text - Text to strip
+ * @return {string} Stripped text
+ */
+export function stripCr(text: string): string {
+    return text.replace(/\r/g, '')
+}
