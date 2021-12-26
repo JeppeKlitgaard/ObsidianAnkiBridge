@@ -66,7 +66,7 @@ You can still have flashcards that only exist in Anki.
 This means that your Obsidian vault represents the truth and your Anki decks 
 are always update to reflect the vault perfectly.
 
-- 🚮 Delete notes from Obsidian via the `delete: true` key
+- 🚮 Delete notes from Anki via the `delete: true` key
 - ➡ Automatically moves cards to appropriate deck
 - 🤖 Automatically updates tags and field content when syncing 
 
