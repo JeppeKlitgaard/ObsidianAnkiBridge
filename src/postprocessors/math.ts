@@ -8,7 +8,7 @@ export class MathPostprocessor extends Postprocessor {
     static weight = 40
     static defaultConfigState = true
 
-    public process(note: NoteBase, text: string, ctx: PostprocessorContext): string {
+    public async process(note: NoteBase, text: string, ctx: PostprocessorContext): Promise<string> {
         const mathBlockRegex = /\$\$(.*?)\$\$/gis
         text = text.replace(mathBlockRegex, (match, group1) => {
             return String.raw`\\(` + escapeMarkdown(group1) + String.raw` \\)`

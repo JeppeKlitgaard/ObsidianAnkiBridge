@@ -9,6 +9,7 @@ export class HtmlPostprocessor extends Postprocessor {
     static displayName = 'HtmlPostprocessor'
     static weight = 60
     static defaultConfigState = true
+    static configurable = false
 
     private markdownit: MarkdownIt
 
@@ -25,7 +26,7 @@ export class HtmlPostprocessor extends Postprocessor {
         this.markdownit.use(MarkdownIt)
     }
 
-    public process(note: NoteBase, text: string, ctx: PostprocessorContext): string {
+    public async process(note: NoteBase, text: string, ctx: PostprocessorContext): Promise<string> {
         return this.markdownit.render(text)
     }
 }

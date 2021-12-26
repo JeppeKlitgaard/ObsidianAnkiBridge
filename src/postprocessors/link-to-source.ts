@@ -8,7 +8,7 @@ export class LinkToSourcePostprocessor extends Postprocessor {
     static weight = 50
     static defaultConfigState = true
 
-    public process(note: NoteBase, text: string, ctx: PostprocessorContext): string {
+    public async process(note: NoteBase, text: string, ctx: PostprocessorContext): Promise<string> {
         if (ctx.fieldName === 'Back') {
             const link = markdownLinkToTextAndHref(
                 this.app.vault,

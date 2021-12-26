@@ -7,10 +7,15 @@ export abstract class Postprocessor {
     public static readonly displayName: string
     public static readonly weight: number // Lower is first
     public static readonly defaultConfigState: boolean
+    public static readonly configurable: boolean = true
 
     constructor(public app: App, public plugin: AnkiBridgePlugin) {}
 
-    public abstract process(note: NoteBase, text: string, ctx: PostprocessorContext): string
+    public abstract process(
+        note: NoteBase,
+        text: string,
+        ctx: PostprocessorContext,
+    ): Promise<string>
 }
 
 export interface PostprocessorContext {

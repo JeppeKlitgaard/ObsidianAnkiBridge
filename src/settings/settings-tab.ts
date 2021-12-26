@@ -7,6 +7,7 @@ import { FolderSuggest } from 'suggesters/folder-suggester'
 import { logError } from 'log'
 import { AnkiBridgeError } from 'error'
 import { arraymove } from 'utils/array'
+import _ from 'lodash'
 
 export class SettingsTab extends PluginSettingTab {
     constructor(public app: App, private plugin: AnkiBridgePlugin) {
@@ -383,7 +384,16 @@ export class SettingsTab extends PluginSettingTab {
         this.containerEl.createEl('h2', { text: 'Postprocessor Settings' })
 
         const postprocessorSettingsConst = Object.fromEntries(
-            POSTPROCESSORS.map((pp) => {
+            _.sortBy(POSTPROCESSORS, ['weight']).map((pp) => {
+                return [pp.id, pp.defaultConfigState]
+            }),
+        )
+
+        // Override those that are not configurable, just in case
+        const postprocessorSettingsOverrides = Object.fromEntries(
+            POSTPROCESSORS.filter((pp) => {
+                return !pp.configurable
+            }).map((pp) => {
                 return [pp.id, pp.defaultConfigState]
             }),
         )
@@ -392,16 +402,20 @@ export class SettingsTab extends PluginSettingTab {
             {},
             postprocessorSettingsConst,
             this.plugin.settings.postprocessors,
+            postprocessorSettingsOverrides,
         )
 
         for (const [id, enabled] of Object.entries(postprocessorSettings)) {
             const pp = getPostprocessorById(id)
             new Setting(this.containerEl).setName(pp.displayName).addToggle((toggle) => {
-                toggle.setValue(enabled).onChange((newState) => {
-                    this.plugin.settings.postprocessors[id] = newState
-                    this.plugin.saveSettings()
-                    this.plugin.initiateServices()
-                })
+                toggle
+                    .setValue(enabled)
+                    .setDisabled(!pp.configurable)
+                    .onChange((newState) => {
+                        this.plugin.settings.postprocessors[id] = newState
+                        this.plugin.saveSettings()
+                        this.plugin.initiateServices()
+                    })
             })
         }
     }

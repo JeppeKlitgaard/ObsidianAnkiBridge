@@ -2,11 +2,12 @@ import AnkiBridgePlugin from 'main'
 import { NoteBase } from 'notes/base'
 import { App, Notice } from 'obsidian'
 import { ProcessedFileResult } from './reader'
-import * as _ from 'lodash'
+import _ from 'lodash'
 import { Postprocessor, PostprocessorContext } from 'postprocessors/base'
 import { getPostprocessorById } from 'postprocessors'
 import { NotesInfoResponseEntity } from 'entities/network'
 import { FileProcessingResult } from 'entities/other'
+import promiseAllProperties from 'promise-all-properties'
 
 interface NotePairDelta {
     shouldUpdate: boolean
@@ -35,29 +36,38 @@ export class Bridge {
         ])
     }
 
-    public postprocessField(note: NoteBase, field: string, ctx: PostprocessorContext): string {
+    public async postprocessField(
+        note: NoteBase,
+        field: string,
+        ctx: PostprocessorContext,
+    ): Promise<string> {
         for (const pp of this.postprocessors) {
-            field = pp.process(note, field, ctx)
+            field = await pp.process(note, field, ctx)
         }
 
         return field
     }
 
-    public postprocessFields(
+    public async postprocessFields(
         note: NoteBase,
         fields: Record<string, string>,
-    ): Record<string, string> {
-        return _.transform(fields, (result, field, fieldName) => {
-            const ctx: PostprocessorContext = {
-                fieldName: fieldName,
-            }
+    ): Promise<Record<string, string>> {
+        const promisedTransforms = _.transform(
+            fields,
+            (result: Record<string, any>, field, fieldName) => {
+                const ctx: PostprocessorContext = {
+                    fieldName: fieldName,
+                }
 
-            result[fieldName] = this.postprocessField(note, field, ctx)
-        })
+                result[fieldName] = this.postprocessField(note, field, ctx)
+            },
+        )
+
+        return await promiseAllProperties(promisedTransforms)
     }
 
-    public renderFields(note: NoteBase): Record<string, string> {
-        return this.postprocessFields(note, note.renderFields())
+    public async renderFields(note: NoteBase): Promise<Record<string, string>> {
+        return await this.postprocessFields(note, note.renderFields())
     }
 
     private async notePairChanges(
@@ -103,12 +113,18 @@ export class Bridge {
     /**
      * Returns true if error is not fatal for that note
      */
-    private handleError(e: string, note: NoteBase): boolean {
-        if (e.startsWith('deck was not found')) {
-            this.displayError(e, note)
-            return false
-        } else if (e === 'cannot create note because it is a duplicate') {
-            this.displayError(e, note)
+    private handleError(e: string | Error, note: NoteBase): boolean {
+        if (typeof e === 'string') {
+            if (e.startsWith('deck was not found')) {
+                this.displayError(e, note)
+                return false
+            } else if (e === 'cannot create note because it is a duplicate') {
+                this.displayError(e, note)
+                return false
+            }
+        } else {
+            this.displayError(e.toString(), note)
+            throw e // For now
             return false
         }
 
@@ -163,7 +179,7 @@ export class Bridge {
                         element,
                         deckName,
                         modelName,
-                        this.renderFields(element),
+                        await this.renderFields(element),
                     )
                     element.id = id
 
@@ -181,7 +197,7 @@ export class Bridge {
                             element,
                             deckName,
                             modelName,
-                            this.renderFields(element),
+                            await this.renderFields(element),
                         )
                         element.id = id
 
@@ -195,7 +211,7 @@ export class Bridge {
                             if (notePairDelta.shouldUpdateFields) {
                                 await this.plugin.anki.updateNoteFields(
                                     element,
-                                    this.renderFields(element),
+                                    await this.renderFields(element),
                                 )
                             }
 
