@@ -1,22 +1,19 @@
 import AnkiBridgePlugin from 'main'
 import { App } from 'obsidian'
-import { Postprocessor } from './base'
-import { DebugPostprocessor } from './debug'
-import { HtmlPostprocessor } from './html'
-import { LinkPostprocessor } from './link'
 import { LinkToSourcePostprocessor } from './link-to-source'
-import { MathPostprocessor } from './math'
+import { Postprocessor } from './base'
+import { LinkPostprocessor } from './link'
+import { FinalDebugPostprocessor, InitialDebugPostprocessor } from './debug'
 
-type PostprocessorConstructor = {
+export type PostprocessorConstructor = {
     new (app: App, plugin: AnkiBridgePlugin): Postprocessor
 } & typeof Postprocessor
 
 export const POSTPROCESSORS: Array<PostprocessorConstructor> = [
-    MathPostprocessor,
-    HtmlPostprocessor,
+    InitialDebugPostprocessor,
+    FinalDebugPostprocessor,
     LinkPostprocessor,
     LinkToSourcePostprocessor,
-    DebugPostprocessor,
 ]
 
 export function getPostprocessorById(id: string): PostprocessorConstructor {

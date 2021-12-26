@@ -2,12 +2,11 @@ import { Notice, PluginSettingTab, Setting, App, ButtonComponent } from 'obsidia
 import { Anki } from 'services/anki'
 import { BLUEPRINTS, getBlueprintById } from 'blueprints'
 import AnkiBridgePlugin from 'main'
-import { getPostprocessorById, POSTPROCESSORS } from 'postprocessors'
 import { FolderSuggest } from 'suggesters/folder-suggester'
 import { logError } from 'log'
 import { AnkiBridgeError } from 'error'
 import { arraymove } from 'utils/array'
-import _ from 'lodash'
+import { getProcessorById } from 'processors'
 
 export class SettingsTab extends PluginSettingTab {
     constructor(public app: App, private plugin: AnkiBridgePlugin) {
@@ -23,7 +22,7 @@ export class SettingsTab extends PluginSettingTab {
         this.addDefaultDeck()
         this.addNetworking()
         this.addBlueprints()
-        this.addPostprocessors()
+        this.addProcessors()
         this.addDebugging()
     }
 
@@ -380,39 +379,31 @@ export class SettingsTab extends PluginSettingTab {
         }
     }
 
-    addPostprocessors(): void {
-        this.containerEl.createEl('h2', { text: 'Postprocessor Settings' })
+    addProcessors(): void {
+        this.containerEl.createEl('h2', { text: 'Processor Settings' })
 
-        const postprocessorSettingsConst = Object.fromEntries(
-            _.sortBy(POSTPROCESSORS, ['weight']).map((pp) => {
-                return [pp.id, pp.defaultConfigState]
-            }),
+        const processorSettings = this.plugin.settings.getMergedProcessors()
+
+        const descHeading = document.createDocumentFragment()
+        descHeading.append(
+            `Processors are responsible for converting the raw markdown from Obsidian into
+            Anki-compatible HTML.`,
         )
+        descHeading.appendChild(createEl('br'))
+        descHeading.append('Preprocessors act on Markdown-formatted text.')
+        descHeading.appendChild(createEl('br'))
+        descHeading.append('Postprocessors act on an HTML DOM tree.')
 
-        // Override those that are not configurable, just in case
-        const postprocessorSettingsOverrides = Object.fromEntries(
-            POSTPROCESSORS.filter((pp) => {
-                return !pp.configurable
-            }).map((pp) => {
-                return [pp.id, pp.defaultConfigState]
-            }),
-        )
+        new Setting(this.containerEl).setDesc(descHeading)
 
-        const postprocessorSettings: Record<string, boolean> = Object.assign(
-            {},
-            postprocessorSettingsConst,
-            this.plugin.settings.postprocessors,
-            postprocessorSettingsOverrides,
-        )
-
-        for (const [id, enabled] of Object.entries(postprocessorSettings)) {
-            const pp = getPostprocessorById(id)
+        for (const [id, enabled] of Object.entries(processorSettings)) {
+            const pp = getProcessorById(id)
             new Setting(this.containerEl).setName(pp.displayName).addToggle((toggle) => {
                 toggle
                     .setValue(enabled)
                     .setDisabled(!pp.configurable)
                     .onChange((newState) => {
-                        this.plugin.settings.postprocessors[id] = newState
+                        this.plugin.settings.processors[id] = newState
                         this.plugin.saveSettings()
                         this.plugin.initiateServices()
                     })

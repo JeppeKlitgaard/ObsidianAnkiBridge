@@ -1,14 +1,18 @@
 import { NoteBase } from 'notes/base'
+import { ProcessorContext } from 'processors/base'
 import { escapeMarkdown } from 'utils'
-import { Postprocessor, PostprocessorContext } from './base'
+import { Preprocessor } from './base'
 
-export class MathPostprocessor extends Postprocessor {
-    static id = 'MathPostprocessor'
-    static displayName = 'MathPostprocessor'
-    static weight = 40
+export class MathPreprocessor extends Preprocessor {
+    /**
+     * Preprocesses inline and block math into an Anki-compatible format
+     */
+    static id = 'MathPreprocessor'
+    static displayName = 'MathPreprocessor'
+    static weight = 20
     static defaultConfigState = true
 
-    public async process(note: NoteBase, text: string, ctx: PostprocessorContext): Promise<string> {
+    public async preprocess(note: NoteBase, text: string, ctx: ProcessorContext): Promise<string> {
         const mathBlockRegex = /\$\$(.*?)\$\$/gis
         text = text.replace(mathBlockRegex, (match, group1) => {
             return String.raw`\\(` + escapeMarkdown(group1) + String.raw` \\)`

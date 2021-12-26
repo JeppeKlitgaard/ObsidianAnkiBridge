@@ -3,11 +3,14 @@ import { NoteBase } from 'notes/base'
 import { App, Notice } from 'obsidian'
 import { ProcessedFileResult } from './reader'
 import _ from 'lodash'
-import { Postprocessor, PostprocessorContext } from 'postprocessors/base'
-import { getPostprocessorById } from 'postprocessors'
 import { NotesInfoResponseEntity } from 'entities/network'
 import { FileProcessingResult } from 'entities/other'
 import promiseAllProperties from 'promise-all-properties'
+import { Preprocessor } from 'processors/preprocessors/base'
+import { Postprocessor } from 'processors/postprocessors/base'
+import { getProcessorById } from 'processors'
+import { ProcessorContext } from 'processors/base'
+import { processMarkdownToHtml } from 'processors/html'
 
 interface NotePairDelta {
     shouldUpdate: boolean
@@ -17,18 +20,29 @@ interface NotePairDelta {
 }
 
 export class Bridge {
+    private preprocessors: Array<Preprocessor> = []
     private postprocessors: Array<Postprocessor> = []
 
     constructor(public app: App, public plugin: AnkiBridgePlugin) {
-        for (const [id, enabled] of Object.entries(this.plugin.settings.postprocessors)) {
+        for (const [id, enabled] of Object.entries(this.plugin.settings.getMergedProcessors())) {
             if (enabled) {
-                const postprocessorClass = getPostprocessorById(id)
-                const postprocessor = new postprocessorClass(this.app, this.plugin)
+                const processorClass = getProcessorById(id)
+                const processor = new processorClass(this.app, this.plugin)
 
-                this.postprocessors.push(postprocessor)
+                if (processor instanceof Preprocessor) {
+                    this.preprocessors.push(processor)
+                } else {
+                    this.postprocessors.push(processor)
+                }
             }
         }
 
+        // Sort processors
+        this.preprocessors = _.sortBy(this.preprocessors, [
+            (o) => {
+                return Object.getPrototypeOf(o).constructor.weight
+            },
+        ])
         this.postprocessors = _.sortBy(this.postprocessors, [
             (o) => {
                 return Object.getPrototypeOf(o).constructor.weight
@@ -36,30 +50,41 @@ export class Bridge {
         ])
     }
 
-    public async postprocessField(
+    public async processField(
         note: NoteBase,
         field: string,
-        ctx: PostprocessorContext,
+        ctx: ProcessorContext,
     ): Promise<string> {
+        // Do all Markdown preprocessing
+        for (const pp of this.preprocessors) {
+            field = await pp.preprocess(note, field, ctx)
+        }
+        console.log(field)
+        // Convert to HTML DOM
+        const domField = await processMarkdownToHtml(note, field, ctx)
+
+        // Do all HTML postprocessing
         for (const pp of this.postprocessors) {
-            field = await pp.process(note, field, ctx)
+            await pp.postprocess(note, domField, ctx)
         }
 
-        return field
+        // Turn back into string
+        console.log(domField)
+        return domField.innerHTML
     }
 
-    public async postprocessFields(
+    public async processFields(
         note: NoteBase,
         fields: Record<string, string>,
     ): Promise<Record<string, string>> {
         const promisedTransforms = _.transform(
             fields,
             (result: Record<string, any>, field, fieldName) => {
-                const ctx: PostprocessorContext = {
+                const ctx: ProcessorContext = {
                     fieldName: fieldName,
                 }
 
-                result[fieldName] = this.postprocessField(note, field, ctx)
+                result[fieldName] = this.processField(note, field, ctx)
             },
         )
 
@@ -67,7 +92,7 @@ export class Bridge {
     }
 
     public async renderFields(note: NoteBase): Promise<Record<string, string>> {
-        return await this.postprocessFields(note, note.renderFields())
+        return await this.processFields(note, note.renderFields())
     }
 
     private async notePairChanges(

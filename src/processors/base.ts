@@ -1,23 +1,25 @@
 import AnkiBridgePlugin from 'main'
-import { NoteBase } from 'notes/base'
 import { App } from 'obsidian'
 
-export abstract class Postprocessor {
+export abstract class Processor {
     public static readonly id: string
     public static readonly displayName: string
-    public static readonly weight: number // Lower is first
+
+    /**
+     * Lower is first
+     * HTML conversion is at weight=50
+     * Thus <50 is rendered while still in Markdown
+     * and >50 is rendered when converted to HTML
+     */
+
+    public static readonly weight: number
+
     public static readonly defaultConfigState: boolean
     public static readonly configurable: boolean = true
 
     constructor(public app: App, public plugin: AnkiBridgePlugin) {}
-
-    public abstract process(
-        note: NoteBase,
-        text: string,
-        ctx: PostprocessorContext,
-    ): Promise<string>
 }
 
-export interface PostprocessorContext {
+export interface ProcessorContext {
     fieldName: string
 }

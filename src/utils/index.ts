@@ -66,15 +66,14 @@ export function renderObsidianURIOpen(vault: Vault, file?: string, path?: string
 
     return uri
 }
-
 interface RenderedLink {
     uri: string
     text: string
 }
 
 export function markdownLinkToTextAndHref(vault: Vault, markdownLink: string): RenderedLink {
-    const el = document.createElement('div')
-    MarkdownRenderer.renderMarkdown(markdownLink, el, '', undefined)
+    const el = createEl('div')
+    MarkdownRenderer.renderMarkdown(markdownLink, el, '', null)
     const anchor = el.firstElementChild.firstElementChild
 
     const linkText = anchor.textContent

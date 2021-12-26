@@ -3,7 +3,6 @@ import AnkiBridgePlugin from 'main'
 import { NoteBase } from 'notes/base'
 import { App } from 'obsidian'
 import { Parser } from 'peggy'
-import { Postprocessor } from 'postprocessors/base'
 
 export abstract class Blueprint {
     public static readonly displayName: string
@@ -16,7 +15,6 @@ export abstract class Blueprint {
     protected parser: Parser
 
     protected config: IBlueprintConfig
-    protected postProcessors: Postprocessor[]
 
     constructor(app: App, plugin: AnkiBridgePlugin) {
         this.app = app

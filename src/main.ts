@@ -1,5 +1,5 @@
 import { addIcon, Notice, Plugin, TFile } from 'obsidian'
-import { ISettings, DEFAULT_SETTINGS } from 'settings/settings'
+import { DEFAULT_SETTINGS, Settings } from 'settings/settings'
 import { SettingsTab } from 'settings/settings-tab'
 import { Anki } from 'services/anki'
 import flashcardsIcon from 'assets/flashcard.svg_content'
@@ -8,7 +8,7 @@ import { Bridge } from 'services/bridge'
 import { FileProcessingResult, SyncResult } from 'entities/other'
 
 export default class AnkiBridgePlugin extends Plugin {
-    public settings: ISettings
+    public settings: Settings
 
     public anki: Anki
     private reader: Reader
@@ -93,7 +93,7 @@ export default class AnkiBridgePlugin extends Plugin {
     }
 
     async loadSettings() {
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
+        this.settings = Object.assign(new Settings(), DEFAULT_SETTINGS, await this.loadData())
     }
 
     async saveSettings() {
