@@ -38,7 +38,7 @@
     "jest": "^27.4.3",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
-    "obsidian": "https://github.com/obsidianmd/obsidian-api/tarball/master",
+    "obsidian": "^0.13.11",
     "peggy": "^1.2.0",
     "prettier": "^2.5.1",
     "promise-all-properties": "^3.0.2",
