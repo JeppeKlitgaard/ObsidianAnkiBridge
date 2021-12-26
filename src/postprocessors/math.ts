@@ -6,7 +6,7 @@ export class MathPostprocessor extends Postprocessor {
     static id = 'MathPostprocessor'
     static displayName = 'MathPostprocessor'
     static weight = 40
-    static defaultConfigState: true
+    static defaultConfigState = true
 
     public process(note: NoteBase, text: string, ctx: PostprocessorContext): string {
         const mathBlockRegex = /\$\$(.*?)\$\$/gis

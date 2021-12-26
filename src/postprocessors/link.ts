@@ -6,7 +6,7 @@ export class LinkPostprocessor extends Postprocessor {
     static id = 'LinkPostprocessor'
     static displayName = 'LinkPostprocessor'
     static weight = 50
-    static defaultConfigState: true
+    static defaultConfigState = true
 
     static linkRegex = /(\[\[.*?\]\])/g
 

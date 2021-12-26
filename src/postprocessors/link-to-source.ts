@@ -6,7 +6,7 @@ export class LinkToSourcePostprocessor extends Postprocessor {
     static id = 'LinkToSourcePostprocessor'
     static displayName = 'LinkToSourcePostprocessor'
     static weight = 50
-    static defaultConfigState: true
+    static defaultConfigState = true
 
     public process(note: NoteBase, text: string, ctx: PostprocessorContext): string {
         if (ctx.fieldName === 'Back') {

@@ -8,7 +8,7 @@ export class HtmlPostprocessor extends Postprocessor {
     static id = 'HtmlPostprocessor'
     static displayName = 'HtmlPostprocessor'
     static weight = 60
-    static defaultConfigState: true
+    static defaultConfigState = true
 
     private markdownit: MarkdownIt
 

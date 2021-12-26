@@ -1,6 +1,7 @@
 import AnkiBridgePlugin from 'main'
 import { App } from 'obsidian'
 import { Postprocessor } from './base'
+import { DebugPostprocessor } from './debug'
 import { HtmlPostprocessor } from './html'
 import { LinkPostprocessor } from './link'
 import { LinkToSourcePostprocessor } from './link-to-source'
@@ -15,6 +16,7 @@ export const POSTPROCESSORS: Array<PostprocessorConstructor> = [
     HtmlPostprocessor,
     LinkPostprocessor,
     LinkToSourcePostprocessor,
+    DebugPostprocessor,
 ]
 
 export function getPostprocessorById(id: string): PostprocessorConstructor {
