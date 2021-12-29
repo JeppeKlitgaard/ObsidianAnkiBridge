@@ -235,14 +235,15 @@ export class Bridge {
 
                         // Note pair found
                     } else {
-                        const notePairDelta = await this.notePairChanges(element, noteInfo, renderedFields)
+                        const notePairDelta = await this.notePairChanges(
+                            element,
+                            noteInfo,
+                            renderedFields,
+                        )
                         // Note pair changed
                         if (notePairDelta.shouldUpdate) {
                             if (notePairDelta.shouldUpdateFields) {
-                                await this.plugin.anki.updateNoteFields(
-                                    element,
-                                    renderedFields,
-                                )
+                                await this.plugin.anki.updateNoteFields(element, renderedFields)
                             }
 
                             if (notePairDelta.shouldUpdateTags) {

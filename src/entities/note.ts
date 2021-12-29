@@ -2,8 +2,7 @@ import { NoteBase } from 'notes/base'
 import { TFile } from 'obsidian'
 import { arrayBufferToBase64 } from 'utils/encoding'
 
-
-export type Field = "Front" | "Back"
+export type Field = 'Front' | 'Back'
 
 export interface SourceDescriptor {
     from: number
