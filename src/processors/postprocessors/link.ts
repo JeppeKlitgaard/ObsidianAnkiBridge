@@ -9,8 +9,6 @@ export class LinkPostprocessor extends Postprocessor {
     static weight = 70
     static defaultConfigState = true
 
-    static linkRegex = /(\[\[.*?\]\])/g
-
     public async postprocess(
         note: NoteBase,
         domField: HTMLTemplateElement,

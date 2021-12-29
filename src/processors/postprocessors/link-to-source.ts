@@ -29,7 +29,6 @@ export class LinkToSourcePostprocessor extends Postprocessor {
             linkParagraph.appendChild(anchor)
 
             domField.content.append(createEl('br'), linkParagraph)
-            // text += `<br><p>🔗 ${anchor.outerHTML}</p>`
         }
     }
 }
