@@ -99,13 +99,18 @@ export class Bridge {
     private async notePairChanges(
         note: NoteBase,
         noteInfo: NotesInfoResponseEntity,
+        renderedNote?: Record<Field, string>,
     ): Promise<NotePairDelta> {
         let shouldUpdateFields = false
         let shouldUpdateTags = false
         let cardsToUpdate: Array<number> = []
 
+        if (renderedNote === undefined) {
+            renderedNote = await this.renderFields(note)
+        }
+
         // Check that fields are the same
-        if (!_.isEqual(note.normaliseNoteInfoFields(noteInfo.fields), this.renderFields(note))) {
+        if (!_.isEqual(note.normaliseNoteInfoFields(noteInfo.fields), renderedNote)) {
             shouldUpdateFields = true
         }
 
@@ -173,16 +178,17 @@ export class Bridge {
 
             notesProcessed++
 
+            if (element.enabled === false) {
+                continue
+            }
+
             const deckName = element.getDeckName(this.plugin)
             const modelName = element.modelName || this.plugin.settings.defaultModel
             const tagsToSet = [
                 this.plugin.settings.tagInAnki,
                 ...(element.tags != null ? element.tags : []),
             ]
-
-            if (element.enabled === false) {
-                continue
-            }
+            const renderedFields = await this.renderFields(element)
 
             try {
                 // If delete is set
@@ -205,7 +211,7 @@ export class Bridge {
                         element,
                         deckName,
                         modelName,
-                        await this.renderFields(element),
+                        renderedFields,
                     )
                     element.id = id
 
@@ -223,7 +229,7 @@ export class Bridge {
                             element,
                             deckName,
                             modelName,
-                            await this.renderFields(element),
+                            renderedFields,
                         )
                         element.id = id
 
@@ -231,13 +237,13 @@ export class Bridge {
 
                         // Note pair found
                     } else {
-                        const notePairDelta = await this.notePairChanges(element, noteInfo)
+                        const notePairDelta = await this.notePairChanges(element, noteInfo, renderedFields)
                         // Note pair changed
                         if (notePairDelta.shouldUpdate) {
                             if (notePairDelta.shouldUpdateFields) {
                                 await this.plugin.anki.updateNoteFields(
                                     element,
-                                    await this.renderFields(element),
+                                    renderedFields,
                                 )
                             }
 
