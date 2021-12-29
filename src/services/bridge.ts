@@ -60,7 +60,6 @@ export class Bridge {
         for (const pp of this.preprocessors) {
             field = await pp.preprocess(note, field, ctx)
         }
-        console.log(field)
         // Convert to HTML DOM
         const domField = await processMarkdownToHtml(note, field, ctx)
 
@@ -70,7 +69,6 @@ export class Bridge {
         }
 
         // Turn back into string
-        console.log(domField)
         return domField.innerHTML
     }
 
