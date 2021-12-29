@@ -1,6 +1,6 @@
 import { Blueprint } from 'blueprints/base'
 import { FieldEntity } from 'entities/network'
-import { SourceDescriptor } from 'entities/note'
+import { Media, SourceDescriptor } from 'entities/note'
 import AnkiBridgePlugin from 'main'
 import { getDefaultDeckForFolder } from 'utils/file'
 
@@ -16,6 +16,7 @@ export abstract class NoteBase {
         public tags?: Array<string>,
         public delete_?: boolean,
         public enabled?: boolean,
+        public medias: Array<Media> = [],
     ) {}
 
     public renderAsText(): string {

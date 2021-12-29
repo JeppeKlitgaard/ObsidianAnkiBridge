@@ -17,6 +17,7 @@ esbuild.build({
     entryPoints: ['src/main.ts'],
     bundle: true,
     external: ['obsidian'],
+    platform: 'node',
     format: 'cjs',
     watch: !prod,
     target: 'es2016',

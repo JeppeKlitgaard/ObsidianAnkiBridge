@@ -4,6 +4,7 @@ import { LinkToSourcePostprocessor } from './link-to-source'
 import { Postprocessor } from './base'
 import { LinkPostprocessor } from './link'
 import { FinalDebugPostprocessor, InitialDebugPostprocessor } from './debug'
+import { MediaPostprocessor } from './media'
 
 export type PostprocessorConstructor = {
     new (app: App, plugin: AnkiBridgePlugin): Postprocessor
@@ -13,6 +14,7 @@ export const POSTPROCESSORS: Array<PostprocessorConstructor> = [
     InitialDebugPostprocessor,
     FinalDebugPostprocessor,
     LinkPostprocessor,
+    MediaPostprocessor,
     LinkToSourcePostprocessor,
 ]
 
