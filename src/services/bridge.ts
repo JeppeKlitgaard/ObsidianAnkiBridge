@@ -11,6 +11,7 @@ import { Postprocessor } from 'processors/postprocessors/base'
 import { getProcessorById } from 'processors'
 import { ProcessorContext } from 'processors/base'
 import { processMarkdownToHtml } from 'processors/html'
+import { Field } from 'entities/note'
 
 interface NotePairDelta {
     shouldUpdate: boolean
@@ -75,11 +76,11 @@ export class Bridge {
 
     public async processFields(
         note: NoteBase,
-        fields: Record<string, string>,
-    ): Promise<Record<string, string>> {
+        fields: Record<Field, string>,
+    ): Promise<Record<Field, string>> {
         const promisedTransforms = _.transform(
             fields,
-            (result: Record<string, any>, field, fieldName) => {
+            (result: Record<Field, Promise<string>>, field, fieldName: Field) => {
                 const ctx: ProcessorContext = {
                     fieldName: fieldName,
                 }

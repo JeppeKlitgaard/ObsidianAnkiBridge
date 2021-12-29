@@ -1,3 +1,4 @@
+import { Field } from 'entities/note'
 import AnkiBridgePlugin from 'main'
 import { App } from 'obsidian'
 
@@ -21,5 +22,5 @@ export abstract class Processor {
 }
 
 export interface ProcessorContext {
-    fieldName: string
+    fieldName: Field
 }
