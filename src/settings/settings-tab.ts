@@ -56,24 +56,6 @@ export class SettingsTab extends PluginSettingTab {
         this.containerEl.createEl('h2', { text: 'General Settings' })
 
         new Setting(this.containerEl)
-            .setName('Default model')
-            .setDesc(
-                'The name of the default model used for new notes when the blueprint supports it.',
-            )
-            .addText((text) => {
-                text.setValue(this.plugin.settings.defaultModel)
-                    .setPlaceholder('Basic')
-                    .onChange((value) => {
-                        if (value.length) {
-                            this.plugin.settings.defaultModel = value
-                            this.plugin.saveSettings()
-                        } else {
-                            new Notice('The model name must be at least 1 character long')
-                        }
-                    })
-            })
-
-        new Setting(this.containerEl)
             .setName('Global tag')
             .setDesc('The tag to identify the flashcards in the notes.')
             .addText((text) => {

@@ -1,4 +1,4 @@
-import { AnkiField, AnkiFields, ModelName } from "./note"
+import { AnkiField, AnkiFields, ModelName } from './note'
 
 // General Response
 export interface ResponseEntity {

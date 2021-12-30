@@ -80,6 +80,14 @@ export abstract class NoteBase {
         return this.getEnabled() && this.renderAsText() !== this.sourceText
     }
 
+    public getModelName(): ModelName {
+        if (this.isCloze) {
+            return 'Cloze'
+        }
+
+        return 'Basic'
+    }
+
     /**
      * Returns the resolved deck name
      */

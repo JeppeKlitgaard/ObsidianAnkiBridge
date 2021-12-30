@@ -9,6 +9,7 @@ export const ConfigSchema = yup.object({
     tags: yup.array().of(yup.string().emptyAsUndefined().nullAsUndefined()),
     delete: yup.boolean().nullAsUndefined(),
     enabled: yup.boolean().nullAsUndefined(),
+    cloze: yup.boolean().nullAsUndefined(),
 })
 
 export type Config = yup.Asserts<typeof ConfigSchema>

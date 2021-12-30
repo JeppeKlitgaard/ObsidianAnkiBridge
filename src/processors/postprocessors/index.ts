@@ -5,6 +5,7 @@ import { Postprocessor } from './base'
 import { LinkPostprocessor } from './link'
 import { FinalDebugPostprocessor, InitialDebugPostprocessor } from './debug'
 import { MediaPostprocessor } from './media'
+import { ClozePostprocessor } from './cloze'
 
 export type PostprocessorConstructor = {
     new (app: App, plugin: AnkiBridgePlugin): Postprocessor
@@ -16,6 +17,7 @@ export const POSTPROCESSORS: Array<PostprocessorConstructor> = [
     LinkPostprocessor,
     MediaPostprocessor,
     LinkToSourcePostprocessor,
+    ClozePostprocessor,
 ]
 
 export function getPostprocessorById(id: string): PostprocessorConstructor {

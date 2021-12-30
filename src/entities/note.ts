@@ -47,6 +47,7 @@ export class FragmentProcessingResult extends Array<NoteBase | Fragment> {
 
 export enum NoteAction {
     Created,
+    Recreated,
     Deleted,
     Updated,
     Skipped,

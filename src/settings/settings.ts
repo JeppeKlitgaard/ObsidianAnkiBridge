@@ -20,6 +20,9 @@ export interface ISettings {
     ankiConnectAddress: string
     ankiConnectPort: number
 
+    markToCloze: boolean
+    deleteToCloze: boolean
+
     debug: boolean
     debugNetwork: boolean
 }
@@ -69,7 +72,6 @@ export class Settings {
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
-    defaultModel: 'Basic',
     tagInAnki: 'obsidian',
     foldersToIgnore: [],
 
@@ -84,6 +86,9 @@ export const DEFAULT_SETTINGS: ISettings = {
 
     ankiConnectAddress: '127.0.0.1',
     ankiConnectPort: 8765,
+
+    markToCloze: true,
+    deleteToCloze: true,
 
     debug: false,
     debugNetwork: false,
