@@ -23,6 +23,8 @@ export class MediaPostprocessor extends Postprocessor {
 
         await Promise.all(
             embeds.map(async (embed) => {
+                const alt = embed.innerHTML
+
                 const srcpath = embed.getAttribute('src')
                 const linkpath = getLinkpath(srcpath) // This might be dodgy?
 
@@ -78,6 +80,8 @@ export class MediaPostprocessor extends Postprocessor {
 
                     mediaEl.appendChild(sourceEl)
                 }
+
+                mediaEl.setAttribute("alt", alt)
 
                 embed.parentNode.replaceChild(mediaEl, embed)
             }),

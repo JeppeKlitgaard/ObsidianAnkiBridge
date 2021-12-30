@@ -47,6 +47,8 @@ Currently implemented blueprints:
 ### 📊 Rendering
 - 🧮 Math rendering
 - 🖼 Image rendering
+- 🔉 Audio rendering
+- 📹 Video rendering
 - ⬇ Standard Markdown rendering
 - 🔗 Link rendering (with Obsidian URI support)
 - ⚓ Linking to source from Anki
@@ -85,8 +87,6 @@ changes to bridged notes in Anki will be reverted upon sync.__
 ## Upcoming features
 
 - 👩‍💻 Code syntax highlighting
-- 🔉 Audio rendering
-- 📹 Video rendering
 - 🌉 Syncing of Mathjax preamples (advanced feature)
 - 📄 Documentation
 - ❔ Cloze deletion
