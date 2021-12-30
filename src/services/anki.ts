@@ -11,6 +11,8 @@ import {
     NotesInfoRequest,
     NotesInfoResponseEntity,
     RemoveTagsRequest,
+    StoreMediaFileRequest,
+    StoreMediaFileResponse,
     UpdateNoteFieldsRequest,
     UpdateNoteFieldsResponse,
 } from 'entities/network'
@@ -19,6 +21,7 @@ import _ from 'lodash'
 import { App } from 'obsidian'
 import AnkiBridgePlugin from 'main'
 import { PLUGIN_NAME } from 'consts'
+import { Fields } from 'entities/note'
 
 export class Anki {
     private static version = 6
@@ -55,7 +58,7 @@ export class Anki {
         note: NoteBase,
         deckName: string,
         modelName: string,
-        fields: Record<string, string>,
+        fields: Fields,
     ): Promise<AddNoteResponse> {
         const params: AddNoteRequest = {
             note: {
@@ -79,7 +82,7 @@ export class Anki {
 
     public async updateNoteFields(
         note: NoteBase,
-        fields: Record<string, string>,
+        fields: Fields,
     ): Promise<UpdateNoteFieldsResponse> {
         const params: UpdateNoteFieldsRequest = {
             note: {
@@ -89,6 +92,25 @@ export class Anki {
         }
 
         return await this.invoke('updateNoteFields', Anki.version, params)
+    }
+
+    public async storeMediaFile(
+        filename: string,
+        source: { data?: string; path?: string; url?: string } = {},
+    ): Promise<StoreMediaFileResponse> {
+        if (Object.keys(source).length !== 1) {
+            throw TypeError('Specify exactly one of `data, path, url`')
+        }
+
+        const uploadType = Object.keys(source)[0] as 'data' | 'path' | 'url'
+        const uploadValue = source[uploadType]
+
+        const params: StoreMediaFileRequest = {
+            filename: filename,
+            [uploadType]: uploadValue,
+        }
+
+        return await this.invoke('storeMediaFile', Anki.version, params)
     }
 
     public async noteInfo(note: NoteBase): Promise<NotesInfoResponseEntity> {

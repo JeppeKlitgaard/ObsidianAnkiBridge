@@ -3,14 +3,18 @@ import { NoteBase } from 'notes/base'
 import { App, Notice } from 'obsidian'
 import { ProcessedFileResult } from './reader'
 import _ from 'lodash'
-import { NotesInfoResponseEntity } from 'entities/network'
+import {
+    AddNoteResponse,
+    NotesInfoResponseEntity,
+    UpdateNoteFieldsResponse,
+} from 'entities/network'
 import promiseAllProperties from 'promise-all-properties'
 import { Preprocessor } from 'processors/preprocessors/base'
 import { Postprocessor } from 'processors/postprocessors/base'
 import { getProcessorById } from 'processors'
 import { ProcessorContext } from 'processors/base'
 import { processMarkdownToHtml } from 'processors/html'
-import { Field, NoteAction } from 'entities/note'
+import { Field, Fields, NoteAction } from 'entities/note'
 
 interface NotePairDelta {
     shouldUpdate: boolean
@@ -71,10 +75,7 @@ export class Bridge {
         return domField.innerHTML
     }
 
-    public async processFields(
-        note: NoteBase,
-        fields: Fields,
-    ): Promise<Fields> {
+    public async processFields(note: NoteBase, fields: Fields): Promise<Fields> {
         const promisedTransforms = _.transform(
             fields,
             (result: Record<Field, Promise<string>>, field, fieldName: Field) => {
@@ -159,6 +160,47 @@ export class Bridge {
         throw e
     }
 
+    private async storeMediaFiles(note: NoteBase): Promise<void> {
+        // Add media files
+        await Promise.all(
+            note.medias.map(async (media) => {
+                await this.plugin.anki.storeMediaFile(media.filename, { path: media.path })
+            }),
+        )
+    }
+
+    private async easyAddNote(note: NoteBase, renderedFields: Fields): Promise<AddNoteResponse> {
+        const anki = this.plugin.anki
+
+        const deckName = note.getDeckName(this.plugin)
+        const modelName = note.modelName || this.plugin.settings.defaultModel
+        const tagsToSet = [this.plugin.settings.tagInAnki, ...(note.tags != null ? note.tags : [])]
+
+        // Add note
+        const id = await anki.addNote(note, deckName, modelName, renderedFields)
+        note.id = id
+
+        // Set tags
+        await anki.setTags(note, tagsToSet)
+
+        // Add media files
+        await this.storeMediaFiles(note)
+
+        return id
+    }
+
+    private async easyUpdateNoteFields(
+        note: NoteBase,
+        renderedFields: Fields,
+    ): Promise<UpdateNoteFieldsResponse> {
+        const anki = this.plugin.anki
+
+        await anki.updateNoteFields(note, renderedFields)
+        await this.storeMediaFiles(note)
+
+        return null
+    }
+
     private async processNote(note: NoteBase): Promise<NoteAction> {
         const anki = this.plugin.anki
 
@@ -177,18 +219,12 @@ export class Bridge {
             return NoteAction.Deleted
         }
 
-        const deckName = note.getDeckName(this.plugin)
-        const modelName = note.modelName || this.plugin.settings.defaultModel
-        const tagsToSet = [this.plugin.settings.tagInAnki, ...(note.tags != null ? note.tags : [])]
         const renderedFields = await this.renderFields(note)
 
         // Create if does not exist
         if (note.id === null) {
             // We must create note
-            const id = await anki.addNote(note, deckName, modelName, renderedFields)
-            note.id = id
-
-            await anki.setTags(note, tagsToSet)
+            await this.easyAddNote(note, renderedFields)
 
             return NoteAction.Created
         }
@@ -199,8 +235,7 @@ export class Bridge {
 
         // No note with that ID found. Make it
         if (_.isEmpty(noteInfo)) {
-            const id = await anki.addNote(note, deckName, modelName, renderedFields)
-            note.id = id
+            await this.easyAddNote(note, renderedFields)
 
             return NoteAction.Created
         }
@@ -216,16 +251,21 @@ export class Bridge {
         // Note pair changed
         // We must update fields
         if (notePairDelta.shouldUpdateFields) {
-            await anki.updateNoteFields(note, renderedFields)
+            await this.easyUpdateNoteFields(note, renderedFields)
         }
 
         // We must update tags
         if (notePairDelta.shouldUpdateTags) {
+            const tagsToSet = [
+                this.plugin.settings.tagInAnki,
+                ...(note.tags != null ? note.tags : []),
+            ]
             await anki.setTags(note, tagsToSet)
         }
 
         // We must update deck
         if (notePairDelta.cardsToUpdate.length) {
+            const deckName = note.getDeckName(this.plugin)
             await anki.changeDeck(notePairDelta.cardsToUpdate, deckName)
         }
 
@@ -256,7 +296,8 @@ export class Bridge {
             }
 
             actions.push(action)
-            shouldUpdateSource = shouldUpdateSource || note.shouldUpdateFile() || action === NoteAction.Deleted
+            shouldUpdateSource =
+                shouldUpdateSource || note.shouldUpdateFile() || action === NoteAction.Deleted
 
             this.plugin.debug(`${NoteAction[action]}: ${note.id}`)
         }

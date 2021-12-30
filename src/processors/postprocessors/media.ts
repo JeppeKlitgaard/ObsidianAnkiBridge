@@ -5,6 +5,7 @@ import { Postprocessor } from './base'
 import { fileTypeFromBuffer } from 'file-type'
 import { fileTypeToMediaType } from 'utils/encoding'
 import { Media } from 'entities/note'
+import { getFullPath } from 'utils/file'
 
 export class MediaPostprocessor extends Postprocessor {
     static id = 'MediaPostprocessor'
@@ -32,15 +33,20 @@ export class MediaPostprocessor extends Postprocessor {
                     throw TypeError('Embed was not a file. Contact developer on GitHub.')
                 }
 
-                const vault = this.app.vault
-                const data = await vault.readBinary(file)
+                const data = await this.app.vault.readBinary(file)
 
                 const fileType = await fileTypeFromBuffer(data)
 
                 const mediaType = fileTypeToMediaType(fileType)
-                const media = new Media(mediaType, data, [ctx.fieldName])
+                const path = getFullPath(this.app.vault.adapter, file.path)
+                const media = new Media(srcpath, path, mediaType, data, [ctx.fieldName])
 
                 note.medias.push(media)
+
+                const imgEl = createEl('img')
+                imgEl.src = media.filename
+
+                embed.parentNode.replaceChild(imgEl, embed)
             }),
         )
     }

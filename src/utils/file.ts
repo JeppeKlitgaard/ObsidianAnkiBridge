@@ -1,6 +1,15 @@
 import { DefaultDeckMap } from 'entities/other'
 import { AnkiBridgeError } from 'error'
-import { App, normalizePath, TFolder, TFile, TAbstractFile, Vault } from 'obsidian'
+import {
+    App,
+    normalizePath,
+    TFolder,
+    TFile,
+    TAbstractFile,
+    Vault,
+    DataAdapter,
+    FileSystemAdapter,
+} from 'obsidian'
 
 export function resolveTFolder(app: App, folderStr: string): TFolder {
     folderStr = normalizePath(folderStr)
@@ -66,4 +75,12 @@ export function getDefaultDeckForFolder(folder: TFolder, maps: Array<DefaultDeck
  */
 export function stripCr(text: string): string {
     return text.replace(/\r/g, '')
+}
+
+export function getFullPath(adapter: DataAdapter, normalisedPath: string): string {
+    if (!(adapter instanceof FileSystemAdapter)) {
+        throw TypeError('Wrong data adapter on vault. Contact developer on GitHub')
+    }
+
+    return adapter.getFullPath(normalisedPath)
 }
