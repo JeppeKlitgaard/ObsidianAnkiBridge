@@ -118,7 +118,12 @@ export class Anki {
         return await this.invoke('removeTags', Anki.version, params)
     }
 
-    public async setTags(note: NoteBase, tags: Array<string>): Promise<RemoveTagsRequest> {
+    public async ping(): Promise<boolean> {
+        return (await this.invoke('version', 6, {}, 2)) === 6
+    }
+    // Convenience methods
+
+    public async setTags(note: NoteBase, tags: Array<string>): Promise<void> {
         const alreadySetTags: Array<string> = (await this.noteInfo(note)).tags
         const tagsToAdd = _.difference(tags, alreadySetTags)
         const tagsToRemove = _.difference(alreadySetTags, tags)
@@ -129,12 +134,6 @@ export class Anki {
         if (tagsToRemove.length) {
             await this.removeTags(note, tagsToRemove)
         }
-
-        return null
-    }
-
-    public async ping(): Promise<boolean> {
-        return (await this.invoke('version', 6, {}, 2)) === 6
     }
 
     private invoke(

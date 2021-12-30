@@ -85,7 +85,7 @@ export class SandwichBlueprint extends Blueprint {
                     config.model,
                     config.tags,
                     config.delete,
-                    config.enabled
+                    config.enabled,
                 )
 
                 // Make new fragment
