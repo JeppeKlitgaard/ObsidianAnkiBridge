@@ -14,20 +14,30 @@ export interface MultiRequest {
     actions: Array<ActionEntity>
 }
 
+export interface UploadMethods {
+    data?: string
+    path?: string
+    url?: string
+}
+
 // StoreMediaFile
-export interface StoreMediaFileRequest {
+export interface StoreMediaFileRequest extends UploadMethods {
     filename: string
-    data: string
 }
 
 export type StoreMediaFileResponse = string
 
 // ---
-export interface AssetEntity {
-    url: string
+export interface AssetEntity extends UploadMethods {
     filename: string
     skipHash?: string
     fields: Array<string>
+}
+
+export interface AssetsEntity {
+    audio?: Array<AssetEntity>
+    video?: Array<AssetEntity>
+    picture?: Array<AssetEntity>
 }
 
 export interface NoteOptionsEntity {
@@ -78,15 +88,12 @@ export interface ChangeDeckRequest {
 export type ChangeDeckResponse = null
 
 // AddNote
-export interface AddNoteEntity {
+export interface AddNoteEntity extends AssetsEntity {
     deckName: string
     modelName: string
     fields: Record<string, string>
     options?: NoteOptionsEntity
     tags: Array<string>
-    audio?: AssetEntity
-    video?: AssetEntity
-    picture?: AssetEntity
 }
 
 export interface AddNoteRequest {
@@ -103,12 +110,9 @@ export interface DeleteNotesRequest {
 export type DeleteNoteResponse = null
 
 // UpdateNoteFields
-export interface UpdateNoteFieldsEntity {
+export interface UpdateNoteFieldsEntity extends AssetsEntity {
     id: number
     fields: Record<string, string>
-    audio?: AssetEntity
-    video?: AssetEntity
-    picture?: AssetEntity
 }
 
 export interface UpdateNoteFieldsRequest {
