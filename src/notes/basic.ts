@@ -1,12 +1,11 @@
 import { NoteBase } from './base'
-import { SourceDescriptor } from 'entities/note'
+import { Media, NoteField, SourceDescriptor } from 'entities/note'
 import yup from 'utils/yup'
 import { Blueprint } from 'blueprints/base'
 
 export const ConfigSchema = yup.object({
     id: yup.number().nullable().defined().default(null),
     deck: yup.string().emptyAsUndefined().nullAsUndefined(),
-    model: yup.string().emptyAsUndefined().nullAsUndefined(),
     tags: yup.array().of(yup.string().emptyAsUndefined().nullAsUndefined()),
     delete: yup.boolean().nullAsUndefined(),
     enabled: yup.boolean().nullAsUndefined(),
@@ -18,27 +17,40 @@ export class BasicNote extends NoteBase {
     constructor(
         blueprint: typeof Blueprint,
         id: number | null,
-        front: string,
-        back: string,
+        frontlike: string,
+        backlike: string,
         source: SourceDescriptor,
         sourceText: string,
-        deckName?: string,
-        modelName?: string,
-        tags?: Array<string>,
-        delete_?: boolean,
-        enabled?: boolean,
+        {
+            deckName,
+            tags,
+            medias,
+            delete_,
+            enabled,
+            isCloze = false,
+        }: {
+            deckName?: string
+            tags?: Array<string>
+            medias?: Array<Media>
+            delete_?: boolean
+            enabled?: boolean
+            isCloze?: boolean
+        },
     ) {
         super(
             blueprint,
             id,
-            { front: front, back: back },
+            { [NoteField.Frontlike]: frontlike, [NoteField.Backlike]: backlike },
             source,
             sourceText,
-            deckName,
-            modelName,
-            tags,
-            delete_,
-            enabled,
+            {
+                deckName: deckName,
+                tags: tags,
+                medias: medias,
+                delete_: delete_,
+                enabled: enabled,
+                isCloze: isCloze,
+            },
         )
     }
 }

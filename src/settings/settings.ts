@@ -5,7 +5,6 @@ import { PREPROCESSORS } from 'processors/preprocessors'
 import { Preprocessor } from 'processors/preprocessors/base'
 
 export interface ISettings {
-    defaultModel: string
     tagInAnki: string
     foldersToIgnore: Array<string>
 

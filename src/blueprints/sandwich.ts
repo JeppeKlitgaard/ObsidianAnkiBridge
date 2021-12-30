@@ -3,7 +3,7 @@ import { GRAMMAR_LIBRARIES } from 'consts'
 import { makeGrammar } from 'utils/grammar'
 import { generate } from 'peggy'
 import { BasicNote, ConfigSchema } from 'notes/basic'
-import { SourceDescriptor, Fragment, FragmentProcessingResult } from 'entities/note'
+import { SourceDescriptor, Fragment, FragmentProcessingResult, NoteField } from 'entities/note'
 import { dump, load } from 'js-yaml'
 import { showError } from 'utils'
 import { NoteBase } from 'notes/base'
@@ -81,11 +81,12 @@ export class SandwichBlueprint extends Blueprint {
                     back,
                     source,
                     sourceText,
-                    config.deck,
-                    config.model,
-                    config.tags,
-                    config.delete,
-                    config.enabled,
+                    {
+                        deckName: config.deck,
+                        tags: config.tags,
+                        delete_: config.delete,
+                        enabled: config.enabled,
+                    },
                 )
 
                 // Make new fragment
@@ -114,17 +115,16 @@ export class SandwichBlueprint extends Blueprint {
         str += dump({
             id: note.id,
             deck: note.deckName,
-            model: note.modelName,
             tags: note.tags,
             delete: note.delete_,
             enabled: note.enabled,
         })
         str += '```\n'
 
-        str += note.fields['front']
+        str += note.fields[NoteField.Frontlike]
         str += '#anki/---\n'
 
-        str += note.fields['back']
+        str += note.fields[NoteField.Backlike]
         str += '#anki/end\n'
 
         return str

@@ -1,4 +1,4 @@
-import { Field } from 'entities/note'
+import { NoteField } from 'entities/note'
 import AnkiBridgePlugin from 'main'
 import { App } from 'obsidian'
 
@@ -8,9 +8,6 @@ export abstract class Processor {
 
     /**
      * Lower is first
-     * HTML conversion is at weight=50
-     * Thus <50 is rendered while still in Markdown
-     * and >50 is rendered when converted to HTML
      */
 
     public static readonly weight: number
@@ -22,5 +19,5 @@ export abstract class Processor {
 }
 
 export interface ProcessorContext {
-    fieldName: Field
+    noteField: NoteField
 }

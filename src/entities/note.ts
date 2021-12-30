@@ -2,8 +2,19 @@ import { NoteBase } from 'notes/base'
 import { TFile } from 'obsidian'
 import { arrayBufferToBase64 } from 'utils/encoding'
 
-export type Field = 'Front' | 'Back'
-export type Fields = Record<Field, string>
+export type AnkiBasicField = 'Front' | 'Back'
+export type AnkiClozeField = 'Text' | 'Back Extra'
+export type AnkiField = AnkiBasicField | AnkiClozeField
+
+export type AnkiFields = Record<AnkiBasicField, string> | Record<AnkiClozeField, string>
+
+export enum NoteField {
+    Frontlike,
+    Backlike,
+}
+export type NoteFields = Record<NoteField, string>
+
+export type ModelName = 'Basic' | 'Cloze'
 
 export interface SourceDescriptor {
     from: number
@@ -51,7 +62,7 @@ export class Media {
         public path: string,
         public type: MediaType,
         public data: ArrayBuffer,
-        public fields: Array<Field>,
+        public fields: Array<NoteField>,
     ) {}
 
     public async toBase64(): Promise<string> {

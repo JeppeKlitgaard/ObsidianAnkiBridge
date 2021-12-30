@@ -1,34 +1,79 @@
 import { Blueprint } from 'blueprints/base'
-import { FieldEntity } from 'entities/network'
-import { Field, Fields, Media, SourceDescriptor } from 'entities/note'
+import { NotesInfoResponseEntity } from 'entities/network'
+import {
+    AnkiFields,
+    Media,
+    ModelName,
+    NoteField,
+    NoteFields,
+    SourceDescriptor,
+} from 'entities/note'
 import AnkiBridgePlugin from 'main'
 import { getDefaultDeckForFolder } from 'utils/file'
 
 export abstract class NoteBase {
+    public deckName?: string
+    public tags?: Array<string>
+    public medias: Array<Media>
+    public delete_?: boolean
+    public enabled?: boolean
+    public isCloze: boolean
+
     constructor(
         public blueprint: typeof Blueprint,
         public id: number | null,
-        public fields: Record<string, string>,
+        public fields: NoteFields,
         public source: SourceDescriptor,
         public sourceText: string,
-        public deckName?: string,
-        public modelName?: string,
-        public tags?: Array<string>,
-        public delete_?: boolean,
-        public enabled?: boolean,
-        public medias: Array<Media> = [],
-    ) {}
+        {
+            deckName,
+            tags,
+            medias = [],
+            delete_,
+            enabled,
+            isCloze = false,
+        }: {
+            deckName?: string
+            tags?: Array<string>
+            medias?: Array<Media>
+            delete_?: boolean
+            enabled?: boolean
+            isCloze?: boolean
+        },
+    ) {
+        this.deckName = deckName
+        this.tags = tags
+        this.medias = medias
+        this.delete_ = delete_
+        this.enabled = enabled
+        this.isCloze = isCloze
+    }
 
     public renderAsText(): string {
         return this.blueprint.renderAsText(this)
     }
 
-    public renderFields(): Fields {
-        return { Front: this.fields['front'], Back: this.fields['back'] }
+    public fieldsToAnkiFields(fields: NoteFields): AnkiFields {
+        if (this.isCloze) {
+            return {
+                Text: fields[NoteField.Frontlike],
+                'Back Extra': fields[NoteField.Backlike],
+            }
+        }
+
+        return { Front: fields[NoteField.Frontlike], Back: fields[NoteField.Backlike] }
     }
 
-    public normaliseNoteInfoFields(fields: Record<Field, FieldEntity>): Fields {
-        return { Front: fields['Front'].value, Back: fields['Back'].value }
+    public normaliseNoteInfoFields(noteInfo: NotesInfoResponseEntity): NoteFields {
+        const isCloze = noteInfo.modelName === 'Cloze'
+
+        const frontlike = isCloze ? 'Text' : 'Front'
+        const backlike = isCloze ? 'Back Extra' : 'Back'
+
+        return {
+            [NoteField.Frontlike]: noteInfo.fields[frontlike].value,
+            [NoteField.Backlike]: noteInfo.fields[backlike].value,
+        }
     }
 
     public shouldUpdateFile(): boolean {

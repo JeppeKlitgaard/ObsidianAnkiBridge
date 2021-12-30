@@ -21,7 +21,7 @@ import _ from 'lodash'
 import { App } from 'obsidian'
 import AnkiBridgePlugin from 'main'
 import { PLUGIN_NAME } from 'consts'
-import { Fields } from 'entities/note'
+import { AnkiFields, ModelName } from 'entities/note'
 
 export class Anki {
     private static version = 6
@@ -57,8 +57,8 @@ export class Anki {
     public async addNote(
         note: NoteBase,
         deckName: string,
-        modelName: string,
-        fields: Fields,
+        modelName: ModelName,
+        fields: AnkiFields,
     ): Promise<AddNoteResponse> {
         const params: AddNoteRequest = {
             note: {
@@ -82,7 +82,7 @@ export class Anki {
 
     public async updateNoteFields(
         note: NoteBase,
-        fields: Fields,
+        fields: AnkiFields,
     ): Promise<UpdateNoteFieldsResponse> {
         const params: UpdateNoteFieldsRequest = {
             note: {

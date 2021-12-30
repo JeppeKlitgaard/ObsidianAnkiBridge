@@ -48,7 +48,7 @@ export class MediaPostprocessor extends Postprocessor {
                     mediaType = videoCheck ? 'video' : 'audio'
                 }
 
-                const media = new Media(srcpath, path, mediaType, data, [ctx.fieldName])
+                const media = new Media(srcpath, path, mediaType, data, [ctx.noteField])
                 note.medias.push(media)
 
                 let mediaEl: HTMLVideoElement | HTMLAudioElement | HTMLImageElement
@@ -81,7 +81,7 @@ export class MediaPostprocessor extends Postprocessor {
                     mediaEl.appendChild(sourceEl)
                 }
 
-                mediaEl.setAttribute("alt", alt)
+                mediaEl.setAttribute('alt', alt)
 
                 embed.parentNode.replaceChild(mediaEl, embed)
             }),

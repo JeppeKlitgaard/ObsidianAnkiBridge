@@ -39,7 +39,6 @@ This makes parsing easier to debug and should make it very extensible too.
 Directly in the Obsidian Vault you can specify:
 - Anki Tags
 - Anki Deck
-- Anki Model to use (experimental)
 
 Currently implemented blueprints:
 - 🥪 Sandwich Blueprint with `#anki/start`, `#anki/---`, `#anki/end`

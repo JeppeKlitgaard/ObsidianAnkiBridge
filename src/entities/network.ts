@@ -1,3 +1,5 @@
+import { AnkiField, AnkiFields, ModelName } from "./note"
+
 // General Response
 export interface ResponseEntity {
     result: any
@@ -60,7 +62,7 @@ export interface CardsInfoEntity {
     answer: string
     question: string
     deckName: string
-    modelName: string
+    modelName: ModelName
     fieldOrder: number
     fields: FieldEntity
     css: string
@@ -90,8 +92,8 @@ export type ChangeDeckResponse = null
 // AddNote
 export interface AddNoteEntity extends AssetsEntity {
     deckName: string
-    modelName: string
-    fields: Record<string, string>
+    modelName: ModelName
+    fields: AnkiFields
     options?: NoteOptionsEntity
     tags: Array<string>
 }
@@ -112,7 +114,7 @@ export type DeleteNoteResponse = null
 // UpdateNoteFields
 export interface UpdateNoteFieldsEntity extends AssetsEntity {
     id: number
-    fields: Record<string, string>
+    fields: AnkiFields
 }
 
 export interface UpdateNoteFieldsRequest {
@@ -149,10 +151,10 @@ export interface FieldEntity {
 
 export interface NotesInfoResponseEntity {
     noteId: number
-    modelName: string
+    modelName: ModelName
     tags: Array<string>
     cards: Array<number>
-    fields: Record<string, FieldEntity>
+    fields: Record<AnkiField, FieldEntity>
 }
 
 export type NotesInfoResponse = Array<NotesInfoResponseEntity>

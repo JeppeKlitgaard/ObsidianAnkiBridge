@@ -14,13 +14,24 @@ import { Postprocessor } from 'processors/postprocessors/base'
 import { getProcessorById } from 'processors'
 import { ProcessorContext } from 'processors/base'
 import { processMarkdownToHtml } from 'processors/html'
-import { Field, Fields, NoteAction } from 'entities/note'
+import { NoteAction, NoteField, NoteFields } from 'entities/note'
 
-interface NotePairDelta {
-    shouldUpdate: boolean
-    shouldUpdateFields: boolean
-    shouldUpdateTags: boolean
-    cardsToUpdate: Array<number>
+class NotePairDelta {
+    constructor(
+        public shouldChangeModel: boolean = false,
+        public shouldUpdateFields: boolean = false,
+        public shouldUpdateTags: boolean = false,
+        public cardsToUpdate: Array<number> = [],
+    ) {}
+
+    public shouldUpdate(): boolean {
+        return (
+            this.shouldChangeModel ||
+            this.shouldUpdateFields ||
+            this.shouldUpdateTags ||
+            !_.isEmpty(this.cardsToUpdate)
+        )
+    }
 }
 
 export class Bridge {
@@ -75,47 +86,49 @@ export class Bridge {
         return domField.innerHTML
     }
 
-    public async processFields(note: NoteBase, fields: Fields): Promise<Fields> {
+    public async renderFields(note: NoteBase): Promise<NoteFields> {
         const promisedTransforms = _.transform(
-            fields,
-            (result: Record<Field, Promise<string>>, field, fieldName: Field) => {
+            note.fields,
+            (result: Record<NoteField, Promise<string>>, field, noteField: NoteField) => {
                 const ctx: ProcessorContext = {
-                    fieldName: fieldName,
+                    noteField: noteField,
                 }
 
-                result[fieldName] = this.processField(note, field, ctx)
+                result[noteField] = this.processField(note, field, ctx)
             },
         )
 
         return await promiseAllProperties(promisedTransforms)
     }
 
-    public async renderFields(note: NoteBase): Promise<Fields> {
-        return await this.processFields(note, note.renderFields())
-    }
-
     private async notePairChanges(
         note: NoteBase,
         noteInfo: NotesInfoResponseEntity,
-        renderedNote?: Fields,
+        renderedNote?: NoteFields,
     ): Promise<NotePairDelta> {
-        let shouldUpdateFields = false
-        let shouldUpdateTags = false
-        let cardsToUpdate: Array<number> = []
+        const delta = new NotePairDelta()
 
         if (renderedNote === undefined) {
             renderedNote = await this.renderFields(note)
         }
 
+        // Check that model is the same
+        if (note.getModelName() !== noteInfo.modelName) {
+            delta.shouldChangeModel = true
+
+            // Return early since model change requires recreation anyway
+            return delta
+        }
+
         // Check that fields are the same
-        if (!_.isEqual(note.normaliseNoteInfoFields(noteInfo.fields), renderedNote)) {
-            shouldUpdateFields = true
+        if (!_.isEqual(note.normaliseNoteInfoFields(noteInfo), renderedNote)) {
+            delta.shouldUpdateFields = true
         }
 
         // Check that tags are the same
         const sourceTags = [...(note.tags || []), this.plugin.settings.tagInAnki]
         if (!_.isEqual(_.sortBy(sourceTags), _.sortBy(noteInfo.tags))) {
-            shouldUpdateTags = true
+            delta.shouldUpdateTags = true
         }
 
         // Cannot actually update modelName - skip checking
@@ -123,16 +136,9 @@ export class Bridge {
         const cardsInfosToUpdate = _.filter(cardsInfos, (value) => {
             return value.deckName.toLowerCase() !== note.getDeckName(this.plugin).toLowerCase()
         })
-        cardsToUpdate = _.map(cardsInfosToUpdate, 'cardId')
+        delta.cardsToUpdate = _.map(cardsInfosToUpdate, 'cardId')
 
-        const shouldUpdate = shouldUpdateFields || shouldUpdateTags || !_.isEmpty(cardsToUpdate)
-
-        return {
-            shouldUpdate: shouldUpdate,
-            shouldUpdateFields: shouldUpdateFields,
-            shouldUpdateTags: shouldUpdateTags,
-            cardsToUpdate: cardsToUpdate,
-        }
+        return delta
     }
 
     private displayError(e: string, note: NoteBase): void {
@@ -169,15 +175,20 @@ export class Bridge {
         )
     }
 
-    private async easyAddNote(note: NoteBase, renderedFields: Fields): Promise<AddNoteResponse> {
+    private async easyAddNote(
+        note: NoteBase,
+        renderedFields: NoteFields,
+    ): Promise<AddNoteResponse> {
         const anki = this.plugin.anki
 
         const deckName = note.getDeckName(this.plugin)
-        const modelName = note.modelName || this.plugin.settings.defaultModel
+        const modelName = note.getModelName()
         const tagsToSet = [this.plugin.settings.tagInAnki, ...(note.tags != null ? note.tags : [])]
 
+        const ankiFields = note.fieldsToAnkiFields(renderedFields)
+
         // Add note
-        const id = await anki.addNote(note, deckName, modelName, renderedFields)
+        const id = await anki.addNote(note, deckName, modelName, ankiFields)
         note.id = id
 
         // Set tags
@@ -191,11 +202,12 @@ export class Bridge {
 
     private async easyUpdateNoteFields(
         note: NoteBase,
-        renderedFields: Fields,
+        renderedFields: NoteFields,
     ): Promise<UpdateNoteFieldsResponse> {
         const anki = this.plugin.anki
 
-        await anki.updateNoteFields(note, renderedFields)
+        const ankiFields = note.fieldsToAnkiFields(renderedFields)
+        await anki.updateNoteFields(note, ankiFields)
         await this.storeMediaFiles(note)
 
         return null
@@ -242,13 +254,23 @@ export class Bridge {
 
         // Note exists on source and on Anki --->
         const notePairDelta = await this.notePairChanges(note, noteInfo, renderedFields)
+        console.log('Delta: ', notePairDelta)
+        console.log(note)
+        console.log(noteInfo)
 
         // Note pair did not change, but we did check
-        if (!notePairDelta.shouldUpdate) {
+        if (!notePairDelta.shouldUpdate()) {
             return NoteAction.Checked
         }
 
         // Note pair changed
+        // We must change model. This requires recreation sadly.
+        if (notePairDelta.shouldChangeModel) {
+            await anki.deleteNote(note)
+            await this.easyAddNote(note, renderedFields)
+
+            return NoteAction.Recreated
+        }
         // We must update fields
         if (notePairDelta.shouldUpdateFields) {
             await this.easyUpdateNoteFields(note, renderedFields)
