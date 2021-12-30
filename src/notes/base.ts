@@ -1,6 +1,6 @@
 import { Blueprint } from 'blueprints/base'
 import { FieldEntity } from 'entities/network'
-import { Media, SourceDescriptor } from 'entities/note'
+import { Field, Fields, Media, SourceDescriptor } from 'entities/note'
 import AnkiBridgePlugin from 'main'
 import { getDefaultDeckForFolder } from 'utils/file'
 
@@ -23,11 +23,11 @@ export abstract class NoteBase {
         return this.blueprint.renderAsText(this)
     }
 
-    public renderFields(): Record<string, string> {
+    public renderFields(): Fields {
         return { Front: this.fields['front'], Back: this.fields['back'] }
     }
 
-    public normaliseNoteInfoFields(fields: Record<string, FieldEntity>): Record<string, string> {
+    public normaliseNoteInfoFields(fields: Record<Field, FieldEntity>): Fields {
         return { Front: fields['Front'].value, Back: fields['Back'].value }
     }
 

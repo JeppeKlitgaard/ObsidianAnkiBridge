@@ -73,8 +73,8 @@ export class Bridge {
 
     public async processFields(
         note: NoteBase,
-        fields: Record<Field, string>,
-    ): Promise<Record<Field, string>> {
+        fields: Fields,
+    ): Promise<Fields> {
         const promisedTransforms = _.transform(
             fields,
             (result: Record<Field, Promise<string>>, field, fieldName: Field) => {
@@ -89,14 +89,14 @@ export class Bridge {
         return await promiseAllProperties(promisedTransforms)
     }
 
-    public async renderFields(note: NoteBase): Promise<Record<string, string>> {
+    public async renderFields(note: NoteBase): Promise<Fields> {
         return await this.processFields(note, note.renderFields())
     }
 
     private async notePairChanges(
         note: NoteBase,
         noteInfo: NotesInfoResponseEntity,
-        renderedNote?: Record<Field, string>,
+        renderedNote?: Fields,
     ): Promise<NotePairDelta> {
         let shouldUpdateFields = false
         let shouldUpdateTags = false

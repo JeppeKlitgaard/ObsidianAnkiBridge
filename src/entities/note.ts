@@ -3,6 +3,7 @@ import { TFile } from 'obsidian'
 import { arrayBufferToBase64 } from 'utils/encoding'
 
 export type Field = 'Front' | 'Back'
+export type Fields = Record<Field, string>
 
 export interface SourceDescriptor {
     from: number
@@ -45,7 +46,13 @@ export enum NoteAction {
 export type MediaType = 'image' | 'video' | 'audio'
 
 export class Media {
-    constructor(public type: MediaType, public data: ArrayBuffer, public fields: Array<Field>) {}
+    constructor(
+        public filename: string,
+        public path: string,
+        public type: MediaType,
+        public data: ArrayBuffer,
+        public fields: Array<Field>,
+    ) {}
 
     public async toBase64(): Promise<string> {
         return await arrayBufferToBase64(this.data)
