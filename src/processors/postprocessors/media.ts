@@ -6,6 +6,7 @@ import { fileTypeFromBuffer } from 'file-type'
 import { fileTypeToMediaType } from 'utils/encoding'
 import { Media } from 'entities/note'
 import { getFullPath } from 'utils/file'
+import { isVideo } from 'utils/media'
 
 export class MediaPostprocessor extends Postprocessor {
     static id = 'MediaPostprocessor'
@@ -26,6 +27,7 @@ export class MediaPostprocessor extends Postprocessor {
                 const linkpath = getLinkpath(srcpath) // This might be dodgy?
 
                 const file = this.app.metadataCache.getFirstLinkpathDest(linkpath, srcpath)
+                const resourcepath = this.app.vault.adapter.getResourcePath(file.path)
 
                 if (!(file instanceof TFile)) {
                     console.warn('Offending linkpath: ', linkpath)
@@ -33,20 +35,51 @@ export class MediaPostprocessor extends Postprocessor {
                     throw TypeError('Embed was not a file. Contact developer on GitHub.')
                 }
 
+                const path = getFullPath(this.app.vault.adapter, file.path)
                 const data = await this.app.vault.readBinary(file)
 
                 const fileType = await fileTypeFromBuffer(data)
+                let mediaType = fileTypeToMediaType(fileType)
 
-                const mediaType = fileTypeToMediaType(fileType)
-                const path = getFullPath(this.app.vault.adapter, file.path)
+                if (mediaType === 'video') {
+                    const videoCheck = await isVideo(resourcepath)
+                    mediaType = videoCheck ? 'video' : 'audio'
+                }
+
                 const media = new Media(srcpath, path, mediaType, data, [ctx.fieldName])
-
                 note.medias.push(media)
 
-                const imgEl = createEl('img')
-                imgEl.src = media.filename
+                let mediaEl: HTMLVideoElement | HTMLAudioElement | HTMLImageElement
+                switch (mediaType) {
+                    case 'image': {
+                        mediaEl = createEl('img')
+                        mediaEl.src = media.filename
+                        break
+                    }
 
-                embed.parentNode.replaceChild(imgEl, embed)
+                    case 'audio': {
+                        mediaEl = createEl('audio')
+                        break
+                    }
+
+                    case 'video': {
+                        mediaEl = createEl('video')
+                        break
+                    }
+                }
+
+                if (mediaType === 'audio' || mediaType == 'video') {
+                    mediaEl = mediaEl as HTMLVideoElement | HTMLAudioElement
+                    mediaEl.controls = true
+
+                    const sourceEl = createEl('source')
+                    sourceEl.src = media.filename
+                    sourceEl.type = fileType.mime
+
+                    mediaEl.appendChild(sourceEl)
+                }
+
+                embed.parentNode.replaceChild(mediaEl, embed)
             }),
         )
     }
