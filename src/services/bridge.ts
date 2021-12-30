@@ -256,7 +256,7 @@ export class Bridge {
             }
 
             actions.push(action)
-            shouldUpdateSource = shouldUpdateSource || note.shouldUpdateFile()
+            shouldUpdateSource = shouldUpdateSource || note.shouldUpdateFile() || action === NoteAction.Deleted
 
             this.plugin.debug(`${NoteAction[action]}: ${note.id}`)
         }
