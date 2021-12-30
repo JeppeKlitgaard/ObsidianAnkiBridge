@@ -32,7 +32,7 @@ export abstract class NoteBase {
     }
 
     public shouldUpdateFile(): boolean {
-        return this.renderAsText() !== this.sourceText
+        return this.getEnabled() && this.renderAsText() !== this.sourceText
     }
 
     /**
@@ -55,5 +55,9 @@ export abstract class NoteBase {
 
         // Fallback if no deck was found
         return plugin.settings.fallbackDeck
+    }
+
+    public getEnabled(): boolean {
+        return this.enabled === undefined || this.enabled
     }
 }
