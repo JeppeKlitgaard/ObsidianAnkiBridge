@@ -2,12 +2,13 @@ import { Blueprint } from 'blueprints/base'
 import { GRAMMAR_LIBRARIES } from 'consts'
 import { makeGrammar } from 'utils/grammar'
 import { generate } from 'peggy'
-import { BasicNote, ConfigSchema } from 'notes/basic'
+import { BasicNote } from 'notes/basic'
 import { SourceDescriptor, Fragment, FragmentProcessingResult, NoteField } from 'entities/note'
 import { dump, load } from 'js-yaml'
 import { showError } from 'utils'
-import { NoteBase } from 'notes/base'
+import { NoteBase, ParseConfig, ParseConfigSchema } from 'notes/base'
 import sandwichGrammar from 'grammars/CardSandwich.pegjs'
+
 
 export class SandwichBlueprint extends Blueprint {
     static id = 'Sandwich'
@@ -40,7 +41,7 @@ export class SandwichBlueprint extends Blueprint {
                 const to: number = result['location']['end']['line'] + fragment.sourceOffset
                 const front: string = result['front']
                 const back: string = result['back']
-                let config: Record<string, any> = load(result['config']) || {}
+                let config: ParseConfig = load(result['config']) || {}
 
                 const source: SourceDescriptor = { from: from, to: to, file: fragment.sourceFile }
                 const sourceText =
@@ -51,7 +52,7 @@ export class SandwichBlueprint extends Blueprint {
 
                 // Validate configuration
                 try {
-                    config = ConfigSchema.validateSync(config)
+                    config = ParseConfigSchema.validateSync(config) as ParseConfig
                 } catch (e) {
                     for (const error of e.errors) {
                         console.warn(error)
@@ -74,18 +75,18 @@ export class SandwichBlueprint extends Blueprint {
                     continue
                 }
 
+                let id: number
+                ({ id, ...config } = config)
+
                 const note = new BasicNote(
                     SandwichBlueprint,
-                    config.id,
+                    id,
                     front,
                     back,
                     source,
                     sourceText,
                     {
-                        deckName: config.deck,
-                        tags: config.tags,
-                        delete_: config.delete,
-                        enabled: config.enabled,
+                        config: config
                     },
                 )
 
@@ -114,10 +115,11 @@ export class SandwichBlueprint extends Blueprint {
         str += '```anki\n'
         str += dump({
             id: note.id,
-            deck: note.deckName,
-            tags: note.tags,
-            delete: note.delete_,
-            enabled: note.enabled,
+            deck: note.config.deck,
+            tags: note.config.tags,
+            delete: note.config.delete_,
+            enabled: note.config.enabled,
+            cloze: note.config.cloze,
         })
         str += '```\n'
 

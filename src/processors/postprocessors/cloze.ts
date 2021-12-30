@@ -15,7 +15,7 @@ export class ClozePostprocessor extends Postprocessor {
         ctx: ProcessorContext,
     ): Promise<void> {
         // Clozes are only specified on frontlike field
-        if (ctx.noteField != NoteField.Frontlike) {
+        if (ctx.noteField != NoteField.Frontlike || note.config.cloze === false) {
             return
         }
 

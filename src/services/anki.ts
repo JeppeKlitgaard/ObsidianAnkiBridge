@@ -59,13 +59,14 @@ export class Anki {
         deckName: string,
         modelName: ModelName,
         fields: AnkiFields,
+        tags: Array<string>,
     ): Promise<AddNoteResponse> {
         const params: AddNoteRequest = {
             note: {
                 deckName: deckName,
                 modelName: modelName,
                 fields: fields,
-                tags: note.tags || [],
+                tags: tags,
             },
         }
 

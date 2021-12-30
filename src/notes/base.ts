@@ -10,13 +10,33 @@ import {
 } from 'entities/note'
 import AnkiBridgePlugin from 'main'
 import { getDefaultDeckForFolder } from 'utils/file'
+import yup from 'utils/yup'
+
+export const ParseConfigSchema = yup.object({
+    id: yup.number().nullable().defined().default(null),
+    deck: yup.string().emptyAsUndefined().nullAsUndefined(),
+    tags: yup.array().of(yup.string().emptyAsUndefined().nullAsUndefined()),
+    delete: yup.boolean().nullAsUndefined(),
+    enabled: yup.boolean().nullAsUndefined(),
+    cloze: yup.boolean().nullAsUndefined(),
+})
+
+export interface Config {
+    deck?: string
+    tags?: Array<string>
+    delete_?: boolean
+    enabled?: boolean
+    cloze?: boolean
+}
+
+export interface ParseConfig extends Config {
+    id?: number
+}
+
 
 export abstract class NoteBase {
-    public deckName?: string
-    public tags?: Array<string>
+    public config: Config
     public medias: Array<Media>
-    public delete_?: boolean
-    public enabled?: boolean
     public isCloze: boolean
 
     constructor(
@@ -26,26 +46,17 @@ export abstract class NoteBase {
         public source: SourceDescriptor,
         public sourceText: string,
         {
-            deckName,
-            tags,
+            config,
             medias = [],
-            delete_,
-            enabled,
             isCloze = false,
         }: {
-            deckName?: string
-            tags?: Array<string>
+            config: Config
             medias?: Array<Media>
-            delete_?: boolean
-            enabled?: boolean
             isCloze?: boolean
         },
     ) {
-        this.deckName = deckName
-        this.tags = tags
+        this.config = config
         this.medias = medias
-        this.delete_ = delete_
-        this.enabled = enabled
         this.isCloze = isCloze
     }
 
@@ -93,8 +104,8 @@ export abstract class NoteBase {
      */
     public getDeckName(plugin: AnkiBridgePlugin): string {
         // Use in-note configured deck
-        if (this.deckName) {
-            return this.deckName
+        if (this.config.deck) {
+            return this.config.deck
         }
 
         // Try to resolve based on default deck mappings
@@ -110,7 +121,11 @@ export abstract class NoteBase {
         return plugin.settings.fallbackDeck
     }
 
+    public getTags(plugin: AnkiBridgePlugin): Array<string> {
+        return [plugin.settings.tagInAnki, ...(this.config.tags || [])]
+    }
+
     public getEnabled(): boolean {
-        return this.enabled === undefined || this.enabled
+        return this.config.enabled === undefined || this.config.enabled
     }
 }

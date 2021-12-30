@@ -126,7 +126,7 @@ export class Bridge {
         }
 
         // Check that tags are the same
-        const sourceTags = [...(note.tags || []), this.plugin.settings.tagInAnki]
+        const sourceTags = note.getTags(this.plugin)
         if (!_.isEqual(_.sortBy(sourceTags), _.sortBy(noteInfo.tags))) {
             delta.shouldUpdateTags = true
         }
@@ -183,16 +183,13 @@ export class Bridge {
 
         const deckName = note.getDeckName(this.plugin)
         const modelName = note.getModelName()
-        const tagsToSet = [this.plugin.settings.tagInAnki, ...(note.tags != null ? note.tags : [])]
+        const tagsToSet = note.getTags(this.plugin)
 
         const ankiFields = note.fieldsToAnkiFields(renderedFields)
 
         // Add note
-        const id = await anki.addNote(note, deckName, modelName, ankiFields)
+        const id = await anki.addNote(note, deckName, modelName, ankiFields, tagsToSet)
         note.id = id
-
-        // Set tags
-        await anki.setTags(note, tagsToSet)
 
         // Add media files
         await this.storeMediaFiles(note)
@@ -217,15 +214,15 @@ export class Bridge {
         const anki = this.plugin.anki
 
         // Skip
-        if (note.enabled === false) {
+        if (note.config.enabled === false) {
             return NoteAction.Skipped
         }
 
         // Delete
-        if (note.delete_) {
+        if (note.config.delete_) {
             anki.deleteNote(note)
-            note.delete_ = undefined
-            note.enabled = false
+            note.config.delete_ = undefined
+            note.config.enabled = false
             note.id = undefined
 
             return NoteAction.Deleted
@@ -278,10 +275,7 @@ export class Bridge {
 
         // We must update tags
         if (notePairDelta.shouldUpdateTags) {
-            const tagsToSet = [
-                this.plugin.settings.tagInAnki,
-                ...(note.tags != null ? note.tags : []),
-            ]
+            const tagsToSet = note.getTags(this.plugin)
             await anki.setTags(note, tagsToSet)
         }
 

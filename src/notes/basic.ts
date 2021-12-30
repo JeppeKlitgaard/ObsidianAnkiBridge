@@ -1,18 +1,7 @@
-import { NoteBase } from './base'
+import { Config, NoteBase } from './base'
 import { Media, NoteField, SourceDescriptor } from 'entities/note'
-import yup from 'utils/yup'
 import { Blueprint } from 'blueprints/base'
 
-export const ConfigSchema = yup.object({
-    id: yup.number().nullable().defined().default(null),
-    deck: yup.string().emptyAsUndefined().nullAsUndefined(),
-    tags: yup.array().of(yup.string().emptyAsUndefined().nullAsUndefined()),
-    delete: yup.boolean().nullAsUndefined(),
-    enabled: yup.boolean().nullAsUndefined(),
-    cloze: yup.boolean().nullAsUndefined(),
-})
-
-export type Config = yup.Asserts<typeof ConfigSchema>
 
 export class BasicNote extends NoteBase {
     constructor(
@@ -23,18 +12,12 @@ export class BasicNote extends NoteBase {
         source: SourceDescriptor,
         sourceText: string,
         {
-            deckName,
-            tags,
-            medias,
-            delete_,
-            enabled,
+            config,
+            medias = [],
             isCloze = false,
         }: {
-            deckName?: string
-            tags?: Array<string>
+            config: Config
             medias?: Array<Media>
-            delete_?: boolean
-            enabled?: boolean
             isCloze?: boolean
         },
     ) {
@@ -45,11 +28,8 @@ export class BasicNote extends NoteBase {
             source,
             sourceText,
             {
-                deckName: deckName,
-                tags: tags,
+                config: config,
                 medias: medias,
-                delete_: delete_,
-                enabled: enabled,
                 isCloze: isCloze,
             },
         )
