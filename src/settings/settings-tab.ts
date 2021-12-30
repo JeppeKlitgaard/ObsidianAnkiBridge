@@ -23,6 +23,7 @@ export class SettingsTab extends PluginSettingTab {
         this.addNetworking()
         this.addBlueprints()
         this.addProcessors()
+        this.addProcessorConfig()
         this.addDebugging()
     }
 
@@ -391,6 +392,30 @@ export class SettingsTab extends PluginSettingTab {
                     })
             })
         }
+    }
+
+    addProcessorConfig(): void {
+        this.containerEl.createEl('h2', { text: 'Processor Configuration' })
+
+        new Setting(this.containerEl)
+            .setName('ClozePostprocessor: use marks as clozes')
+            .setDesc('Translates ==something== into a cloze.')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.markToCloze).onChange((newState) => {
+                    this.plugin.settings.markToCloze = newState
+                    this.plugin.saveSettings()
+                })
+            })
+
+        new Setting(this.containerEl)
+            .setName('ClozePostprocessor: use deletes as clozes')
+            .setDesc('Translates ~~something~~ into a cloze.')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.deleteToCloze).onChange((newState) => {
+                    this.plugin.settings.deleteToCloze = newState
+                    this.plugin.saveSettings()
+                })
+            })
     }
 
     addDebugging(): void {
