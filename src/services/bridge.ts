@@ -251,9 +251,6 @@ export class Bridge {
 
         // Note exists on source and on Anki --->
         const notePairDelta = await this.notePairChanges(note, noteInfo, renderedFields)
-        console.log('Delta: ', notePairDelta)
-        console.log(note)
-        console.log(noteInfo)
 
         // Note pair did not change, but we did check
         if (!notePairDelta.shouldUpdate()) {
