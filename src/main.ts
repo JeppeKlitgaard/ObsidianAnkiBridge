@@ -198,7 +198,6 @@ export default class AnkiBridgePlugin extends Plugin {
                     this.printFailedConnection()
                 }
                 return
-
             } else {
                 if (displayOnFailure) {
                     new Notice(
