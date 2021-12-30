@@ -1,10 +1,7 @@
-export interface FileProcessingResult {
-    nonFatalErrors: number
-    notesProcessed: number
-    notesSynced: number
-}
+import { NoteAction } from './note'
 
-export interface SyncResult extends FileProcessingResult {
+export interface SyncResult {
+    noteActions: Array<NoteAction>
     fatalErrorString?: string
     fatalError: boolean
 }

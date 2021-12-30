@@ -5,7 +5,9 @@ import { Anki } from 'services/anki'
 import flashcardsIcon from 'assets/flashcard.svg_content'
 import { Reader } from 'services/reader'
 import { Bridge } from 'services/bridge'
-import { FileProcessingResult, SyncResult } from 'entities/other'
+import { SyncResult } from 'entities/other'
+import { NoteAction } from 'entities/note'
+import _ from 'lodash'
 
 export default class AnkiBridgePlugin extends Plugin {
     public settings: Settings
@@ -177,7 +179,7 @@ export default class AnkiBridgePlugin extends Plugin {
     /**
      * Can raise an error
      */
-    private async syncFileRoutine(file: TFile): Promise<FileProcessingResult> {
+    private async syncFileRoutine(file: TFile): Promise<Array<NoteAction>> {
         const elements = await this.reader.readFile(file)
         const result = await this.bridge.processFileResults(elements)
 
@@ -195,6 +197,8 @@ export default class AnkiBridgePlugin extends Plugin {
                 if (displayOnFailure) {
                     this.printFailedConnection()
                 }
+                return
+
             } else {
                 if (displayOnFailure) {
                     new Notice(
@@ -207,24 +211,41 @@ export default class AnkiBridgePlugin extends Plugin {
 
                 throw result.fatalErrorString
             }
-        } else if (result.nonFatalErrors === 0) {
-            if (displayOnSuccess && result.notesProcessed) {
-                new Notice(
-                    '✔ Synced with Anki\n' +
-                        '\n' +
-                        `Notes processed: ${result.notesProcessed}\n` +
-                        `Notes synced: ${result.notesSynced}`,
-                )
-            }
-        } else {
-            if (displayOnFailure) {
-                new Notice(
-                    '🟡 Synced with Anki\n' +
-                        '\n' +
-                        `Notes failed: ${result.nonFatalErrors}\n` +
-                        `Notes processed: ${result.notesProcessed}\n` +
-                        `Notes synced: ${result.notesSynced}`,
-                )
+        }
+
+        if (result.noteActions.length === 0) {
+            return
+        }
+
+        const wasSuccess = !result.noteActions.includes(NoteAction.NonFatalError)
+        const statusSymbol = wasSuccess ? '✔' : '🟡'
+
+        if (displayOnSuccess || (displayOnFailure && !wasSuccess)) {
+            // Instantiate counts with default values of 0.
+            // Working with enum is tricky, so this is ugly
+            let counts = _.zipObject(
+                Object.keys(NoteAction)
+                    .filter((x) => !isNaN(parseInt(x)))
+                    .map((x) => parseInt(x)),
+                _.times(Object.keys(NoteAction).length / 2, _.constant(0)),
+            ) as Record<NoteAction, number>
+
+            counts = _.merge(counts, _.countBy(result.noteActions))
+
+            if (counts[NoteAction.NonFatalError] === 0) {
+                let msg = `${statusSymbol} Synced with Anki\n\n`
+
+                msg += `Notes processed: ${result.noteActions.length}\n\n`
+
+                for (const [action, count] of Object.entries(counts)) {
+                    const actionStr =
+                        parseInt(action) === NoteAction.NonFatalError
+                            ? 'Errored'
+                            : NoteAction[action]
+                    msg += `Notes ${actionStr.toLowerCase()}: ${count}.\n`
+                }
+
+                new Notice(msg)
             }
         }
     }
@@ -233,9 +254,10 @@ export default class AnkiBridgePlugin extends Plugin {
         const result: Partial<SyncResult> = {}
 
         try {
-            Object.assign(result, await this.syncFileRoutine(file))
+            result.noteActions = await this.syncFileRoutine(file)
             result.fatalError = false
         } catch (e) {
+            result.noteActions = []
             result.fatalError = true
             result.fatalErrorString = e
         }
@@ -274,20 +296,16 @@ export default class AnkiBridgePlugin extends Plugin {
         }
 
         const result: Partial<SyncResult> = {
-            nonFatalErrors: 0,
-            notesProcessed: 0,
-            notesSynced: 0,
+            noteActions: [],
         }
 
         try {
             await Promise.all(
                 this.app.vault.getMarkdownFiles().map(async (file) => {
                     if (!this.shouldIgnoreFile(file)) {
-                        const fileResult = await this.syncFileRoutine(file)
-
-                        result.nonFatalErrors += fileResult.nonFatalErrors
-                        result.notesProcessed += fileResult.notesProcessed
-                        result.notesSynced += fileResult.notesSynced
+                        result.noteActions = result.noteActions.concat(
+                            await this.syncFileRoutine(file),
+                        )
                     }
                 }),
             )

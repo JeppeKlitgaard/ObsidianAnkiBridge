@@ -33,6 +33,15 @@ export class FragmentProcessingResult extends Array<NoteBase | Fragment> {
     }
 }
 
+export enum NoteAction {
+    Created,
+    Deleted,
+    Updated,
+    Skipped,
+    Checked,
+    NonFatalError,
+}
+
 export type MediaType = 'image' | 'video' | 'audio'
 
 export class Media {

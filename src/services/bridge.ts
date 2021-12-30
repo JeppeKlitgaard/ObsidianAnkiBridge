@@ -4,14 +4,13 @@ import { App, Notice } from 'obsidian'
 import { ProcessedFileResult } from './reader'
 import _ from 'lodash'
 import { NotesInfoResponseEntity } from 'entities/network'
-import { FileProcessingResult } from 'entities/other'
 import promiseAllProperties from 'promise-all-properties'
 import { Preprocessor } from 'processors/preprocessors/base'
 import { Postprocessor } from 'processors/postprocessors/base'
 import { getProcessorById } from 'processors'
 import { ProcessorContext } from 'processors/base'
 import { processMarkdownToHtml } from 'processors/html'
-import { Field } from 'entities/note'
+import { Field, NoteAction } from 'entities/note'
 
 interface NotePairDelta {
     shouldUpdate: boolean
@@ -160,12 +159,83 @@ export class Bridge {
         throw e
     }
 
-    public async processFileResults(results: ProcessedFileResult): Promise<FileProcessingResult> {
+    private async processNote(note: NoteBase): Promise<NoteAction> {
+        const anki = this.plugin.anki
+
+        // Skip
+        if (note.enabled === false) {
+            return NoteAction.Skipped
+        }
+
+        // Delete
+        if (note.delete_) {
+            anki.deleteNote(note)
+            note.delete_ = undefined
+            note.enabled = false
+            note.id = undefined
+
+            return NoteAction.Deleted
+        }
+
+        const deckName = note.getDeckName(this.plugin)
+        const modelName = note.modelName || this.plugin.settings.defaultModel
+        const tagsToSet = [this.plugin.settings.tagInAnki, ...(note.tags != null ? note.tags : [])]
+        const renderedFields = await this.renderFields(note)
+
+        // Create if does not exist
+        if (note.id === null) {
+            // We must create note
+            const id = await anki.addNote(note, deckName, modelName, renderedFields)
+            note.id = id
+
+            await anki.setTags(note, tagsToSet)
+
+            return NoteAction.Created
+        }
+
+        // Note has ID --->
+        // Check if note exists on Anki
+        const noteInfo = await anki.noteInfo(note)
+
+        // No note with that ID found. Make it
+        if (_.isEmpty(noteInfo)) {
+            const id = await anki.addNote(note, deckName, modelName, renderedFields)
+            note.id = id
+
+            return NoteAction.Created
+        }
+
+        // Note exists on source and on Anki --->
+        const notePairDelta = await this.notePairChanges(note, noteInfo, renderedFields)
+
+        // Note pair did not change, but we did check
+        if (!notePairDelta.shouldUpdate) {
+            return NoteAction.Checked
+        }
+
+        // Note pair changed
+        // We must update fields
+        if (notePairDelta.shouldUpdateFields) {
+            await anki.updateNoteFields(note, renderedFields)
+        }
+
+        // We must update tags
+        if (notePairDelta.shouldUpdateTags) {
+            await anki.setTags(note, tagsToSet)
+        }
+
+        // We must update deck
+        if (notePairDelta.cardsToUpdate.length) {
+            await anki.changeDeck(notePairDelta.cardsToUpdate, deckName)
+        }
+
+        return NoteAction.Updated
+    }
+
+    public async processFileResults(results: ProcessedFileResult): Promise<Array<NoteAction>> {
         let shouldUpdateSource = false
 
-        let nonFatalErrors = 0
-        let notesProcessed = 0
-        let notesSynced = 0
+        const actions: Array<NoteAction> = []
 
         // Pass over all elements
         for (const element of results.elements) {
@@ -174,101 +244,21 @@ export class Bridge {
                 continue
             }
 
-            notesProcessed++
+            const note = element
 
-            if (element.enabled === false) {
-                continue
-            }
-
-            const deckName = element.getDeckName(this.plugin)
-            const modelName = element.modelName || this.plugin.settings.defaultModel
-            const tagsToSet = [
-                this.plugin.settings.tagInAnki,
-                ...(element.tags != null ? element.tags : []),
-            ]
-            const renderedFields = await this.renderFields(element)
-
+            let action: NoteAction
             try {
-                // If delete is set
-                if (element.delete_) {
-                    this.plugin.anki.deleteNote(element)
-                    element.delete_ = undefined
-                    element.enabled = false
-                    element.id = undefined
-
-                    shouldUpdateSource = true
-
-                    notesSynced++
-                    continue
-                }
-
-                // If note has no id, create note and assign id
-                if (element.id === null) {
-                    // We must create note
-                    const id = await this.plugin.anki.addNote(
-                        element,
-                        deckName,
-                        modelName,
-                        renderedFields,
-                    )
-                    element.id = id
-
-                    await this.plugin.anki.setTags(element, tagsToSet)
-
-                    notesSynced++
-
-                    // Note already has id
-                } else {
-                    const noteInfo = await this.plugin.anki.noteInfo(element)
-
-                    // No note with that ID found. Make it
-                    if (_.isEmpty(noteInfo)) {
-                        const id = await this.plugin.anki.addNote(
-                            element,
-                            deckName,
-                            modelName,
-                            renderedFields,
-                        )
-                        element.id = id
-
-                        notesSynced++
-
-                        // Note pair found
-                    } else {
-                        const notePairDelta = await this.notePairChanges(
-                            element,
-                            noteInfo,
-                            renderedFields,
-                        )
-                        // Note pair changed
-                        if (notePairDelta.shouldUpdate) {
-                            if (notePairDelta.shouldUpdateFields) {
-                                await this.plugin.anki.updateNoteFields(element, renderedFields)
-                            }
-
-                            if (notePairDelta.shouldUpdateTags) {
-                                await this.plugin.anki.setTags(element, tagsToSet)
-                            }
-
-                            if (notePairDelta.cardsToUpdate.length) {
-                                await this.plugin.anki.changeDeck(
-                                    notePairDelta.cardsToUpdate,
-                                    deckName,
-                                )
-                            }
-
-                            notesSynced++
-                        }
-                    }
-                }
+                action = await this.processNote(note)
             } catch (e) {
-                if (!this.handleError(e, element)) {
-                    nonFatalErrors++
-                    continue
+                if (!this.handleError(e, note)) {
+                    action = NoteAction.NonFatalError
                 }
             }
 
-            shouldUpdateSource = shouldUpdateSource || element.shouldUpdateFile()
+            actions.push(action)
+            shouldUpdateSource = shouldUpdateSource || note.shouldUpdateFile()
+
+            this.plugin.debug(`${NoteAction[action]}: ${note.id}`)
         }
 
         // Update file if content has changed
@@ -276,12 +266,6 @@ export class Bridge {
             await this.app.vault.modify(results.sourceFile, results.elements.renderAsText())
         }
 
-        const result: FileProcessingResult = {
-            nonFatalErrors: nonFatalErrors,
-            notesProcessed: notesProcessed,
-            notesSynced: notesSynced,
-        }
-
-        return result
+        return actions
     }
 }
