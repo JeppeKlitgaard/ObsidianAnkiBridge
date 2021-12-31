@@ -1,3 +1,6 @@
+/**
+ * Run using `yarn test` by commenting (1)
+ */
 import { SandwichBlueprint } from 'blueprints/sandwich'
 import { TestingDatabase } from 'test/helpers'
 import * as fs from 'fs'
@@ -12,7 +15,7 @@ beforeAll(async () => {
 
 describe('Render test file', () => {
     it('Rendering 1', async () => {
-        return
+        return // (1)
 
         const rootFragment = tdb.getTestFileAsFragment('sandwich-pure')
         const processResult = bp.processFragment(rootFragment)
