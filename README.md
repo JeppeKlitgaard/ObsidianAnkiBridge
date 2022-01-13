@@ -113,9 +113,9 @@ First install the Obsidian plugin via one of the three methods described below.
 
 **Then install AnkiConnect and configure it as described below.**
 
-### Community Plugins
+### Community Plugins (recommended method)
 
-Install this plugin via the Obsidian Community Plugin interface (**Currently not yet released**)
+Install this plugin via the Obsidian Community Plugin interface
 
 You can activate this plugin within Obsidian by doing the following:
 
