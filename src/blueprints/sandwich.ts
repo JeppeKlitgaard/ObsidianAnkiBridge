@@ -9,7 +9,6 @@ import { showError } from 'utils'
 import { NoteBase, ParseConfig, ParseConfigSchema } from 'notes/base'
 import sandwichGrammar from 'grammars/CardSandwich.pegjs'
 
-
 export class SandwichBlueprint extends Blueprint {
     static id = 'Sandwich'
     static displayName = 'Sandwich'
@@ -75,20 +74,12 @@ export class SandwichBlueprint extends Blueprint {
                     continue
                 }
 
-                let id: number
-                ({ id, ...config } = config)
+                const id = config.id
+                delete config.id
 
-                const note = new BasicNote(
-                    SandwichBlueprint,
-                    id,
-                    front,
-                    back,
-                    source,
-                    sourceText,
-                    {
-                        config: config
-                    },
-                )
+                const note = new BasicNote(SandwichBlueprint, id, front, back, source, sourceText, {
+                    config: config,
+                })
 
                 // Make new fragment
                 elements.push(newFragment)
