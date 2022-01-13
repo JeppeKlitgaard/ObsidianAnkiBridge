@@ -3,7 +3,6 @@
     "text": "---\ncreated: 2021-10-26T10:55\nmodified: 2021-10-26T10:55\n\ntags:\n- physics/optics\n\naliases:\n- Jones Matrices\n---\n\n# Jones Matrices\n \nJones Matrices describe the effect of a [[Linear Optical Element]] on a [[40 💫 Physics/Optics/Polarisation|polarised]] [[Electromagnetic Wave|Wave]].\n\n```ad-warning\nOnly works on [[40 💫 Physics/Optics/Polarisation|polarised]] light\n``` \n\n",
     "sourceFile": {
       "vault": {},
-      "path": "C:/Users/jeppe/Documents/TestVault/.obsidian/plugins/ObsidianAnkiBridge/src/test/data/sandwich-pure.md",
       "name": "sandwich-pure",
       "parent": {},
       "basename": "sandwich-pure.md",
@@ -27,7 +26,6 @@
       "to": 33,
       "file": {
         "vault": {},
-        "path": "C:/Users/jeppe/Documents/TestVault/.obsidian/plugins/ObsidianAnkiBridge/src/test/data/sandwich-pure.md",
         "name": "sandwich-pure",
         "parent": {},
         "basename": "sandwich-pure.md",
@@ -52,7 +50,6 @@
     "text": "\n#todo Common Jones Matrices\n",
     "sourceFile": {
       "vault": {},
-      "path": "C:/Users/jeppe/Documents/TestVault/.obsidian/plugins/ObsidianAnkiBridge/src/test/data/sandwich-pure.md",
       "name": "sandwich-pure",
       "parent": {},
       "basename": "sandwich-pure.md",
