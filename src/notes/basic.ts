@@ -2,7 +2,6 @@ import { Config, NoteBase } from './base'
 import { Media, NoteField, SourceDescriptor } from 'entities/note'
 import { Blueprint } from 'blueprints/base'
 
-
 export class BasicNote extends NoteBase {
     constructor(
         blueprint: typeof Blueprint,

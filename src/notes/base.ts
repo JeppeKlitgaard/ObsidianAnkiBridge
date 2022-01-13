@@ -33,7 +33,6 @@ export interface ParseConfig extends Config {
     id?: number
 }
 
-
 export abstract class NoteBase {
     public config: Config
     public medias: Array<Media>

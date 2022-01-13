@@ -1,3 +1,4 @@
+import { LATEST_MIGRATION_VERSION } from 'consts'
 import { DefaultDeckMap } from 'entities/other'
 import _ from 'lodash'
 import { POSTPROCESSORS } from 'processors/postprocessors'
@@ -5,6 +6,8 @@ import { PREPROCESSORS } from 'processors/preprocessors'
 import { Preprocessor } from 'processors/preprocessors/base'
 
 export interface ISettings {
+    currentMigrationVersion: number
+
     tagInAnki: string
     foldersToIgnore: Array<string>
 
@@ -72,6 +75,8 @@ export class Settings {
 }
 
 export const DEFAULT_SETTINGS: ISettings = {
+    currentMigrationVersion: LATEST_MIGRATION_VERSION,
+
     tagInAnki: 'obsidian',
     foldersToIgnore: [],
 
