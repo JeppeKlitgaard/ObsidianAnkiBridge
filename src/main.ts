@@ -1,4 +1,11 @@
-import { addIcon, Notice, Plugin, TFile } from 'obsidian'
+import {
+    addIcon,
+    MarkdownPostProcessor,
+    MarkdownPreviewRenderer,
+    Notice,
+    Plugin,
+    TFile,
+} from 'obsidian'
 import { DEFAULT_SETTINGS, Settings } from 'settings/settings'
 import { SettingsTab } from 'settings/settings-tab'
 import { Anki } from 'services/anki'
@@ -7,6 +14,7 @@ import { Reader } from 'services/reader'
 import { Bridge } from 'services/bridge'
 import { SyncResult } from 'entities/other'
 import { NoteAction } from 'entities/note'
+import { CodeBlockBlueprint } from 'blueprints/base'
 import _ from 'lodash'
 
 export default class AnkiBridgePlugin extends Plugin {
@@ -20,6 +28,8 @@ export default class AnkiBridgePlugin extends Plugin {
     public connectionStatus = false
 
     private periodicPingIntervalId: number
+
+    private codeblockPostprocessor: MarkdownPostProcessor
 
     async onload() {
         console.log('Loading ' + this.manifest.name)
@@ -71,6 +81,7 @@ export default class AnkiBridgePlugin extends Plugin {
             await this.syncActiveFile()
         })
 
+        this.setupMarkdownPostprocessors()
         this.setupPeriodicPing()
 
         this.addSettingTab(new SettingsTab(this.app, this))
@@ -81,9 +92,10 @@ export default class AnkiBridgePlugin extends Plugin {
     async onunload() {
         console.log('Unloading ' + this.manifest.name)
 
-        await this.saveData(this.settings)
-
+        this.teardownMarkdownPostprocessors()
         this.teardownPeriodicPing()
+
+        await this.saveData(this.settings)
     }
 
     async initiateServices(): Promise<void> {
@@ -158,6 +170,17 @@ export default class AnkiBridgePlugin extends Plugin {
         if (this.periodicPingIntervalId !== undefined) {
             window.clearInterval(this.periodicPingIntervalId)
         }
+    }
+
+    private setupMarkdownPostprocessors(): void {
+        this.codeblockPostprocessor = this.registerMarkdownCodeBlockProcessor(
+            CodeBlockBlueprint.codeBlockLanguage,
+            CodeBlockBlueprint.codeBlockProcessor,
+        )
+    }
+
+    private teardownMarkdownPostprocessors(): void {
+        MarkdownPreviewRenderer.unregisterPostProcessor(this.codeblockPostprocessor)
     }
 
     private shouldIgnoreFile(file: TFile): boolean {

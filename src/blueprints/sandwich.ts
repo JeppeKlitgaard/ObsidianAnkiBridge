@@ -1,4 +1,4 @@
-import { Blueprint } from 'blueprints/base'
+import { FullNoteBlueprint } from 'blueprints/base'
 import { GRAMMAR_LIBRARIES } from 'consts'
 import { makeGrammar } from 'utils/grammar'
 import { generate } from 'peggy'
@@ -9,7 +9,7 @@ import { showError } from 'utils'
 import { NoteBase, ParseConfig, ParseConfigSchema } from 'notes/base'
 import sandwichGrammar from 'grammars/CardSandwich.pegjs'
 
-export class SandwichBlueprint extends Blueprint {
+export class SandwichBlueprint extends FullNoteBlueprint {
     static id = 'Sandwich'
     static displayName = 'Sandwich'
     static weight = 50
