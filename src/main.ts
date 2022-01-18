@@ -234,6 +234,9 @@ export default class AnkiBridgePlugin extends Plugin {
             if (counts[NoteAction.NonFatalError] === 0) {
                 let msg = `${statusSymbol} Synced with Anki\n\n`
 
+                if (result.totalFiles !== undefined) {
+                    msg += `Files processed: ${result.totalFiles}\n`
+                }
                 msg += `Notes processed: ${result.noteActions.length}\n\n`
 
                 for (const [action, count] of Object.entries(counts)) {
@@ -287,7 +290,13 @@ export default class AnkiBridgePlugin extends Plugin {
     }
 
     private async syncAllFiles(): Promise<void> {
-        new Notice('Syncing all files with Anki...')
+        const INITIAL_LINE = 'Syncing all files with Anki...'
+        let syncCounter = 0
+
+        const notice = new Notice(INITIAL_LINE, 0)
+
+        const files = this.app.vault.getMarkdownFiles()
+        notice.setMessage(INITIAL_LINE + '\n\n' + `${syncCounter}/${files.length}`)
 
         if (!(await this.pingAnki())) {
             this.printFailedConnection()
@@ -296,14 +305,17 @@ export default class AnkiBridgePlugin extends Plugin {
 
         const result: Partial<SyncResult> = {
             noteActions: [],
+            totalFiles: files.length,
         }
 
         try {
             await Promise.all(
                 this.app.vault.getMarkdownFiles().map(async (file) => {
                     if (!this.shouldIgnoreFile(file)) {
-                        result.noteActions!.push(... await this.syncFileRoutine(file))
+                        result.noteActions!.push(...(await this.syncFileRoutine(file)))
                     }
+                    syncCounter++
+                    notice.setMessage(INITIAL_LINE + '\n\n' + `${syncCounter}/${files.length}`)
                 }),
             )
 
@@ -313,6 +325,7 @@ export default class AnkiBridgePlugin extends Plugin {
             result.fatalErrorString = e
         }
 
+        notice.hide()
         this.handleSyncResult(result as SyncResult)
     }
 }
