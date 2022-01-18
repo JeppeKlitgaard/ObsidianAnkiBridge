@@ -19,6 +19,14 @@ AnkiID = '%% ID: ' id:Integer ' %%' {return id}
 MiscChar = !Newline c:. {return c}
 MiscLine = c:($($MiscChar+ Newline?) / $MiscChar + / $(Newline)) {return {"type": "line", "text": c}}
 
+AnkiConfigCodeBlockStart = '```anki-config'
+AnkiConfigCodeBlockEnd = '```'
+AnkiConfigCodeBlock =
+    AnkiConfigCodeBlockStart _* Newline
+    content:(!(AnkiConfigCodeBlockEnd _* Newline) line:MiscLine {return line})*
+    AnkiConfigCodeBlockEnd _* Newline
+    { return linesToStr(content) }
+
 AnkiCodeBlockStart = '```anki'
 AnkiCodeBlockEnd = '```'
 AnkiCodeBlock =

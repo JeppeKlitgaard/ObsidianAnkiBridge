@@ -2,7 +2,7 @@ start = (note / MiscLine)*
 
 note =
     AnkiStart _* Newline
-    config:AnkiCodeBlock?
+    config:AnkiConfigCodeBlock?
     front:(!(AnkiMiddle _* Newline) line:MiscLine {return line})*
     AnkiMiddle _* Newline
     back:(!(AnkiEnd _* Newline?) line:MiscLine {return line})*

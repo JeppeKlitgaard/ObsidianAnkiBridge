@@ -103,7 +103,7 @@ export class SandwichBlueprint extends Blueprint {
         let str = ''
         str += '#anki/start\n'
 
-        str += '```anki\n'
+        str += '```anki-config\n'
         str += dump({
             id: note.id,
             deck: note.config.deck,

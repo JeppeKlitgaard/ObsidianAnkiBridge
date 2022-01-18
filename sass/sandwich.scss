@@ -1,0 +1,11 @@
+// For the Sandwich type card
+
+/* Hide Anki tags */
+.markdown-preview-view a.tag[href^="#anki"] {
+    display: none;
+}
+
+/* Hide Anki configurations */
+.markdown-preview-view div>pre.language-anki-config {
+    display: none;
+}
