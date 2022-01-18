@@ -47,6 +47,7 @@ export abstract class Blueprint {
         await this.setupParser()
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     public async teardown(): Promise<void> {}
 
     public renderAsText(note: NoteBase): string {

@@ -67,7 +67,6 @@ export abstract class BasicCodeBlockBlueprint extends CodeBlockBlueprint {
 
         try {
             const result = this.codeblockParser.parse(source)
-            console.log('RESULT', result)
 
             const config = await ParseConfig.fromResult(result)
 
