@@ -302,9 +302,7 @@ export default class AnkiBridgePlugin extends Plugin {
             await Promise.all(
                 this.app.vault.getMarkdownFiles().map(async (file) => {
                     if (!this.shouldIgnoreFile(file)) {
-                        result.noteActions = result.noteActions!.concat(
-                            await this.syncFileRoutine(file),
-                        )
+                        result.noteActions!.push(... await this.syncFileRoutine(file))
                     }
                 }),
             )
