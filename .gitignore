@@ -16,6 +16,7 @@ main.js
 *.js.map
 data.json
 rendered_test_file.json
+styles.css
 
 # Visual Studio Code
 .vscode
