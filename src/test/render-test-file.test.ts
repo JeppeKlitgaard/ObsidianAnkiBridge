@@ -18,7 +18,7 @@ describe('Render test file', () => {
         return // (1)
 
         const rootFragment = tdb.getTestFileAsFragment('sandwich-pure')
-        const processResult = bp.processFragment(rootFragment)
+        const processResult = await bp.processFragment(rootFragment)
 
         const objStr = JSON.stringify(processResult, null, 2)
         fs.writeFileSync('rendered_test_file.json', objStr)

@@ -17,7 +17,7 @@ describe('Sandwich Blueprint', () => {
         const rootFragment = tdb.getTestFileAsFragment(target)
         const rootObject = tdb.getTestObject(target)
 
-        const processResult = bp.processFragment(rootFragment)
+        const processResult = await bp.processFragment(rootFragment)
 
         expect(processResult.renderAsText()).toBe(rootContent)
         expect(processResult).toMatchObject(rootObject)

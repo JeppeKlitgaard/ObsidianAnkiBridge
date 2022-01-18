@@ -8,6 +8,7 @@ import {
     NoteFields,
     SourceDescriptor,
 } from 'entities/note'
+import { load } from 'js-yaml'
 import AnkiBridgePlugin from 'main'
 import { getDefaultDeckForFolder } from 'utils/file'
 import yup from 'utils/yup'
@@ -31,6 +32,16 @@ export interface Config {
 
 export interface ParseConfig extends Config {
     id?: number
+}
+export class ParseConfig {
+    public static async fromResult(result: Record<string, any>): Promise<ParseConfig> {
+        const configStr = result['config']
+        const configObj: ParseConfig = load(configStr) || {}
+
+        const validatedConfig = (await ParseConfigSchema.validate(configObj)) as ParseConfig
+
+        return validatedConfig
+    }
 }
 
 export abstract class NoteBase {

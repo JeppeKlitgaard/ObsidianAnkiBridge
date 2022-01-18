@@ -57,7 +57,7 @@ export class Reader {
                     continue
                 }
 
-                elements.push(...blueprint.processFragment(element))
+                elements.push(...(await blueprint.processFragment(element)))
             }
         }
 

@@ -1,15 +1,15 @@
-import { FullNoteBlueprint } from 'blueprints/base'
+import { Blueprint } from 'blueprints/base'
 import { GRAMMAR_LIBRARIES } from 'consts'
 import { makeGrammar } from 'utils/grammar'
 import { generate } from 'peggy'
 import { BasicNote } from 'notes/basic'
 import { SourceDescriptor, Fragment, FragmentProcessingResult, NoteField } from 'entities/note'
-import { dump, load } from 'js-yaml'
+import { dump } from 'js-yaml'
 import { showError } from 'utils'
-import { NoteBase, ParseConfig, ParseConfigSchema } from 'notes/base'
+import { NoteBase, ParseConfig } from 'notes/base'
 import sandwichGrammar from 'grammars/CardSandwich.pegjs'
 
-export class SandwichBlueprint extends FullNoteBlueprint {
+export class SandwichBlueprint extends Blueprint {
     static id = 'Sandwich'
     static displayName = 'Sandwich'
     static weight = 50
@@ -20,7 +20,7 @@ export class SandwichBlueprint extends FullNoteBlueprint {
         this.parser = generate(grammar)
     }
 
-    public processFragment(fragment: Fragment): FragmentProcessingResult {
+    public async processFragment(fragment: Fragment): Promise<FragmentProcessingResult> {
         const elements = new FragmentProcessingResult()
 
         const results: Array<Record<string, any>> = this.parser.parse(fragment.text)
@@ -40,7 +40,7 @@ export class SandwichBlueprint extends FullNoteBlueprint {
                 const to: number = result['location']['end']['line'] + fragment.sourceOffset
                 const front: string = result['front']
                 const back: string = result['back']
-                let config: ParseConfig = load(result['config']) || {}
+                let config: ParseConfig
 
                 const source: SourceDescriptor = { from: from, to: to, file: fragment.sourceFile }
                 const sourceText =
@@ -51,7 +51,7 @@ export class SandwichBlueprint extends FullNoteBlueprint {
 
                 // Validate configuration
                 try {
-                    config = ParseConfigSchema.validateSync(config) as ParseConfig
+                    config = await ParseConfig.fromResult(result)
                 } catch (e) {
                     for (const error of e.errors) {
                         console.warn(error)
