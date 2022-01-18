@@ -7,12 +7,27 @@ assignees: ''
 
 ---
 
-**NOTE: Do you have the last version of the plugin? If not that's probably the problem**
+## Sanity checks
 
-**Describe the bug**
+- [ ] I am using the latest version of the plugin
+- [ ] I am using the latest version of Obsidian
+- [ ] I have read the README
+
+## Diagnositics
+
+| Component   | Version |
+| ----------- | ------- |
+| Obsidian    | ....... |
+| AnkiBridge  | ....... |
+| Anki        | ....... |
+| AnkiConnect | ....... |
+
+## Description
+
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+### Reproduce
+
 - Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
@@ -24,12 +39,6 @@ A clear and concise description of what you expected to happen.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
-
-**Markdown used**
-```md
-# Question #card
-Answer
-```
 
 **Additional context**
 Add any other context about the problem here.
