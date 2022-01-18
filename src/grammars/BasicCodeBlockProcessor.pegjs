@@ -12,7 +12,6 @@ note =
 
     back:(line: MiscLine {return line})*
     {
-        console.log(back)
         return {
             "type": "note",
             "config": config ? linesToStr(config) : null,
