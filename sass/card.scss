@@ -9,128 +9,140 @@ div.ankibridge-card {
     box-shadow      : 0 0.2rem 0.5rem var(--background-modifier-box-shadow);
     position        : relative;
 
+    margin: 15px 0;
+
     &:hover {
-        div.ankibridge-card-config {
-            transform: translateX(0%);
-            opacity  : 1;
+        div.ankibridge-card-container {
+            div.ankibridge-card-config {
+                transform: translateX(0%);
+                opacity  : 1;
+            }
         }
     }
 
-    // Config
-    div.ankibridge-card-config {
-        padding: 0.4rem 1rem;
-        z-index: 999999;
+    &.error {
+        background-color: var(--background-modifier-error);
+    }
 
-        top     : calc(0% + 1.5rem);
-        right   : calc(0% + 1.5rem);
-        position: absolute;
+    div.ankibridge-card-container {
+        margin: 20px 25px;
 
-        background-color: var(--interactive-accent);
-        border-radius   : $border-radius;
+        // Config
+        div.ankibridge-card-config {
+            padding: 0.4rem 1rem;
+            z-index: 999999;
 
-        transition: transform 0.2s ease-out, opacity 0.2s ease-in;
-        transform: translateX(100%);
-        opacity  : 0;
+            top     : calc(0% + 1.5rem);
+            right   : calc(0% + 1.5rem);
+            position: absolute;
 
+            background-color: var(--interactive-accent);
+            border-radius   : $border-radius;
 
-        &::before {
-            content    : "Card configuration";
-            font-weight: bold;
-            font-size  : 18px;
-
-        }
-
-        span.ankibridge-card-config-entry {
-            display            : block;
-            font-weight        : normal;
-            font-size          : 15px;
-
-            font-family : var(--font-monospace);
-            margin-top  : 0.1rem;
-            margin-right: 0px;
+            transition: transform 0.2s ease-out, opacity 0.2s ease-in;
+            transform : translateX(100%);
+            opacity   : 0;
 
             &::before {
-                font-family  : var(--default-font);
-                font-weight  : bold;
-                padding-right: 0.3rem;
+                content    : "Card configuration";
+                font-weight: bold;
+                font-size  : 18px;
 
             }
 
-            &:first-child {
-                margin-top: 0.5rem;
-            }
+            span.ankibridge-card-config-entry {
+                display    : block;
+                font-weight: normal;
+                font-size  : 15px;
 
-            // Non-boolean properties
-            &[data-type="id"] {
+                font-family : var(--font-monospace);
+                margin-top  : 0.1rem;
+                margin-right: 0px;
+
                 &::before {
-                    content: "ID:";
-                }
-            }
+                    font-family  : var(--default-font);
+                    font-weight  : bold;
+                    padding-right: 0.3rem;
 
-            &[data-type="deck"] {
-                &::before {
-                    content: "Deck:";
-                }
-            }
-
-            &[data-type="tags"] {
-                &::before {
-                    content: "Tags:";
-                }
-            }
-
-            // Boolean properties
-            &[data-type="cloze"],
-            &[data-type="enabled"],
-            &[data-type="delete"] {
-                font-size : 0;
-                visibility: hidden;
-
-                &::before,
-                &::after {
-                    font-size : 15px;
-                    visibility: visible;
                 }
 
-                &[data-value="false"]::after {
-                    content: "❌";
+                &:first-child {
+                    margin-top: 0.5rem;
                 }
 
-                &[data-value="true"]::after {
-                    content: "✔";
+                // Non-boolean properties
+                &[data-type="id"] {
+                    &::before {
+                        content: "ID:";
+                    }
+                }
+
+                &[data-type="deck"] {
+                    &::before {
+                        content: "Deck:";
+                    }
+                }
+
+                &[data-type="tags"] {
+                    &::before {
+                        content: "Tags:";
+                    }
+                }
+
+                // Boolean properties
+                &[data-type="cloze"],
+                &[data-type="enabled"],
+                &[data-type="delete"] {
+                    font-size : 0;
+                    visibility: hidden;
+
+                    &::before,
+                    &::after {
+                        font-size : 15px;
+                        visibility: visible;
+                    }
+
+                    &[data-value="false"]::after {
+                        content: "❌";
+                    }
+
+                    &[data-value="true"]::after {
+                        content: "✔";
+                    }
+                }
+
+                &[data-type="cloze"]::before {
+                    content: "Cloze";
+                }
+
+                &[data-type="enabled"]::before {
+                    content: "Enabled:";
+                }
+
+
+                &[data-type="delete"]::before {
+                    content: "Delete:";
                 }
             }
+        }
 
-            &[data-type="cloze"]::before {
-                content: "Cloze";
+        div.ankibridge-card-fields {
+            // margin: 10px 15px;
+
+            // Front
+            div.ankibridge-card-front {}
+
+            // Separator
+            div.ankibridge-card-separator {
+                height       : 0.25rem;
+                border-radius: 0.15rem;
+
+                background-color: var(--background-modifier-border);
             }
 
-            &[data-type="enabled"]::before {
-                content: "Enabled:";
-            }
-
-
-            &[data-type="delete"]::before {
-                content: "Delete:";
-            }
+            // Back
+            div.ankibridge-card-back {}
         }
     }
 
-    div.ankibridge-card-fields {
-        margin: 10px 15px;
-
-        // Front
-        div.ankibridge-card-front {}
-
-        // Separator
-        div.ankibridge-card-separator {
-            height       : 0.25rem;
-            border-radius: 0.15rem;
-
-            background-color: var(--background-modifier-border);
-        }
-
-        // Back
-        div.ankibridge-card-back {}
-    }
 }

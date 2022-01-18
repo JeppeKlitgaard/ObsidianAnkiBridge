@@ -1,10 +1,12 @@
-start =
+start = (note / MiscLine)*
+
+note =
     config:(
         config:(!Config line:MiscLine {return line})*
         Config
         { return config }
     )?
-    front:(!FrontBack line:MiscLine {return line})*
+    front:(!FrontBack line:MiscLine {return line})+
     back:(
         FrontBack
         back:MiscLine*
