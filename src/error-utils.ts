@@ -1,7 +1,7 @@
 import { AnkiBridgeError } from 'error'
 import { logError } from 'log'
 
-export async function errorWrapper<T>(fn: () => Promise<T>, msg: string): Promise<T> {
+export async function errorWrapper<T>(fn: () => Promise<T>, msg: string): Promise<T | null> {
     try {
         return await fn()
     } catch (e) {
@@ -14,7 +14,7 @@ export async function errorWrapper<T>(fn: () => Promise<T>, msg: string): Promis
     }
 }
 
-export function errorWrapperSync<T>(fn: () => T, msg: string): T {
+export function errorWrapperSync<T>(fn: () => T, msg: string): T | null {
     try {
         return fn()
     } catch (e) {

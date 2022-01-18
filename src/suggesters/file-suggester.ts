@@ -21,7 +21,7 @@ export class FileSuggest extends TextInputSuggest<TFile> {
 
     getSuggestions(input_str: string): TFile[] {
         const all_files = errorWrapperSync(
-            () => getTFilesFromFolder(this.app, this.folder.path),
+            () => getTFilesFromFolder(this.app, this.folder!.path),
             'Folder does not exist!',
         )
         if (!all_files) {

@@ -1,4 +1,4 @@
-import { MarkdownRenderer, Notice, Vault } from 'obsidian'
+import { Component, MarkdownRenderer, Notice, Vault } from 'obsidian'
 
 export function arraysEqual(a: string[], b: string[]) {
     if (a === b) return true
@@ -73,11 +73,11 @@ interface RenderedLink {
 
 export function markdownLinkToTextAndHref(vault: Vault, markdownLink: string): RenderedLink {
     const el = createEl('div')
-    MarkdownRenderer.renderMarkdown(markdownLink, el, '', null)
-    const anchor = el.firstElementChild.firstElementChild
+    MarkdownRenderer.renderMarkdown(markdownLink, el, '', {} as Component)
+    const anchor = el.firstElementChild!.firstElementChild!
 
-    const linkText = anchor.textContent
-    const linkAddr = anchor.getAttribute('href')
+    const linkText = anchor.textContent ?? ""
+    const linkAddr = anchor.getAttribute('href')!
 
     const uri = renderObsidianURIOpen(vault, linkAddr)
 

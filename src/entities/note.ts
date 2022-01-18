@@ -12,7 +12,7 @@ export enum NoteField {
     Frontlike,
     Backlike,
 }
-export type NoteFields = Record<NoteField, string>
+export type NoteFields = Record<NoteField, string | null>
 
 export type ModelName = 'Basic' | 'Cloze'
 

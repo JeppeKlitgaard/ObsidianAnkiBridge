@@ -12,17 +12,23 @@ export class MathPreprocessor extends Preprocessor {
     static weight = 20
     static defaultConfigState = true
 
-    public async preprocess(note: NoteBase, text: string, ctx: ProcessorContext): Promise<string> {
-        const mathBlockRegex = /\$\$(.*?)\$\$/gis
-        text = text.replace(mathBlockRegex, (match, group1) => {
-            return String.raw`\\(` + escapeMarkdown(group1) + String.raw` \\)`
-        })
+    public async preprocess(
+        note: NoteBase,
+        strField: string | null,
+        ctx: ProcessorContext,
+    ): Promise<string | null> {
+        if (strField !== null) {
+            const mathBlockRegex = /\$\$(.*?)\$\$/gis
+            strField = strField.replace(mathBlockRegex, (match, group1) => {
+                return String.raw`\\(` + escapeMarkdown(group1) + String.raw` \\)`
+            })
 
-        const mathInlineRegex = /\$(.*?)\$/gi
-        text = text.replace(mathInlineRegex, (match, group1) => {
-            return String.raw`\\(` + escapeMarkdown(group1) + String.raw` \\)`
-        })
+            const mathInlineRegex = /\$(.*?)\$/gi
+            strField = strField.replace(mathInlineRegex, (match, group1) => {
+                return String.raw`\\(` + escapeMarkdown(group1) + String.raw` \\)`
+            })
+        }
 
-        return text
+        return strField
     }
 }

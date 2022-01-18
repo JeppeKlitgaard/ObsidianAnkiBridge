@@ -56,7 +56,7 @@ export function getTFilesFromFolder(app: App, folderStr: string): Array<TFile> {
     return files
 }
 
-export function getDefaultDeckForFolder(folder: TFolder, maps: Array<DefaultDeckMap>): string {
+export function getDefaultDeckForFolder(folder: TFolder, maps: Array<DefaultDeckMap>): string | undefined {
     do {
         const match = maps.find((e) => e.folder == folder.path)
 

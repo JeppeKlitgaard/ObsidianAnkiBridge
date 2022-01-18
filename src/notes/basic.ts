@@ -6,8 +6,8 @@ export class BasicNote extends NoteBase {
     constructor(
         blueprint: Blueprint,
         id: number | null,
-        frontlike: string,
-        backlike: string,
+        frontlike: string | null,
+        backlike: string | null,
         source: SourceDescriptor,
         sourceText: string,
         {

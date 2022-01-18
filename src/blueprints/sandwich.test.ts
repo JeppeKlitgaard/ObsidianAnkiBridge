@@ -1,3 +1,5 @@
+import AnkiBridgePlugin from 'main'
+import { App } from 'obsidian'
 import { TestingDatabase } from 'test/helpers'
 import { SandwichBlueprint } from './sandwich'
 
@@ -5,7 +7,7 @@ const tdb = new TestingDatabase()
 let bp: SandwichBlueprint
 
 beforeAll(async () => {
-    bp = new SandwichBlueprint(undefined, undefined)
+    bp = new SandwichBlueprint({} as App, {} as AnkiBridgePlugin)
     await bp.setup()
 })
 

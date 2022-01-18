@@ -7,9 +7,9 @@ export abstract class DebugPreprocessor extends Preprocessor {
 
     public async preprocess(
         note: NoteBase,
-        strField: string,
+        strField: string | null,
         ctx: ProcessorContext,
-    ): Promise<string> {
+    ): Promise<string | null> {
         console.log('Note: ', note)
         console.log('StrField: ', strField)
         console.log('Ctx: ', ctx)

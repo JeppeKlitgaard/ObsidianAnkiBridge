@@ -24,7 +24,7 @@ export class LinkPostprocessor extends Postprocessor {
 
             link.setAttribute(
                 'href',
-                renderObsidianURIOpen(this.app.vault, link.getAttribute('href')),
+                renderObsidianURIOpen(this.app.vault, link.getAttribute('href') || undefined),
             )
         })
     }

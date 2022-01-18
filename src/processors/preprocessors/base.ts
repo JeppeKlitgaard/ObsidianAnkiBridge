@@ -4,7 +4,7 @@ import { Processor, ProcessorContext } from 'processors/base'
 export abstract class Preprocessor extends Processor {
     public abstract preprocess(
         note: NoteBase,
-        strField: string,
+        strField: string | null,
         ctx: ProcessorContext,
-    ): Promise<string>
+    ): Promise<string | null>
 }

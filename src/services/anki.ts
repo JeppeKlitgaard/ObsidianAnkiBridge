@@ -16,7 +16,7 @@ import {
     UpdateNoteFieldsRequest,
     UpdateNoteFieldsResponse,
 } from 'entities/network'
-import { NoteBase } from 'notes/base'
+import { NoteBase, NoteWithID } from 'notes/base'
 import _ from 'lodash'
 import { App } from 'obsidian'
 import AnkiBridgePlugin from 'main'
@@ -73,7 +73,7 @@ export class Anki {
         return await this.invoke('addNote', Anki.version, params)
     }
 
-    public async deleteNote(note: NoteBase): Promise<DeleteNoteResponse> {
+    public async deleteNote(note: NoteWithID): Promise<DeleteNoteResponse> {
         const params: DeleteNotesRequest = {
             notes: [note.id],
         }
@@ -82,7 +82,7 @@ export class Anki {
     }
 
     public async updateNoteFields(
-        note: NoteBase,
+        note: NoteWithID,
         fields: AnkiFields,
     ): Promise<UpdateNoteFieldsResponse> {
         const params: UpdateNoteFieldsRequest = {
@@ -114,7 +114,7 @@ export class Anki {
         return await this.invoke('storeMediaFile', Anki.version, params)
     }
 
-    public async noteInfo(note: NoteBase): Promise<NotesInfoResponseEntity> {
+    public async noteInfo(note: NoteWithID): Promise<NotesInfoResponseEntity> {
         const params: NotesInfoRequest = {
             notes: [note.id],
         }
@@ -123,7 +123,7 @@ export class Anki {
         return response[0]
     }
 
-    public async addTags(note: NoteBase, tags: Array<string>): Promise<AddTagsRequest> {
+    public async addTags(note: NoteWithID, tags: Array<string>): Promise<AddTagsRequest> {
         const params: AddTagsRequest = {
             notes: [note.id],
             tags: tags.join(' '),
@@ -132,7 +132,7 @@ export class Anki {
         return await this.invoke('addTags', Anki.version, params)
     }
 
-    public async removeTags(note: NoteBase, tags: Array<string>): Promise<RemoveTagsRequest> {
+    public async removeTags(note: NoteWithID, tags: Array<string>): Promise<RemoveTagsRequest> {
         const params: RemoveTagsRequest = {
             notes: [note.id],
             tags: tags.join(' '),
@@ -146,7 +146,7 @@ export class Anki {
     }
     // Convenience methods
 
-    public async setTags(note: NoteBase, tags: Array<string>): Promise<void> {
+    public async setTags(note: NoteWithID, tags: Array<string>): Promise<void> {
         const alreadySetTags: Array<string> = (await this.noteInfo(note)).tags
         const tagsToAdd = _.difference(tags, alreadySetTags)
         const tagsToRemove = _.difference(alreadySetTags, tags)

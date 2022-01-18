@@ -11,7 +11,7 @@ export function arrayBufferToBase64(buffer: ArrayBuffer): Promise<string> {
         const reader = new FileReader()
 
         reader.onload = (event) => {
-            resolve(event.target.result as string)
+            resolve(event.target!.result as string)
         }
         reader.onerror = reject
 

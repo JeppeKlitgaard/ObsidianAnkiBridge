@@ -25,10 +25,14 @@ export class MediaPostprocessor extends Postprocessor {
             embeds.map(async (embed) => {
                 const alt = embed.innerHTML
 
-                const srcpath = embed.getAttribute('src')
+                const srcpath = embed.getAttribute('src')!
                 const linkpath = getLinkpath(srcpath) // This might be dodgy?
 
                 const file = this.app.metadataCache.getFirstLinkpathDest(linkpath, srcpath)
+                if (file === null) {
+                    throw new Error("Could not find embed")
+                }
+
                 const resourcepath = this.app.vault.adapter.getResourcePath(file.path)
 
                 if (!(file instanceof TFile)) {
@@ -40,7 +44,12 @@ export class MediaPostprocessor extends Postprocessor {
                 const path = getFullPath(this.app.vault.adapter, file.path)
                 const data = await this.app.vault.readBinary(file)
 
-                const fileType = await fileTypeFromBuffer(data)
+                const fileType = (await fileTypeFromBuffer(data) ||
+                    {
+                        mime: "application/octet-stream",
+                        ext: "",
+                    }) as FileTypeResult
+
                 let mediaType = fileTypeToMediaType(fileType)
 
                 if (mediaType === 'video') {

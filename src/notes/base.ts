@@ -77,12 +77,12 @@ export abstract class NoteBase {
     public fieldsToAnkiFields(fields: NoteFields): AnkiFields {
         if (this.isCloze) {
             return {
-                Text: fields[NoteField.Frontlike],
-                'Back Extra': fields[NoteField.Backlike],
+                Text: fields[NoteField.Frontlike] || '',
+                'Back Extra': fields[NoteField.Backlike] || '',
             }
         }
 
-        return { Front: fields[NoteField.Frontlike], Back: fields[NoteField.Backlike] }
+        return { Front: fields[NoteField.Frontlike] || '', Back: fields[NoteField.Backlike] || '' }
     }
 
     public normaliseNoteInfoFields(noteInfo: NotesInfoResponseEntity): NoteFields {
@@ -138,4 +138,20 @@ export abstract class NoteBase {
     public getEnabled(): boolean {
         return this.config.enabled === undefined || this.config.enabled
     }
+}
+
+export interface NoteWithID extends NoteBase {
+    id: number
+}
+
+export function checkID(note: NoteBase): NoteWithID {
+    if (note.id !== null) {
+        return note as NoteWithID
+    }
+
+    throw new Error('Illegal action. Requires note ID to be set')
+}
+
+export function hasID(note: NoteBase | NoteWithID): note is NoteWithID {
+    return note.id !== null
 }

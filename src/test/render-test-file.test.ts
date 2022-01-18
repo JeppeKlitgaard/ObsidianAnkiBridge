@@ -4,12 +4,14 @@
 import { SandwichBlueprint } from 'blueprints/sandwich'
 import { TestingDatabase } from 'test/helpers'
 import * as fs from 'fs'
+import { App } from 'obsidian'
+import AnkiBridgePlugin from 'main'
 
 const tdb = new TestingDatabase()
 let bp: SandwichBlueprint
 
 beforeAll(async () => {
-    bp = new SandwichBlueprint(undefined, undefined)
+    bp = new SandwichBlueprint({} as App, {} as AnkiBridgePlugin)
     await bp.setup()
 })
 

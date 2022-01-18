@@ -1,5 +1,5 @@
 import AnkiBridgePlugin from 'main'
-import { NoteBase } from 'notes/base'
+import { hasID, NoteBase, NoteWithID } from 'notes/base'
 import { App, Notice } from 'obsidian'
 import { ProcessedFileResult } from './reader'
 import _ from 'lodash'
@@ -67,7 +67,7 @@ export class Bridge {
 
     public async processField(
         note: NoteBase,
-        field: string,
+        field: string | null,
         ctx: ProcessorContext,
     ): Promise<string> {
         // Do all Markdown preprocessing
@@ -198,7 +198,7 @@ export class Bridge {
     }
 
     private async easyUpdateNoteFields(
-        note: NoteBase,
+        note: NoteWithID,
         renderedFields: NoteFields,
     ): Promise<UpdateNoteFieldsResponse> {
         const anki = this.plugin.anki
@@ -210,7 +210,7 @@ export class Bridge {
         return null
     }
 
-    private async processNote(note: NoteBase): Promise<NoteAction> {
+    private async processNote(note: NoteBase | NoteWithID): Promise<NoteAction> {
         const anki = this.plugin.anki
 
         // Skip
@@ -219,11 +219,14 @@ export class Bridge {
         }
 
         // Delete
-        if (note.config.delete_) {
-            anki.deleteNote(note)
-            note.config.delete_ = undefined
+        if (note.config.delete) {
+            if (hasID(note)) {
+                anki.deleteNote(note)
+            }
+
+            note.config.delete = undefined
             note.config.enabled = false
-            note.id = undefined
+            note.id = null
 
             return NoteAction.Deleted
         }
@@ -231,7 +234,7 @@ export class Bridge {
         const renderedFields = await this.renderFields(note)
 
         // Create if does not exist
-        if (note.id === null) {
+        if (!hasID(note)) {
             // We must create note
             await this.easyAddNote(note, renderedFields)
 
@@ -305,6 +308,8 @@ export class Bridge {
             } catch (e) {
                 if (!this.handleError(e, note)) {
                     action = NoteAction.NonFatalError
+                } else {
+                    throw e
                 }
             }
 
