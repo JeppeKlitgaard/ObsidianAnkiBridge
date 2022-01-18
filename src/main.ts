@@ -14,7 +14,6 @@ import { Reader } from 'services/reader'
 import { Bridge } from 'services/bridge'
 import { SyncResult } from 'entities/other'
 import { NoteAction } from 'entities/note'
-import { CodeBlockBlueprint } from 'blueprints/base'
 import _ from 'lodash'
 
 export default class AnkiBridgePlugin extends Plugin {
@@ -172,17 +171,6 @@ export default class AnkiBridgePlugin extends Plugin {
         if (this.periodicPingIntervalId !== undefined) {
             window.clearInterval(this.periodicPingIntervalId)
         }
-    }
-
-    private setupMarkdownPostprocessors(): void {
-        this.codeblockPostprocessor = this.registerMarkdownCodeBlockProcessor(
-            CodeBlockBlueprint.codeBlockLanguage,
-            CodeBlockBlueprint.codeBlockProcessor,
-        )
-    }
-
-    private teardownMarkdownPostprocessors(): void {
-        MarkdownPreviewRenderer.unregisterPostProcessor(this.codeblockPostprocessor)
     }
 
     private shouldIgnoreFile(file: TFile): boolean {
