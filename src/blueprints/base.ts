@@ -32,6 +32,8 @@ export abstract class Blueprint {
     }
 
     public async teardown(): Promise<void> {}
+
+    public renderAsText(note: NoteBase): string {
         throw Error('Not implemented!')
     }
 

@@ -50,7 +50,7 @@ export abstract class NoteBase {
     public isCloze: boolean
 
     constructor(
-        public blueprint: typeof Blueprint,
+        public blueprint: Blueprint,
         public id: number | null,
         public fields: NoteFields,
         public source: SourceDescriptor,

@@ -77,7 +77,7 @@ export class SandwichBlueprint extends Blueprint {
                 const id = config.id
                 delete config.id
 
-                const note = new BasicNote(SandwichBlueprint, id, front, back, source, sourceText, {
+                const note = new BasicNote(this, id, front, back, source, sourceText, {
                     config: config,
                 })
 
@@ -99,7 +99,7 @@ export class SandwichBlueprint extends Blueprint {
         return elements
     }
 
-    public static renderAsText(note: NoteBase): string {
+    public renderAsText(note: NoteBase): string {
         let str = ''
         str += '#anki/start\n'
 

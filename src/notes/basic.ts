@@ -4,7 +4,7 @@ import { Blueprint } from 'blueprints/base'
 
 export class BasicNote extends NoteBase {
     constructor(
-        blueprint: typeof Blueprint,
+        blueprint: Blueprint,
         id: number | null,
         frontlike: string,
         backlike: string,
