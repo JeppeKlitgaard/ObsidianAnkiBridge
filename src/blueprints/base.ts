@@ -1,6 +1,14 @@
 import { Fragment, FragmentProcessingResult } from 'entities/note'
 import AnkiBridgePlugin from 'main'
-import { NoteBase, ParseConfig } from 'notes/base'
+import {
+    NoteBase,
+    ParseConfig,
+    ParseLineResult,
+    ParseLineResultSchema,
+    ParseLocation,
+    ParseNoteResult,
+    ParseNoteResultSchema,
+} from 'notes/base'
 import {
     App,
     MarkdownPostProcessor,
@@ -14,6 +22,8 @@ import { Parser } from 'peggy'
 import { SourceDescriptor } from 'entities/note'
 import { showError } from 'utils'
 import { BasicNote } from 'notes/basic'
+import yup from 'utils/yup'
+import _ from 'lodash'
 export abstract class Blueprint {
     public static readonly displayName: string
     public static readonly id: string
@@ -52,7 +62,6 @@ export abstract class Blueprint {
         const elements = new FragmentProcessingResult()
 
         const results: Array<Record<string, any>> = this.parser.parse(fragment.text)
-        console.log(results)
 
         let newFragment: Fragment = {
             text: '',
@@ -61,66 +70,96 @@ export abstract class Blueprint {
         }
 
         for (const result of results) {
-            if (result['type'] === 'line') {
-                newFragment.text += result['text']
-            }
-            if (result['type'] === 'note') {
-                const from: number = result['location']['start']['line'] + fragment.sourceOffset
-                const to: number = result['location']['end']['line'] + fragment.sourceOffset
-                const front: string = result['front']
-                const back: string = result['back']
-                let config: ParseConfig
-
-                const source: SourceDescriptor = { from: from, to: to, file: fragment.sourceFile }
-                const sourceText =
-                    fragment.text
-                        .split('\n')
-                        .slice(from - 1, to - 1)
-                        .join('\n') + '\n'
-
-                // Validate configuration
-                try {
-                    config = await ParseConfig.fromResult(result)
-                } catch (e) {
-                    for (const error of e.errors) {
-                        console.warn(error)
-                        showError(error)
+            switch (result['type']) {
+                case 'line': {
+                    try {
+                        const vResult: ParseLineResult = await ParseLineResultSchema.validate(
+                            result,
+                        )
+                        newFragment.text += vResult.text
+                    } catch (e) {
+                        for (const error of e.errors) {
+                            console.warn(error)
+                            showError(error)
+                        }
                     }
-
-                    elements.push(newFragment)
-                    newFragment = {
-                        text: '',
-                        sourceFile: fragment.sourceFile,
-                        sourceOffset: to + 1,
-                    }
-                    // If invalid push back this part of the file as a whole fragment
-                    elements.push({
-                        text: sourceText,
-                        sourceFile: fragment.sourceFile,
-                        sourceOffset: from,
-                    })
-
-                    continue
+                    break
                 }
 
-                const id = config.id
-                delete config.id
+                case 'note': {
+                    // Assume location is good for now
+                    const location: ParseLocation = result['location']
+                    const from = location.start.line + fragment.sourceOffset
+                    const to = location.end.line + fragment.sourceOffset
 
-                const note = new BasicNote(this, id, front, back, source, sourceText, {
-                    config: config,
-                })
+                    const source: SourceDescriptor = {
+                        from: from,
+                        to: to,
+                        file: fragment.sourceFile,
+                    }
+                    const sourceText =
+                        fragment.text
+                            .split('\n')
+                            .slice(from - 1, to - 1)
+                            .join('\n') + '\n'
 
-                // Make new fragment
-                elements.push(newFragment)
-                newFragment = {
-                    text: '',
-                    sourceFile: fragment.sourceFile,
-                    sourceOffset: to + 1,
+                    try {
+                        const vResult: ParseNoteResult = await ParseNoteResultSchema.validate(
+                            result,
+                        )
+
+                        const front = vResult.front
+                        const back = vResult.back
+
+                        const parseConfig = await ParseConfig.fromResult(vResult)
+                        const { id, ...config } = parseConfig
+
+                        const note = new BasicNote(this, id, front, back, source, sourceText, {
+                            config: config,
+                        })
+
+                        // Make new fragment
+                        elements.push(newFragment)
+                        newFragment = {
+                            text: '',
+                            sourceFile: fragment.sourceFile,
+                            sourceOffset: to + 1,
+                        }
+                        elements.push(note)
+                    } catch (e) {
+                        if (e instanceof yup.ValidationError) {
+                            for (const error of e.errors) {
+                                console.warn(error)
+                                showError(error)
+
+                                elements.push(newFragment)
+                                newFragment = {
+                                    text: '',
+                                    sourceFile: fragment.sourceFile,
+                                    sourceOffset: to + 1,
+                                }
+                                // If invalid push back this part of the file as a whole fragment
+                                elements.push({
+                                    text: sourceText,
+                                    sourceFile: fragment.sourceFile,
+                                    sourceOffset: from,
+                                })
+
+                                continue
+                            }
+                        } else {
+                            throw e
+                        }
+                    }
+
+                    break
                 }
-                elements.push(note)
+
+                default: {
+                    throw EvalError('Something went wrong!')
+                }
             }
         }
-
         if (newFragment.text !== '') {
             elements.push(newFragment)
         }
@@ -136,6 +175,8 @@ export abstract class Blueprint {
 export abstract class CodeBlockBlueprint extends Blueprint {
     public readonly codeBlockLanguage: string
     private editorPostprocessor: MarkdownPostProcessor
+
+    protected codeblockParser: Parser
 
     public async setup(): Promise<void> {
         await super.setup()
@@ -158,7 +199,7 @@ export abstract class CodeBlockBlueprint extends Blueprint {
         el: HTMLElement,
         ctx: MarkdownPostProcessorContext,
     ): MarkdownRenderChild {
-        const parent = el.parentElement
+        const parent = el.parentElement!
         parent.addClass('ankibridge-card-parent')
 
         const cardEl = createDiv('ankibridge-card')
@@ -174,7 +215,27 @@ export abstract class CodeBlockBlueprint extends Blueprint {
         renderChild.onunload = () => {}
         /* eslint-enable @typescript-eslint/no-empty-function */
 
-        ctx.addChild(renderChild)
+        try {
+            ctx.addChild(renderChild)
+        } catch (e) {
+            // Do nothing
+            /* For some reason Obsidian will throw:
+
+            TypeError: i.addChild is not a function
+            at Object.addChild (app.js:1)
+            at BasicCodeBlockBlueprint.createRenderChild (eval at <anonymous> (app.js:1), <anonymous>:23330:11)
+            at BasicCodeBlockBlueprint.eval (eval at <anonymous> (app.js:1), <anonymous>:23367:32)
+            at Generator.next (<anonymous>)
+            at eval (eval at <anonymous> (app.js:1), <anonymous>:75:61)
+            at new Promise (<anonymous>)
+            at __async (eval at <anonymous> (app.js:1), <anonymous>:59:10)
+            at BasicCodeBlockBlueprint.renderErrorCard (eval at <anonymous> (app.js:1), <anonymous>:23366:12)
+            at BasicCodeBlockBlueprint.eval (eval at <anonymous> (app.js:1), <anonymous>:23527:27)
+            at Generator.throw (<anonymous>)
+
+            Sometimes. This must be an Obsidian Bug.
+            */
+        }
 
         return renderChild
     }
@@ -189,21 +250,23 @@ export abstract class CodeBlockBlueprint extends Blueprint {
         const renderChild = this.createRenderChild(el, ctx)
 
         const cardEl = renderChild.containerEl
-        cardEl.id = config.id?.toString()
+        cardEl.id = config.id?.toString() ?? ''
 
         const containerEl = cardEl.firstChild
 
         // Add config elements
-        const configEl = containerEl.createDiv('ankibridge-card-config')
-        Object.entries(config).forEach(([key, value]) => {
-            const entry = configEl.createSpan('ankibridge-card-config-entry')
-            entry.setAttribute('data-type', key)
-            entry.setAttribute('data-value', value)
-            entry.innerText = value
-        })
+        const prunedConfig = _.omitBy(config, _.isNil)
+        if (!_.isEmpty(prunedConfig)) {
+            const configEl = containerEl!.createDiv('ankibridge-card-config')
+            Object.entries(prunedConfig).forEach(([key, value]) => {
+                const entry = configEl.createSpan('ankibridge-card-config-entry')
+                entry.setAttribute('data-type', key)
+                entry.setAttribute('data-value', value)
+                entry.innerText = value
+            })
+        }
 
-        const fieldsEl = containerEl.createDiv('ankibridge-card-fields')
-
+        const fieldsEl = containerEl!.createDiv('ankibridge-card-fields')
 
         // Add front
         const frontEl = fieldsEl.createDiv('ankibridge-card-front')
@@ -230,12 +293,12 @@ export abstract class CodeBlockBlueprint extends Blueprint {
         const cardEl = renderChild.containerEl
         cardEl.addClass('error')
 
-        const containerEl = cardEl.firstChild
+        const containerEl = cardEl.firstChild!
 
-        const errorHeader = containerEl.createEl("h2")
-        errorHeader.textContent = "Card Error"
+        const errorHeader = containerEl.createEl('h2')
+        errorHeader.textContent = 'Card Error'
 
-        const errorEl = containerEl.createSpan("error")
+        const errorEl = containerEl.createSpan('error')
         errorEl.textContent = error
 
         return renderChild

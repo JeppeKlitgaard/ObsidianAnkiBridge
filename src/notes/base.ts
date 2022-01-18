@@ -13,36 +13,85 @@ import AnkiBridgePlugin from 'main'
 import { getDefaultDeckForFolder } from 'utils/file'
 import yup from 'utils/yup'
 
-export const ParseConfigSchema = yup.object({
-    id: yup.number().nullable().defined().default(null),
-    deck: yup.string().emptyAsUndefined().nullAsUndefined(),
-    tags: yup.array().of(yup.string().emptyAsUndefined().nullAsUndefined()),
-    delete: yup.boolean().nullAsUndefined(),
-    enabled: yup.boolean().nullAsUndefined(),
-    cloze: yup.boolean().nullAsUndefined(),
-})
-
+// Config
 export interface Config {
     deck?: string
     tags?: Array<string>
-    delete_?: boolean
+    delete?: boolean
     enabled?: boolean
     cloze?: boolean
 }
 
 export interface ParseConfig extends Config {
-    id?: number
+    id: number | null
 }
 export class ParseConfig {
-    public static async fromResult(result: Record<string, any>): Promise<ParseConfig> {
-        const configStr = result['config']
-        const configObj: ParseConfig = load(configStr) || {}
+    public static async fromResult(result: ParseNoteResult): Promise<ParseConfig> {
+        const configStr = result.config || ''
+        const configObj: ParseConfig = <ParseConfig>load(configStr) || { id: null }
 
-        const validatedConfig = (await ParseConfigSchema.validate(configObj)) as ParseConfig
+        const validatedConfig: ParseConfig = await ParseConfigSchema.validate(configObj)
 
         return validatedConfig
     }
 }
+export const ParseConfigSchema: yup.SchemaOf<ParseConfig> = yup.object({
+    id: yup.number().nullable().defined().default(null),
+    deck: yup.string().emptyAsUndefined().nullAsUndefined(),
+    tags: yup.array().of(yup.string()).notRequired(),
+    delete: yup.boolean().nullAsUndefined(),
+    enabled: yup.boolean().nullAsUndefined(),
+    cloze: yup.boolean().nullAsUndefined(),
+})
+
+// Location
+export interface ParseLocationMarker {
+    offset: number
+    line: number
+    column: number
+}
+export const ParseLocationMarkerSchema: yup.SchemaOf<ParseLocationMarker> = yup.object({
+    offset: yup.number().defined(),
+    line: yup.number().defined(),
+    column: yup.number().defined(),
+})
+
+export interface ParseLocation {
+    start: ParseLocationMarker
+    end: ParseLocationMarker
+    source?: string
+}
+export const ParseLocationSchema: yup.SchemaOf<ParseLocation> = yup.object({
+    start: ParseLocationMarkerSchema,
+    end: ParseLocationMarkerSchema,
+    source: yup.string(),
+})
+
+// Result
+export interface ParseLineResult {
+    type: string
+    text: string
+}
+
+export const ParseLineResultSchema: yup.SchemaOf<ParseLineResult> = yup.object({
+    type: yup.string().defined(),
+    text: yup.string().defined(),
+})
+
+export interface ParseNoteResult {
+    type: string
+    config: string | null
+    front: string | null
+    back: string | null
+    location: ParseLocation
+}
+export const ParseNoteResultSchema: yup.SchemaOf<ParseNoteResult> = yup.object({
+    type: yup.string().defined(),
+    config: yup.string().nullable().defined(),
+    front: yup.string().nullable().defined(),
+    back: yup.string().nullable().defined(),
+    location: ParseLocationSchema,
+})
 
 export abstract class NoteBase {
     public config: Config
@@ -142,14 +191,6 @@ export abstract class NoteBase {
 
 export interface NoteWithID extends NoteBase {
     id: number
-}
-
-export function checkID(note: NoteBase): NoteWithID {
-    if (note.id !== null) {
-        return note as NoteWithID
-    }
-
-    throw new Error('Illegal action. Requires note ID to be set')
 }
 
 export function hasID(note: NoteBase | NoteWithID): note is NoteWithID {

@@ -1,6 +1,7 @@
 import { getBlueprintById } from 'blueprints'
 import { Blueprint } from 'blueprints/base'
 import { Fragment, FragmentProcessingResult } from 'entities/note'
+import _ from 'lodash'
 import AnkiBridgePlugin from 'main'
 import { NoteBase } from 'notes/base'
 import { App, TFile } from 'obsidian'
@@ -51,23 +52,41 @@ export class Reader {
             sourceOffset: 0,
         }
 
-        let elements = new FragmentProcessingResult(initialFragment)
+        const notes: Array<NoteBase> = []
+        let fragments: Array<Fragment> = [initialFragment]
 
         for (const blueprint of this.blueprints) {
-            const elementsToProcess = [...elements] // Clone
-            elements = new FragmentProcessingResult()
+            const fragmentsToTry = [...fragments]
+            fragments = []
 
-            while (elementsToProcess.length) {
-                const element = elementsToProcess.pop()
-                if (element instanceof NoteBase) {
-                    elements.push(element)
-                    continue
+            while (fragmentsToTry.length) {
+                const element = fragmentsToTry.pop()!
+                const processedElements = await blueprint.processFragment(element)
+
+                for (const processedElement of processedElements) {
+                    if (processedElement instanceof NoteBase) {
+                        notes.push(processedElement)
+                        continue
+                    }
+
+                    fragments.push(processedElement)
                 }
-
-                elements.push(...(await blueprint.processFragment(element)))
             }
         }
 
-        return { sourceFile: file, elements: elements }
+        const processedElements = [...notes, ...fragments]
+        const sortedProcessedElements = _.sortBy(processedElements, [
+            (o) => {
+                if (o instanceof NoteBase) {
+                    return o.source.from
+                }
+
+                return o.sourceOffset
+            },
+        ])
+
+        const processingResult = new FragmentProcessingResult(...sortedProcessedElements)
+
+        return { sourceFile: file, elements: processingResult }
     }
 }

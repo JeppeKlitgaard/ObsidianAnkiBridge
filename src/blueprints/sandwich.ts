@@ -2,11 +2,9 @@ import { Blueprint } from 'blueprints/base'
 import { GRAMMAR_LIBRARIES } from 'consts'
 import { makeGrammar } from 'utils/grammar'
 import { generate } from 'peggy'
-import { BasicNote } from 'notes/basic'
-import { SourceDescriptor, Fragment, FragmentProcessingResult, NoteField } from 'entities/note'
+import { NoteField } from 'entities/note'
 import { dump } from 'js-yaml'
-import { showError } from 'utils'
-import { NoteBase, ParseConfig } from 'notes/base'
+import { NoteBase } from 'notes/base'
 import sandwichGrammar from 'grammars/CardSandwich.pegjs'
 
 export class SandwichBlueprint extends Blueprint {

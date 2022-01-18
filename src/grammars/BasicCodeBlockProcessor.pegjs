@@ -1,21 +1,18 @@
-start = (note / MiscLine)*
+start = note
 
 note =
-    AnkiCodeBlockStarter
-
     config:(
         config:(!Config line:MiscLine {return line})*
         Config
         { return config }
     )?
 
-    front:(!FrontBack !AnkiCodeBlockEnder line:MiscLine {return line})+
+    front:(!FrontBack line:MiscLine {return line})+
     FrontBack?
 
-    back:(!AnkiCodeBlockEnder line: MiscLine {return line})*
-
-    AnkiCodeBlockEnder
+    back:(line: MiscLine {return line})*
     {
+        console.log(back)
         return {
             "type": "note",
             "config": config ? linesToStr(config) : null,
@@ -30,6 +27,3 @@ Config = ConfigSeparator _* Newline
 
 FrontBackSeparator = '==='
 FrontBack = FrontBackSeparator _* Newline?
-
-AnkiCodeBlockStarter = AnkiCodeBlockStart _* Newline
-AnkiCodeBlockEnder = AnkiCodeBlockEnd _* Newline?
