@@ -2,7 +2,7 @@ import { NoteBase } from 'notes/base'
 import { getLinkpath, TFile } from 'obsidian'
 import { ProcessorContext } from 'processors/base'
 import { Postprocessor } from './base'
-import { fileTypeFromBuffer } from 'file-type'
+import { fileTypeFromBuffer, FileTypeResult } from 'file-type'
 import { fileTypeToMediaType } from 'utils/encoding'
 import { Media } from 'entities/note'
 import { getFullPath } from 'utils/file'
@@ -92,7 +92,7 @@ export class MediaPostprocessor extends Postprocessor {
 
                 mediaEl.setAttribute('alt', alt)
 
-                embed.parentNode.replaceChild(mediaEl, embed)
+                embed.replaceWith(mediaEl, embed)
             }),
         )
     }

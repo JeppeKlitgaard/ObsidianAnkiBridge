@@ -28,8 +28,6 @@ export default class AnkiBridgePlugin extends Plugin {
 
     private periodicPingIntervalId: number
 
-    private codeblockPostprocessor: MarkdownPostProcessor
-
     async onload() {
         console.log('Loading ' + this.manifest.name)
 
@@ -223,10 +221,6 @@ export default class AnkiBridgePlugin extends Plugin {
 
                 throw result.fatalErrorString
             }
-        }
-
-        if (result.noteActions.length === 0) {
-            return
         }
 
         const wasSuccess = !result.noteActions.includes(NoteAction.NonFatalError)

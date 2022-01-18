@@ -20,104 +20,30 @@ export class SandwichBlueprint extends Blueprint {
         this.parser = generate(grammar)
     }
 
-    public async processFragment(fragment: Fragment): Promise<FragmentProcessingResult> {
-        const elements = new FragmentProcessingResult()
-
-        const results: Array<Record<string, any>> = this.parser.parse(fragment.text)
-
-        let newFragment: Fragment = {
-            text: '',
-            sourceFile: fragment.sourceFile,
-            sourceOffset: fragment.sourceOffset,
-        }
-
-        for (const result of results) {
-            if (result['type'] === 'line') {
-                newFragment.text += result['text']
-            }
-            if (result['type'] === 'note') {
-                const from: number = result['location']['start']['line'] + fragment.sourceOffset
-                const to: number = result['location']['end']['line'] + fragment.sourceOffset
-                const front: string = result['front']
-                const back: string = result['back']
-                let config: ParseConfig
-
-                const source: SourceDescriptor = { from: from, to: to, file: fragment.sourceFile }
-                const sourceText =
-                    fragment.text
-                        .split('\n')
-                        .slice(from - 1, to - 1)
-                        .join('\n') + '\n'
-
-                // Validate configuration
-                try {
-                    config = await ParseConfig.fromResult(result)
-                } catch (e) {
-                    for (const error of e.errors) {
-                        console.warn(error)
-                        showError(error)
-                    }
-
-                    elements.push(newFragment)
-                    newFragment = {
-                        text: '',
-                        sourceFile: fragment.sourceFile,
-                        sourceOffset: to + 1,
-                    }
-                    // If invalid push back this part of the file as a whole fragment
-                    elements.push({
-                        text: sourceText,
-                        sourceFile: fragment.sourceFile,
-                        sourceOffset: from,
-                    })
-
-                    continue
-                }
-
-                const id = config.id
-                delete config.id
-
-                const note = new BasicNote(this, id, front, back, source, sourceText, {
-                    config: config,
-                })
-
-                // Make new fragment
-                elements.push(newFragment)
-                newFragment = {
-                    text: '',
-                    sourceFile: fragment.sourceFile,
-                    sourceOffset: to + 1,
-                }
-                elements.push(note)
-            }
-        }
-
-        if (newFragment.text !== '') {
-            elements.push(newFragment)
-        }
-
-        return elements
-    }
-
     public renderAsText(note: NoteBase): string {
+        const front = note.fields[NoteField.Frontlike]
+        const back = note.fields[NoteField.Backlike]
+
+        const config = dump({
+            id: note.id,
+            deck: note.config.deck,
+            tags: note.config.tags,
+            delete: note.config.delete,
+            enabled: note.config.enabled,
+            cloze: note.config.cloze,
+        })
+
         let str = ''
         str += '#anki/start\n'
 
         str += '```anki-config\n'
-        str += dump({
-            id: note.id,
-            deck: note.config.deck,
-            tags: note.config.tags,
-            delete: note.config.delete_,
-            enabled: note.config.enabled,
-            cloze: note.config.cloze,
-        })
+        str += config
         str += '```\n'
 
-        str += note.fields[NoteField.Frontlike]
+        str += front
         str += '#anki/---\n'
 
-        str += note.fields[NoteField.Backlike]
+        str += back
         str += '#anki/end\n'
 
         return str
