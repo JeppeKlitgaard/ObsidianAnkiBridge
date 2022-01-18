@@ -354,9 +354,14 @@ export class SettingsTab extends PluginSettingTab {
         for (const [id, enabled] of Object.entries(blueprintSettings)) {
             const bp = getBlueprintById(id)
             new Setting(this.containerEl).setName(bp.displayName).addToggle((toggle) => {
-                toggle.setValue(enabled).onChange((newState) => {
+                toggle.setValue(enabled).onChange(async (newState) => {
                     this.plugin.settings.blueprints[id] = newState
-                    this.plugin.saveSettings()
+                    await this.plugin.saveSettings()
+
+                    // Reinitiate services
+                    this.plugin.debug("Reloading services")
+                    await this.plugin.teardownSerivces()
+                    await this.plugin.setupServices()
                 })
             })
         }
@@ -385,10 +390,14 @@ export class SettingsTab extends PluginSettingTab {
                 toggle
                     .setValue(enabled)
                     .setDisabled(!pp.configurable)
-                    .onChange((newState) => {
+                    .onChange(async (newState) => {
                         this.plugin.settings.processors[id] = newState
-                        this.plugin.saveSettings()
-                        this.plugin.initiateServices()
+                        await this.plugin.saveSettings()
+
+                        // Reinitiate services
+                        this.plugin.debug("Reloading services")
+                        await this.plugin.teardownSerivces()
+                        await this.plugin.setupServices()
                     })
             })
         }

@@ -37,8 +37,7 @@ export default class AnkiBridgePlugin extends Plugin {
         addIcon('flashcards', flashcardsIcon)
 
         await this.loadSettings()
-
-        await this.initiateServices()
+        await this.setupServices()
 
         this.statusbar = this.addStatusBarItem()
 
@@ -81,7 +80,6 @@ export default class AnkiBridgePlugin extends Plugin {
             await this.syncActiveFile()
         })
 
-        this.setupMarkdownPostprocessors()
         this.setupPeriodicPing()
 
         this.addSettingTab(new SettingsTab(this.app, this))
@@ -92,18 +90,22 @@ export default class AnkiBridgePlugin extends Plugin {
     async onunload() {
         console.log('Unloading ' + this.manifest.name)
 
-        this.teardownMarkdownPostprocessors()
         this.teardownPeriodicPing()
+        await this.teardownSerivces()
 
         await this.saveData(this.settings)
     }
 
-    async initiateServices(): Promise<void> {
+    async setupServices(): Promise<void> {
         this.anki = new Anki(this.app, this)
         this.reader = new Reader(this.app, this)
         this.bridge = new Bridge(this.app, this)
 
         await this.reader.setup()
+    }
+
+    async teardownSerivces(): Promise<void> {
+        await this.reader.teardown()
     }
 
     async loadSettings() {

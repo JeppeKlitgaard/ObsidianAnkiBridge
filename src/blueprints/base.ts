@@ -31,7 +31,7 @@ export abstract class Blueprint {
         await this.setupParser()
     }
 
-    public static renderAsText(note: NoteBase): string {
+    public async teardown(): Promise<void> {}
         throw Error('Not implemented!')
     }
 

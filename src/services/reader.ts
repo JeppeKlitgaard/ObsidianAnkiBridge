@@ -34,6 +34,13 @@ export class Reader {
             }),
         )
     }
+    async teardown(): Promise<void> {
+        await Promise.all(
+            this.blueprints.map(async (bp) => {
+                await bp.teardown()
+            }),
+        )
+    }
 
     async readFile(file: TFile): Promise<ProcessedFileResult> {
         const fileContent = stripCr(await this.app.vault.read(file))
