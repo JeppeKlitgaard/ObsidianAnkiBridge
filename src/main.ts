@@ -1,11 +1,4 @@
-import {
-    addIcon,
-    MarkdownPostProcessor,
-    MarkdownPreviewRenderer,
-    Notice,
-    Plugin,
-    TFile,
-} from 'obsidian'
+import { addIcon, Notice, Plugin, TFile } from 'obsidian'
 import { DEFAULT_SETTINGS, Settings } from 'settings/settings'
 import { SettingsTab } from 'settings/settings-tab'
 import { Anki } from 'services/anki'

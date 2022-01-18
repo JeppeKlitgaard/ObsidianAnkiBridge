@@ -30,7 +30,7 @@ export class MediaPostprocessor extends Postprocessor {
 
                 const file = this.app.metadataCache.getFirstLinkpathDest(linkpath, srcpath)
                 if (file === null) {
-                    throw new Error("Could not find embed")
+                    throw new Error('Could not find embed')
                 }
 
                 const resourcepath = this.app.vault.adapter.getResourcePath(file.path)
@@ -44,11 +44,10 @@ export class MediaPostprocessor extends Postprocessor {
                 const path = getFullPath(this.app.vault.adapter, file.path)
                 const data = await this.app.vault.readBinary(file)
 
-                const fileType = (await fileTypeFromBuffer(data) ||
-                    {
-                        mime: "application/octet-stream",
-                        ext: "",
-                    }) as FileTypeResult
+                const fileType = ((await fileTypeFromBuffer(data)) || {
+                    mime: 'application/octet-stream',
+                    ext: '',
+                }) as FileTypeResult
 
                 let mediaType = fileTypeToMediaType(fileType)
 

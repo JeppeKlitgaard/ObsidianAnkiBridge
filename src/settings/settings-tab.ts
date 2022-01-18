@@ -359,7 +359,7 @@ export class SettingsTab extends PluginSettingTab {
                     await this.plugin.saveSettings()
 
                     // Reinitiate services
-                    this.plugin.debug("Reloading services")
+                    this.plugin.debug('Reloading services')
                     await this.plugin.teardownSerivces()
                     await this.plugin.setupServices()
                 })
@@ -395,7 +395,7 @@ export class SettingsTab extends PluginSettingTab {
                         await this.plugin.saveSettings()
 
                         // Reinitiate services
-                        this.plugin.debug("Reloading services")
+                        this.plugin.debug('Reloading services')
                         await this.plugin.teardownSerivces()
                         await this.plugin.setupServices()
                     })

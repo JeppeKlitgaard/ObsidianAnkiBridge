@@ -76,7 +76,7 @@ export function markdownLinkToTextAndHref(vault: Vault, markdownLink: string): R
     MarkdownRenderer.renderMarkdown(markdownLink, el, '', {} as Component)
     const anchor = el.firstElementChild!.firstElementChild!
 
-    const linkText = anchor.textContent ?? ""
+    const linkText = anchor.textContent ?? ''
     const linkAddr = anchor.getAttribute('href')!
 
     const uri = renderObsidianURIOpen(vault, linkAddr)
