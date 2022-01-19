@@ -9,6 +9,7 @@ import { arraymove } from 'utils/array'
 import { getProcessorById } from 'processors'
 import { DOCUMENTATION_URL } from 'consts'
 import supportHtml from 'settings/support.html'
+import { Settings } from './settings'
 
 export class SettingsTab extends PluginSettingTab {
     constructor(public app: App, private plugin: AnkiBridgePlugin) {
@@ -19,6 +20,7 @@ export class SettingsTab extends PluginSettingTab {
         this.containerEl.empty()
         this.containerEl.createEl('h1', { text: this.plugin.manifest.name })
 
+        this.addVersion()
         this.addDocumentation()
         this.addTester()
         this.addSupport()
@@ -29,6 +31,12 @@ export class SettingsTab extends PluginSettingTab {
         this.addProcessors()
         this.addProcessorConfig()
         this.addDebugging()
+    }
+
+    addVersion(): void {
+        new Setting(this.containerEl)
+            .setName(`AnkiBridge Version: ${this.plugin.manifest.version}`)
+            .setDesc("The current AnkiBridge.")
     }
 
     addDocumentation(): void {

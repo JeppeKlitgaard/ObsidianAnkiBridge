@@ -22,7 +22,7 @@ export default class AnkiBridgePlugin extends Plugin {
     private periodicPingIntervalId: number
 
     async onload() {
-        console.log('Loading ' + this.manifest.name)
+        console.log(`Loading ${this.manifest.name} (${this.manifest.version})`)
 
         addIcon('flashcards', flashcardsIcon)
 
