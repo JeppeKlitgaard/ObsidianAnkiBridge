@@ -142,7 +142,7 @@ export class Anki {
     }
 
     public async ping(): Promise<boolean> {
-        return (await this.invoke('version', 6, {}, 2)) === 6
+        return (await this.invoke('version', 6, {}, 1)) === 6
     }
     // Convenience methods
 
