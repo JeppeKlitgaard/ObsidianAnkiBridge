@@ -36,7 +36,7 @@ export class SettingsTab extends PluginSettingTab {
     addVersion(): void {
         new Setting(this.containerEl)
             .setName(`AnkiBridge Version: ${this.plugin.manifest.version}`)
-            .setDesc("The current AnkiBridge.")
+            .setDesc('The current AnkiBridge.')
     }
 
     addDocumentation(): void {
@@ -181,7 +181,7 @@ export class SettingsTab extends PluginSettingTab {
     addDefaultDeck(): void {
         this.containerEl.createEl('h2', { text: 'Default Deck Mapping' })
 
-        const logicDesc = document.createElement('ol')
+        const logicDesc = createEl('ol')
         const logicsDesc = [
             'Value specified by deck key of in-note config',
             'Deepest match specified in mappings below',
@@ -189,12 +189,12 @@ export class SettingsTab extends PluginSettingTab {
         ]
 
         logicsDesc.forEach((value) => {
-            const li = document.createElement('li')
+            const li = createEl('li')
             li.innerText = value
             logicDesc.appendChild(li)
         })
 
-        const descHeading = document.createDocumentFragment()
+        const descHeading = createFragment()
         descHeading.append(
             'Default decks are mapped based on the following logic, using the first match:',
             logicDesc,
@@ -340,10 +340,10 @@ export class SettingsTab extends PluginSettingTab {
             })
 
         // Periodic ping
-        const periodicPingDesc = document.createDocumentFragment()
+        const periodicPingDesc = createFragment()
         periodicPingDesc.append(
             'Pings Anki periodically at the set interval in seconds.',
-            document.createElement('br'),
+            createEl('br'),
             'Note: Due to a shortcoming in Electron this will produce a lot of errors',
             'in console when pings are failing. These are harmless and safe to ignore, ',
             'but cannot be suppresed.',
@@ -416,7 +416,7 @@ export class SettingsTab extends PluginSettingTab {
 
         const processorSettings = this.plugin.settings.getMergedProcessors()
 
-        const descHeading = document.createDocumentFragment()
+        const descHeading = createFragment()
         descHeading.append(
             `Processors are responsible for converting the raw markdown from Obsidian into
             Anki-compatible HTML.`,
