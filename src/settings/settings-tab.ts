@@ -32,7 +32,7 @@ export class SettingsTab extends PluginSettingTab {
     addDocumentation(): void {
         new Setting(this.containerEl)
             .setName('Open Documentation')
-            .setDesc('Open the documentation for AnkiBridge')
+            .setDesc('Open the documentation for AnkiBridge.')
             .addButton((text) => {
                 text.setButtonText('Documentation')
                     .setCta()
@@ -45,7 +45,7 @@ export class SettingsTab extends PluginSettingTab {
     addTester(): void {
         new Setting(this.containerEl)
             .setName('Test Anki Connection')
-            .setDesc('Test that AnkiBridge is able to connect to Anki')
+            .setDesc('Test that AnkiBridge is able to connect to Anki.')
             .addButton((text) => {
                 text.setButtonText('Test')
                     .setCta()
@@ -87,50 +87,10 @@ export class SettingsTab extends PluginSettingTab {
                     })
             })
 
-        // Periodic ping
-        const periodicPingDesc = document.createDocumentFragment()
-        periodicPingDesc.append(
-            'Pings Anki periodically at the set interval in seconds.',
-            document.createElement('br'),
-            'Note: Due to a shortcoming in Electron this will produce a lot of errors',
-            'in console when pings are failing. These are harmless and safe to ignore, ',
-            'but cannot be suppresed.',
-        )
-        new Setting(this.containerEl)
-            .setName('Periodic ping')
-            .setDesc(periodicPingDesc)
-            .addText((e) => {
-                e.setValue(String(this.plugin.settings.periodicPingInterval))
-                e.setPlaceholder('Seconds')
-                e.inputEl.style.marginRight = '20px'
-                e.onChange((value) => {
-                    const interval = Number(value)
-                    if ((isNaN(interval) && value) || interval < 0.0) {
-                        this.display()
-                        return
-                    }
-
-                    if (interval === 0) {
-                        return
-                    }
-
-                    this.plugin.settings.periodicPingInterval = interval
-                    this.plugin.saveSettings()
-                    this.plugin.setupPeriodicPing()
-                })
-            })
-            .addToggle((toggle) => {
-                toggle.setValue(this.plugin.settings.periodicPingEnabled).onChange((newState) => {
-                    this.plugin.settings.periodicPingEnabled = newState
-                    this.plugin.saveSettings()
-                    this.plugin.setupPeriodicPing()
-                })
-            })
-
         // Folders to ignore
         new Setting(this.containerEl)
-            .setName('Add New')
-            .setDesc('Add new folder to ignore.')
+            .setName('Folders to ignore')
+            .setDesc('Add new folder to ignore when syncing notes.')
             .addButton((button: ButtonComponent): ButtonComponent => {
                 const b = button
                     .setTooltip('Add additional folder to ignore')
@@ -349,6 +309,47 @@ export class SettingsTab extends PluginSettingTab {
                         }
                     })
             })
+
+        // Periodic ping
+        const periodicPingDesc = document.createDocumentFragment()
+        periodicPingDesc.append(
+            'Pings Anki periodically at the set interval in seconds.',
+            document.createElement('br'),
+            'Note: Due to a shortcoming in Electron this will produce a lot of errors',
+            'in console when pings are failing. These are harmless and safe to ignore, ',
+            'but cannot be suppresed.',
+        )
+        new Setting(this.containerEl)
+            .setName('Periodic ping')
+            .setDesc(periodicPingDesc)
+            .addText((e) => {
+                e.setValue(String(this.plugin.settings.periodicPingInterval))
+                e.setPlaceholder('Seconds')
+                e.inputEl.style.marginRight = '20px'
+                e.onChange((value) => {
+                    const interval = Number(value)
+                    if ((isNaN(interval) && value) || interval < 0.0) {
+                        this.display()
+                        return
+                    }
+
+                    if (interval === 0) {
+                        return
+                    }
+
+                    this.plugin.settings.periodicPingInterval = interval
+                    this.plugin.saveSettings()
+                    this.plugin.setupPeriodicPing()
+                })
+            })
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.periodicPingEnabled).onChange((newState) => {
+                    this.plugin.settings.periodicPingEnabled = newState
+                    this.plugin.saveSettings()
+                    this.plugin.setupPeriodicPing()
+                })
+            })
+
     }
 
     addBlueprints(): void {
