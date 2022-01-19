@@ -26,6 +26,7 @@ esbuild.build({
         ".pegjs": "text",
         ".js.static": "text",
         ".svg_content": "text",
+        ".html": "text",
     },
     sourcemap: prod ? false : 'inline',
     treeShaking: true,

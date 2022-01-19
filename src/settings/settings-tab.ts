@@ -8,6 +8,7 @@ import { AnkiBridgeError } from 'error'
 import { arraymove } from 'utils/array'
 import { getProcessorById } from 'processors'
 import { DOCUMENTATION_URL } from 'consts'
+import supportHtml from 'settings/support.html'
 
 export class SettingsTab extends PluginSettingTab {
     constructor(public app: App, private plugin: AnkiBridgePlugin) {
@@ -20,6 +21,7 @@ export class SettingsTab extends PluginSettingTab {
 
         this.addDocumentation()
         this.addTester()
+        this.addSupport()
         this.addGeneral()
         this.addDefaultDeck()
         this.addNetworking()
@@ -66,6 +68,30 @@ export class SettingsTab extends PluginSettingTab {
                             )
                     })
             })
+    }
+
+    addSupport(): void {
+        this.containerEl.createEl('h2', { text: '❤ Support me?' })
+        const container = this.containerEl.createDiv('ankibridge-settings-support')
+
+        const template = createEl('template')
+        template.innerHTML = supportHtml.trim()
+
+        const donateButton = template.content.firstChild
+
+        const donateText = container.createDiv('ankibridge-setting-support-text')
+        donateText.createEl('p', {
+            text: 'Developing AnkiBridge was no small feat and it is (proudly) made available free of charge.',
+        })
+
+        const plea = donateText.createEl('p')
+        plea.innerHTML =
+            'If you <b>want to </b> and <b>are able to</b>, you can throw a much-needed coffee or a much-appreciated coin my way on Ko-fi.'
+
+        const wishes = donateText.createEl('p')
+        wishes.innerHTML = 'All the best,<br><em>Jeppe</em>'
+
+        container.appendChild(donateButton)
     }
 
     addGeneral(): void {
@@ -349,7 +375,6 @@ export class SettingsTab extends PluginSettingTab {
                     this.plugin.setupPeriodicPing()
                 })
             })
-
     }
 
     addBlueprints(): void {

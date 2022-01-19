@@ -10,6 +10,7 @@ module.exports = {
   transform: {
     "^.+\\.pegjs$": "esbuild-jest",
     "^.+\\.js\\.static$": "esbuild-jest",
-    "^.+\\.svg_content$": "esbuild-jest"
+    "^.+\\.svg_content$": "esbuild-jest",
+    "^.+\\.html$": "esbuild-jest"
   }
 };
