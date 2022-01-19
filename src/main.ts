@@ -127,14 +127,14 @@ export default class AnkiBridgePlugin extends Plugin {
         await this.saveData(this.settings)
     }
 
-    public debug(text: string): void {
+    public debug(text: string, ...other: any): void {
         if (this.settings.debug) {
-            console.log(this.manifest.name + ': ' + text)
+            console.log(this.manifest.name + ': ' + text, ...other)
         }
     }
 
-    public error(text: string): void {
-        console.error(this.manifest.name + ': ' + text)
+    public error(text: string, ...other: any): void {
+        console.error(this.manifest.name + ': ' + text, ...other)
     }
 
     public async pingAnki(): Promise<boolean> {
