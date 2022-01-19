@@ -270,14 +270,14 @@ export abstract class CodeBlockBlueprint extends Blueprint {
         const fieldsEl = containerEl!.createDiv('ankibridge-card-fields')
 
         // Add front
-        const frontEl = fieldsEl.createDiv('ankibridge-card-front')
+        const frontEl = fieldsEl.createDiv('ankibridge-card-front ankibridge-card-content')
         MarkdownRenderer.renderMarkdown(front, frontEl, ctx.sourcePath, renderChild)
 
         // Add back
         if (back !== null) {
             const separatorEl = fieldsEl.createDiv('ankibridge-card-separator')
 
-            const backEl = fieldsEl.createDiv('ankibridge-card-back')
+            const backEl = fieldsEl.createDiv('ankibridge-card-back ankibridge-card-content')
             MarkdownRenderer.renderMarkdown(back, backEl, ctx.sourcePath, renderChild)
         }
 

@@ -127,8 +127,6 @@ div.ankibridge-card {
         }
 
         div.ankibridge-card-fields {
-            // margin: 10px 15px;
-
             // Front
             div.ankibridge-card-front {}
 
@@ -136,13 +134,30 @@ div.ankibridge-card {
             div.ankibridge-card-separator {
                 height       : 0.25rem;
                 border-radius: 0.15rem;
+                margin: 1rem 0;
 
                 background-color: var(--background-modifier-border);
             }
 
             // Back
             div.ankibridge-card-back {}
+
+            // Front and back
+            .ankibridge-card-content>* {
+                // Live Preview-fixed
+                // Inspired by https://github.com/valentine195/obsidian-admonition/blob/master/src/assets/main.css
+                // Hopefully not needed after Obsidian supports rendering to LP-mode format
+                margin-top   : 0px;
+                margin-bottom: 0px;
+
+                br {
+                    display: none;
+                }
+
+                ul {
+                    white-space: normal;
+                }
+            }
         }
     }
-
 }
