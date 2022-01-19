@@ -32,7 +32,7 @@ will work.
 
 #### MANUAL: Change of configuration codeblock for [Sandwich Blueprint](/blueprints#-sandwich)
 
-The configuration codeblock was changed from:
+The configuration codeblock format was changed from:
 ````md
 ```anki
 deck: …
@@ -48,9 +48,21 @@ deck: …
 ```
 ````
 
+:::danger You must do the following
+
+You will need to manually update all the codeblocks to the new format.
+
+:::
+
 This was done to accommodate the new [BasicCodeBlock Blueprint](/blueprints#-basiccodeblock).
 
 Changing all of the code-blocks is easily done manually at the time of migration
 by using a simple **search-and-replace**.
+
+:::info Suggestion
+
+You might prefer to update your notes to the new [BasicCodeBlock](/blueprints#-basiccodeblock)-format.
+
+:::
 
 [VSCode](https://code.visualstudio.com/) may be preferable to using Obsidian to do this.

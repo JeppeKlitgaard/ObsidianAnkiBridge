@@ -17,11 +17,11 @@ The front and back fields _sandwich_ a `#anki/---` tag.
 The Sandwich blueprint was the first blueprint added and is generally inferior
 to the [BasicCodeBlock blueprint](#-basiccodeblock).
 
-!!!note Recommendation
+:::info Recommendation
 
 I would recommend changing all Sandwich-style notes to the newer BasicCodeBlock-style
 
-!!!
+:::
 
 ### Compatibility
 
@@ -34,26 +34,61 @@ I would recommend changing all Sandwich-style notes to the newer BasicCodeBlock-
 ````md
 #anki/start
 ```anki-config
-deck: Exams
+id: 1636912129121
+deck: Math
 tags:
-  - math
-  - fourier
+  - equation
 ```
-How do you find the [[Test1|Fourier Coefficients]]?
 A function with period $L$ can be written as a __Fourier Series__:
 #anki/---
 $$
-
 \begin{gather}
 	f(x) = \frac{1}{2} a_0 + ∑\limits_{n=1}^∞ a_n \cos(k_n x) + ∑\limits_{n=1}^∞ b_n \sin(k_n x)\\
 	\\
-	\quad \text{where }{k_n = \frac{nπx}{L}} \quad 😀
+	\quad \text{Where } {k_n = \frac{nπx}{L}}
 \end{gather}
-$$ 
+$$
 #anki/end
 ````
 
 ## 💻 BasicCodeBlock
+
+The **BasicCodeBlock**-format consist of an Anki codeblock, hence the name.
+
+### Layout
+
+````md title="Layout of a BasicCodeBlock-style note"
+```anki
+CONFIG HERE
+---
+FRONT HERE
+===
+BACK HERE
+```
+````
+
+Where both the config and the back are optional. Thus this is also valid:
+
+````md title="Both the configuration and back field are optional"
+```anki
+
+This is a front page
+
+$a = b$
+
+[[link to some other note]]
+```
+````
+
+And as is this:
+
+````md title="Just front and back"
+```anki
+What is the answer to the question of life the universe and everything?
+===
+$42$
+```
+````
 
 ### Compatibility
 
@@ -62,4 +97,27 @@ $$
 | Live Preview |      ✔       |         |
 | Reading      |      ✔       |         |
 
-TODO
+### Example
+
+````md
+```anki
+id: 1636912129121
+deck: Math
+tags:
+  - equation
+---
+A function with period $L$ can be written as a __Fourier Series__:
+===
+$$
+\begin{gather}
+	f(x) = \frac{1}{2} a_0 + ∑\limits_{n=1}^∞ a_n \cos(k_n x) + ∑\limits_{n=1}^∞ b_n \sin(k_n x)\\
+	\\
+	\quad \text{Where } {k_n = \frac{nπx}{L}}
+\end{gather}
+$$
+```
+````
+
+### Appearance in Live Preview
+
+![Live Preview rendering of a BasicCodeBlock note with math](/img/basiccodeblock_livepreview.gif)

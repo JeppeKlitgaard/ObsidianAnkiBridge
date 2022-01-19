@@ -2,6 +2,14 @@
 
 ## 🖼 Rendering
 
+### 🦋 Live Preview Rendering
+
+The [BasicCodeBlock Blueprint](/blueprints#-basiccodeblock) offers excellent
+rendering in *Live Preview*, making your notes seamlessly integrate into
+the rest of your beautiful Obsidian notes.
+
+For an example, have a look at the [💃 Demonstration](/demonstration) page.
+
 ### 🧮 Math Rendering
 
 Using the Math [postprocessor] your LaTeX in Obsidian will

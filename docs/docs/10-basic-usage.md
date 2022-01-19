@@ -54,7 +54,7 @@ $a = b$
 
 Or 
 
-````md
+````md title="Just front and back"
 ```anki
 What is the answer to the question of life the universe and everything?
 ===
