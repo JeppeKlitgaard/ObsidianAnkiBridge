@@ -34,7 +34,7 @@ export class ClozePostprocessor extends Postprocessor {
             const cloze = `{{c${clozeIterator}::${content}}}`
             const clozeNode = document.createTextNode(cloze)
 
-            target.replaceWith(clozeNode, target)
+            target.replaceWith(clozeNode)
 
             clozeIterator++
         })

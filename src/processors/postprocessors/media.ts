@@ -91,7 +91,7 @@ export class MediaPostprocessor extends Postprocessor {
 
                 mediaEl.setAttribute('alt', alt)
 
-                embed.replaceWith(mediaEl, embed)
+                embed.replaceWith(mediaEl)
             }),
         )
     }
