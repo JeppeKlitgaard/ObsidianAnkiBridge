@@ -59,21 +59,16 @@ export class SettingsTab extends PluginSettingTab {
             .addButton((text) => {
                 text.setButtonText('Test')
                     .setCta()
-                    .onClick(() => {
-                        new Anki(this.app, this.plugin)
-                            .ping()
-                            .then(
-                                () =>
-                                    new Notice(
-                                        this.plugin.manifest.name + ': Connection succesful ✔',
-                                    ),
-                            )
-                            .catch(
-                                () =>
-                                    new Notice(
-                                        this.plugin.manifest.name + ': Connection failed ❌',
-                                    ),
-                            )
+                    .onClick(async () => {
+                        try {
+                            const notice = new Notice(this.plugin.manifest.name + ": Testing connection …")
+                            await this.plugin.anki.ping()
+                            notice.hide()
+
+                            new Notice(this.plugin.manifest.name + ': Connection successful ✔')
+                        } catch (e) {
+                            new Notice(this.plugin.manifest.name + ': Connection failed ❌')
+                        }
                     })
             })
     }
