@@ -18,7 +18,7 @@ Only works on [[40 💫 Physics/Optics/Polarisation|polarised]] light
 ``` 
 
 #anki/start
-```anki
+```anki-config
 id: 1635543498317
 tags:
   - equation

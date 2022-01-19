@@ -37,7 +37,7 @@
         }
       }
     },
-    "sourceText": "#anki/start\n```anki\nid: 1635543498317\ntags:\n  - equation\n```\nA [[Jones Matrix]] is applied to an incoming [[Electromagnetic Wave|Wave]] by:\n\n#anki/---\n$$\n\\v E_t = \\m J \\v E_i\n$$\n#anki/end\n",
+    "sourceText": "#anki/start\n```anki-config\nid: 1635543498317\ntags:\n  - equation\n```\nA [[Jones Matrix]] is applied to an incoming [[Electromagnetic Wave|Wave]] by:\n\n#anki/---\n$$\n\\v E_t = \\m J \\v E_i\n$$\n#anki/end\n",
     "config": {
       "tags": [
         "equation"
