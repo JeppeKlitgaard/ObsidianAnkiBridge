@@ -42,7 +42,7 @@ Directly in the Obsidian Vault you can specify:
 
 Currently implemented blueprints:
 - 🥪 Sandwich Blueprint with `#anki/start`, `#anki/---`, `#anki/end`
-- 💻 BasicCodeBlock Blueprint with ` ```anki `
+- 💻 BasicCodeBlock Blueprint with `anki` codeblocks
 
 ### 📊 Rendering
 - 🧮 Math rendering
