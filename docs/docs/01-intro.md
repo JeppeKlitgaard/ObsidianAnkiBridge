@@ -1,9 +1,8 @@
 ---
-sidebar_position: 1
 slug: /
 ---
 
-# AnkiBridge Introduction
+# 👋 AnkiBridge Introduction
 
 **AnkiBridge** is a plugin for [Obsidian] that allows seamless integration
 with the [Anki] spaced-repetition software.

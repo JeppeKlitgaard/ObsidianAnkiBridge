@@ -1,8 +1,4 @@
----
-sidebar_position: 2
----
-
-# Installation
+# 💿 Installation
 
 To get set up with **AnkiBridge** you will need to do the following:
 

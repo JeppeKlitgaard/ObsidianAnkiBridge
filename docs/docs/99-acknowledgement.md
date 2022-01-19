@@ -1,8 +1,4 @@
----
-sidebar_position: 100
----
-
-# Acknowledgement
+# 💌 Acknowledgement
 
 While this project has evolved to share practically nothing with the excellent original
 [Flashcards](https://github.com/reuseman/flashcards-obsidian) plugin

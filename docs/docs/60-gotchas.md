@@ -1,8 +1,4 @@
----
-sidebar_position: 4
----
-
-# Gotchas
+# ⚠ Gotchas
 
 There are some gotchas that arise from the slightly fiddly nature of meshing Obsidian
 and Anki together.
