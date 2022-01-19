@@ -45,14 +45,14 @@ export default class AnkiBridgePlugin extends Plugin {
 
         this.addCommand({
             id: 'anki-bridge-sync-active-file',
-            name: 'Sync file with Anki',
+            name: 'Sync active file with Anki',
             callback: async () => {
                 await this.syncActiveFile()
             },
         })
         this.addCommand({
             id: 'anki-bridge-silent-sync-active-file',
-            name: 'Sync file with Anki (Silent)',
+            name: 'Sync active file with Anki (Silent)',
             callback: async () => {
                 await this.syncActiveFile(false, false)
             },
