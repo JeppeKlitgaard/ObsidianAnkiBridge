@@ -7,6 +7,7 @@ import { logError } from 'log'
 import { AnkiBridgeError } from 'error'
 import { arraymove } from 'utils/array'
 import { getProcessorById } from 'processors'
+import { DOCUMENTATION_URL } from 'consts'
 
 export class SettingsTab extends PluginSettingTab {
     constructor(public app: App, private plugin: AnkiBridgePlugin) {
@@ -17,6 +18,7 @@ export class SettingsTab extends PluginSettingTab {
         this.containerEl.empty()
         this.containerEl.createEl('h1', { text: this.plugin.manifest.name })
 
+        this.addDocumentation()
         this.addTester()
         this.addGeneral()
         this.addDefaultDeck()
@@ -25,6 +27,19 @@ export class SettingsTab extends PluginSettingTab {
         this.addProcessors()
         this.addProcessorConfig()
         this.addDebugging()
+    }
+
+    addDocumentation(): void {
+        new Setting(this.containerEl)
+            .setName('Open Documentation')
+            .setDesc('Open the documentation for AnkiBridge')
+            .addButton((text) => {
+                text.setButtonText('Documentation')
+                    .setCta()
+                    .onClick(() => {
+                        open(DOCUMENTATION_URL)
+                    })
+            })
     }
 
     addTester(): void {
