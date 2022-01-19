@@ -1,0 +1,22 @@
+name: Test documentation deployment
+
+on:
+  pull_request:
+    branches: [master]
+    paths: [docs/**]
+
+jobs:
+  test-deploy:
+    name: Test documentation deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+      - name: Test build
+        working-directory: docs
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
