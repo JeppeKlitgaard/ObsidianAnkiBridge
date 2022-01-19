@@ -90,7 +90,7 @@ are always update to reflect the vault perfectly.
 __Note: AnkiBridge considers the Obsidian Vault to be the 'ground truth'. Any
 changes to bridged notes in Anki will be reverted upon sync.__
 
-## Upcoming Features
+## 🔜 Upcoming Features
 
 - 👩‍💻 Code syntax highlighting
 - 🌉 Syncing of Mathjax preamples (advanced feature)
@@ -99,3 +99,8 @@ changes to bridged notes in Anki will be reverted upon sync.__
 
 [Obsidian]: https://obsidian.md/
 [Anki]: https://apps.ankiweb.net/
+
+## 🙏 Support
+
+If you're finding **AnkiBridge** useful and wish to show your appreciation,
+go have a gander at the [🙏 Support](/support) page
