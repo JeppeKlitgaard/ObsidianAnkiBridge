@@ -8,13 +8,13 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Obsidian AnkiBridge',
   tagline: 'Yet Another Anki Bridge.',
-  url: 'https://jeppeklitgaard.github.io',
+  url: 'https://JeppeKlitgaard.github.io',
   baseUrl: '/ObsidianAnkiBridge/',
   trailingSlash: false,
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'jeppeklitgaard', // Usually your GitHub org/user name.
+  organizationName: 'JeppeKlitgaard', // Usually your GitHub org/user name.
   projectName: 'ObsidianAnkiBridge', // Usually your repo name.
 
   presets: [
@@ -25,7 +25,7 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          editUrl: 'https://github.com/JeppeKlitgaard/ObsidianAnkiBridge/tree/master/docs',
           routeBasePath: '/',
         },
         blog: false,
