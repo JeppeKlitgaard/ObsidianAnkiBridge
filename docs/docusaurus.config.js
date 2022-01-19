@@ -8,12 +8,13 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Obsidian AnkiBridge',
   tagline: 'Yet Another Anki Bridge.',
-  url: 'https://your-docusaurus-test-site.com',
-  baseUrl: '/',
+  url: 'https://jeppeklitgaard.github.io',
+  baseUrl: '/ObsidianAnkiBridge/',
+  trailingSlash: false,
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'JeppeKlitgaard', // Usually your GitHub org/user name.
+  organizationName: 'jeppeklitgaard', // Usually your GitHub org/user name.
   projectName: 'ObsidianAnkiBridge', // Usually your repo name.
 
   presets: [
@@ -44,18 +45,22 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      colorMode: {
+        defaultMode: "dark",
+        respectPrefersColorScheme: true,
+      },
       navbar: {
         title: 'AnkiBridge',
-        logo: {
-          alt: 'AnkiBridge Logo',
-          src: 'img/logo.svg',
-        },
+        // logo: {
+        //   alt: 'AnkiBridge Logo',
+        //   src: 'img/logo.svg',
+        // },
         items: [
           {
             type: 'doc',
             docId: 'intro',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Documentation',
           },
           // {to: '/blog', label: 'Blog', position: 'left'},
           // {
@@ -69,46 +74,21 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Docs',
-            items: [
-              {
-                label: 'Tutorial',
-                to: '/docs/intro',
-              },
-            ],
-          },
-          {
             title: 'Community',
             items: [
-              {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-              },
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
-              },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
-              },
             ],
           },
           {
             title: 'More',
             items: [
               {
-                label: 'Blog',
-                to: '/blog',
-              },
-              {
                 label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                href: 'https://github.com/JeppeKlitgaard/ObsidianAnkiBridge',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Jeppe Klitgaard and contributors.`,
       },
       prism: {
         theme: lightCodeTheme,
