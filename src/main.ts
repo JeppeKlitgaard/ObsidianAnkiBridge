@@ -77,20 +77,18 @@ export default class AnkiBridgePlugin extends Plugin {
         // Migration
         if (this.settings.currentMigrationVersion < 1) {
             const noticeContent = createFragment()
-            noticeContent.createEl("p")
-                .innerHTML = "<b>⚠ Breaking Change! ⚠</b>"
+            noticeContent.createEl('p').innerHTML = '<b>⚠ Breaking Change! ⚠</b>'
 
-            noticeContent.createEl("p")
-                .innerHTML = "AnkiBridge underwent a breaking change (0.4.x -> 0.5.x)<br>" +
-                    "Please perform the manual migration described in " +
-                    "<a href='https://jeppeklitgaard.github.io/ObsidianAnkiBridge/migrations#04x--05x'>Documentation > Migrations > '0.4.x ⟶ 0.5.x'</a>"
+            noticeContent.createEl('p').innerHTML =
+                'AnkiBridge underwent a breaking change (0.4.x -> 0.5.x)<br>' +
+                'Please perform the manual migration described in ' +
+                "<a href='https://jeppeklitgaard.github.io/ObsidianAnkiBridge/migrations#04x--05x'>Documentation > Migrations > '0.4.x ⟶ 0.5.x'</a>"
 
-            noticeContent.createEl("p")
-                .innerHTML = "I apologise for the inconvenience - luckily it is a quick fix<br><br><em>Jeppe</em>"
+            noticeContent.createEl('p').innerHTML =
+                'I apologise for the inconvenience - luckily it is a quick fix<br><br><em>Jeppe</em>'
 
-            noticeContent.createEl("p")
-                .innerHTML = "Press this notice to make it disappear. <br>" +
-                    "<b>It will not show up again.</b>"
+            noticeContent.createEl('p').innerHTML =
+                'Press this notice to make it disappear. <br>' + '<b>It will not show up again.</b>'
 
             new Notice(noticeContent, 0)
         }

@@ -1,5 +1,4 @@
 import { Notice, PluginSettingTab, Setting, App, ButtonComponent } from 'obsidian'
-import { Anki } from 'services/anki'
 import { BLUEPRINTS, getBlueprintById } from 'blueprints'
 import AnkiBridgePlugin from 'main'
 import { FolderSuggest } from 'suggesters/folder-suggester'
@@ -9,7 +8,7 @@ import { arraymove } from 'utils/array'
 import { getProcessorById } from 'processors'
 import { DOCUMENTATION_URL } from 'consts'
 import supportHtml from 'settings/support.html'
-import { Settings } from './settings'
+import { RequestPermissionResponse } from 'entities/network'
 
 export class SettingsTab extends PluginSettingTab {
     constructor(public app: App, private plugin: AnkiBridgePlugin) {
@@ -22,6 +21,7 @@ export class SettingsTab extends PluginSettingTab {
 
         this.addVersion()
         this.addDocumentation()
+        this.addInitialSetup()
         this.addTester()
         this.addSupport()
         this.addGeneral()
@@ -52,6 +52,53 @@ export class SettingsTab extends PluginSettingTab {
             })
     }
 
+    addInitialSetup(): void {
+        const descFragment = createFragment()
+        descFragment.append(
+            'You only need to do this once, but you must have Anki open and AnkiConnect installed.',
+            createEl('br'),
+            'See Documentation > Insallation if in doubt.',
+        )
+        new Setting(this.containerEl)
+            .setName('Perform Initial Anki Setup')
+            .setDesc(descFragment)
+            .addButton((text) => {
+                text.setButtonText('Setup')
+                    .setCta()
+                    .onClick(async () => {
+                        const initalNoticeFrag = createFragment()
+
+                        initalNoticeFrag.createEl('p').innerHTML =
+                            this.plugin.manifest.name + 'Setting up Anki Connection…'
+                        initalNoticeFrag.createEl('p').innerHTML =
+                            'Please press <code>YES</code> on the Anki pop-up.'
+
+                        const initialNotice = new Notice(initalNoticeFrag, 0)
+
+                        let response: RequestPermissionResponse
+                        try {
+                            response = await this.plugin.anki.requestPermission()
+                        } catch (e) {
+                            this.plugin.error('During Anki setup this error was raised: ', e)
+                        }
+
+                        initialNotice.hide()
+                        this.plugin.debug('Anki Setup Response: ', response)
+
+                        if (response?.permission === 'granted') {
+                            new Notice(this.plugin.manifest.name + ': Setup successful ✔')
+                        } else {
+                            const frag = createFragment()
+                            frag.createEl('p').innerHTML =
+                                this.plugin.manifest.name + ': Setup failed ❌'
+                            frag.createEl('p').innerHTML = 'Please refer to the documentation'
+
+                            new Notice(frag)
+                        }
+                    })
+            })
+    }
+
     addTester(): void {
         new Setting(this.containerEl)
             .setName('Test Anki Connection')
@@ -61,7 +108,9 @@ export class SettingsTab extends PluginSettingTab {
                     .setCta()
                     .onClick(async () => {
                         try {
-                            const notice = new Notice(this.plugin.manifest.name + ": Testing connection …")
+                            const notice = new Notice(
+                                this.plugin.manifest.name + ': Testing connection …',
+                            )
                             await this.plugin.anki.ping()
                             notice.hide()
 
@@ -74,7 +123,7 @@ export class SettingsTab extends PluginSettingTab {
     }
 
     addSupport(): void {
-        this.containerEl.createEl('h2', { text: '❤ Support me?' })
+        this.containerEl.createEl('h2', { text: '❤ Support Me?' })
         const container = this.containerEl.createDiv('ankibridge-settings-support')
 
         const template = createEl('template')
@@ -101,7 +150,7 @@ export class SettingsTab extends PluginSettingTab {
         this.containerEl.createEl('h2', { text: 'General Settings' })
 
         new Setting(this.containerEl)
-            .setName('Global tag')
+            .setName('Global Tag')
             .setDesc('The tag to identify the flashcards in the notes.')
             .addText((text) => {
                 text.setValue(this.plugin.settings.tagInAnki)
@@ -118,7 +167,7 @@ export class SettingsTab extends PluginSettingTab {
 
         // Folders to ignore
         new Setting(this.containerEl)
-            .setName('Folders to ignore')
+            .setName('Folders To Ignore')
             .setDesc('Add new folder to ignore when syncing notes.')
             .addButton((button: ButtonComponent): ButtonComponent => {
                 const b = button
@@ -203,7 +252,7 @@ export class SettingsTab extends PluginSettingTab {
         new Setting(this.containerEl).setDesc(descHeading)
 
         new Setting(this.containerEl)
-            .setName('Fallback deck')
+            .setName('Fallback Deck')
             .setDesc(
                 'The name of the deck where the cards will be added when no folder mapping could be found.',
             )
@@ -308,7 +357,7 @@ export class SettingsTab extends PluginSettingTab {
         this.containerEl.createEl('h2', { text: 'Networking Settings' })
 
         new Setting(this.containerEl)
-            .setName('AnkiConnect address')
+            .setName('AnkiConnect Address')
             .setDesc('The address on which AnkiConnect is exposed. Usually `127.0.0.1`')
             .addText((text) => {
                 text.setValue(this.plugin.settings.ankiConnectAddress)
@@ -324,7 +373,7 @@ export class SettingsTab extends PluginSettingTab {
             })
 
         new Setting(this.containerEl)
-            .setName('AnkiConnect port')
+            .setName('AnkiConnect Port')
             .setDesc('The port on which AnkiConnect is exposed. Usually `8765`')
             .addText((text) => {
                 text.setValue(String(this.plugin.settings.ankiConnectPort))
@@ -349,7 +398,7 @@ export class SettingsTab extends PluginSettingTab {
             'but cannot be suppresed.',
         )
         new Setting(this.containerEl)
-            .setName('Periodic ping')
+            .setName('Periodic Ping')
             .setDesc(periodicPingDesc)
             .addText((e) => {
                 e.setValue(String(this.plugin.settings.periodicPingInterval))
@@ -475,7 +524,7 @@ export class SettingsTab extends PluginSettingTab {
         this.containerEl.createEl('h2', { text: 'Debugging Settings' })
 
         new Setting(this.containerEl)
-            .setName('Enabling debug logging')
+            .setName('Enabling Debug Logging')
             .setDesc('Useful when developing or reporting errors to the developers.')
             .addToggle((toggle) => {
                 toggle.setValue(this.plugin.settings.debug).onChange((newState) => {
@@ -485,7 +534,7 @@ export class SettingsTab extends PluginSettingTab {
             })
 
         new Setting(this.containerEl)
-            .setName('Enabling networking debug logging')
+            .setName('Enabling Networking Debug Logging')
             .setDesc('Useful when developing or reporting errors to the developers.')
             .addToggle((toggle) => {
                 toggle.setValue(this.plugin.settings.debugNetwork).onChange((newState) => {

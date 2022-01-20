@@ -158,3 +158,11 @@ export interface NotesInfoResponseEntity {
 }
 
 export type NotesInfoResponse = Array<NotesInfoResponseEntity>
+
+// Request Permission
+
+export interface RequestPermissionResponse {
+    permission: 'granted' | 'denied'
+    requireApiKey: boolean
+    version: number
+}

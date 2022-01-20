@@ -2,43 +2,47 @@
 
 This page describes the settings that can be configured for **AnkiBridge** in Obsidian.
 
-## 🧪 Test Connection
+## 🙃 Meta Settings
 
-Pressing the `Test` button will try to connect to Anki and let you know whether
-you have a working connection.
+| Option                     | Description                                                                                   |
+| -------------------------- | --------------------------------------------------------------------------------------------- |
+| AnkiBridge Version         | This shows the version of your AnkiBridge installation                                        |
+| Open Documentation         | This takes you here!                                                                          |
+| Perform Initial Anki Setup | Sets up Anki for use with AnkiBridge. This only needs to be done once.                        |
+| Test Connection            | This will try to connect to Anki and let you know whether you have a working connection.      |
 
 ## ⚙ General Settings
 
 | Option            | Description                                                                                   |
 | ----------------- | --------------------------------------------------------------------------------------------- |
-| Global tag        | This tag is applied to every note in Anki that originates from Obsidian                       |
-| Folders to ignore | Any files in these folders will be ignored by AnkiBridge and their content will not be synced |
+| Global Tag        | This tag is applied to every note in Anki that originates from Obsidian                       |
+| Folders To Ignore | Any files in these folders will be ignored by AnkiBridge and their content will not be synced |
 
 ## 🃏 Default Deck Mapping
 
 | Option        | Description                                                                                                                       |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Fallback deck | The default deck to put notes into                                                                                                |
-| Deck map      | Files in the given folder will be put into the specified deck unless overridden in the [note configuration](/notes#configuration) |
+| Fallback Deck | The default deck to put notes into                                                                                                |
+| Deck Map      | Files in the given folder will be put into the specified deck unless overridden in the [note configuration](/notes#configuration) |
 
 ## 🕸 Networking Settings
 
 | Option              | Description                                                      |
 | ------------------- | ---------------------------------------------------------------- |
-| AnkiConnect address | The address where AnkiConnect exposes its API                    |
-| AnkiConnect port    | The port where AnkiConnect exposes its API                       |
-| Periodic ping       | How often to ping Anki to check if the connection is still alive |
+| AnkiConnect Address | The address where AnkiConnect exposes its API                    |
+| AnkiConnect Port    | The port where AnkiConnect exposes its API                       |
+| Periodic Ping       | How often to ping Anki to check if the connection is still alive |
 
 ## 📘 Blueprint Settings
 
-| Option | Description                                    |
-| ------ | ---------------------------------------------- |
+| Option | Description                                                   |
+| ------ | ------------------------------------------------------------- |
 | …      | Each [blueprint](/blueprints) can be disabled or enabled here |
 
 ## ⚙ Processor Settings
 
-| Option | Description                                    |
-| ------ | ---------------------------------------------- |
+| Option | Description                                                   |
+| ------ | ------------------------------------------------------------- |
 | …      | Each [processor](/processors) can be disabled or enabled here |
 
 ## ⚙ Processor Configuration

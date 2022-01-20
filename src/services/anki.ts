@@ -11,6 +11,7 @@ import {
     NotesInfoRequest,
     NotesInfoResponseEntity,
     RemoveTagsRequest,
+    RequestPermissionResponse,
     StoreMediaFileRequest,
     StoreMediaFileResponse,
     UpdateNoteFieldsRequest,
@@ -139,6 +140,12 @@ export class Anki {
         }
 
         return await this.invoke('removeTags', Anki.version, params)
+    }
+
+    public async requestPermission(): Promise<RequestPermissionResponse> {
+        const params = {}
+
+        return await this.invoke('requestPermission', Anki.version, params, 1)
     }
 
     public async ping(): Promise<boolean> {
