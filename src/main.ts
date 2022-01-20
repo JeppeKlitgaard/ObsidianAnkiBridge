@@ -91,6 +91,9 @@ export default class AnkiBridgePlugin extends Plugin {
                 'Press this notice to make it disappear. <br>' + '<b>It will not show up again.</b>'
 
             new Notice(noticeContent, 0)
+
+            this.settings.currentMigrationVersion = 1
+            await this.syncActiveFile()
         }
 
         await this.pingAnki()
