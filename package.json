@@ -1,6 +1,6 @@
 {
   "name": "obsidian-ankibridge",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Yet Another Anki Bridge.",
   "keywords": [],
   "license": "MIT",
@@ -11,7 +11,7 @@
     "vup:patch": "yarn version patch && yarn vup:post",
     "vup:minor": "yarn version minor && yarn vup:post",
     "vup:major": "yarn version major && yarn vup:post",
-    "vup:post": "node bin/version-bump.mjs && git add manifest.json versions.json",
+    "vup:post": "node bin/version-bump.mjs && git add package.json manifest.json versions.json .yarn/versions",
     "check": "tsc --noEmit --watch",
     "dev": "node esbuild.config.mjs",
     "sass:dev": "sass --no-source-map=none --watch sass/main.scss styles.css",
