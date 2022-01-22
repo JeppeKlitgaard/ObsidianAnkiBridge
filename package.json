@@ -1,13 +1,13 @@
 {
   "name": "obsidian-ankibridge",
-  "version": "0.6.12",
+  "version": "0.6.11",
   "description": "Yet Another Anki Bridge.",
   "keywords": [],
   "license": "MIT",
   "author": "Jeppe Klitgaard <hi@jeppe.science>",
   "main": "main.js",
   "scripts": {
-    "build": "node esbuild.config.mjs production && yarn sass:ci",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && yarn sass:ci",
     "vup": "node bin/version-bump.mjs",
     "check": "tsc --noEmit --watch",
     "dev": "node esbuild.config.mjs",
