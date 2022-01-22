@@ -1,14 +1,14 @@
 {
   "name": "obsidian-ankibridge",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Yet Another Anki Bridge.",
   "keywords": [],
   "license": "MIT",
   "author": "Jeppe Klitgaard <hi@jeppe.science>",
   "main": "main.js",
   "scripts": {
-    "build": "node esbuild.config.mjs production && yarn sass:ci",
-    "version": "json -I -f manifest.json -e \"this.version='$npm_package_version'\" && json -I -f versions.json -e \"this['$npm_package_version']='$(cat manifest.json | json minAppVersion)'\"",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && yarn sass:ci",
+    "version": "node bin/version-bump.mjs && git add manifest.json versions.json",
     "check": "tsc --noEmit --watch",
     "dev": "node esbuild.config.mjs",
     "sass:dev": "sass --no-source-map=none --watch sass/main.scss styles.css",

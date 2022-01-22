@@ -1,10 +1,10 @@
 {
-  "id": "obsidian-ankibridge",
-  "name": "AnkiBridge",
-  "version": "0.6.0",
-  "minAppVersion": "0.13.16",
-  "description": "Yet Another Anki Bridge",
-  "author": "Jeppe Klitgaard",
-  "authorUrl": "https://jeppe.science",
-  "isDesktopOnly": true
+	"id": "obsidian-ankibridge",
+	"name": "AnkiBridge",
+	"version": "0.6.1",
+	"minAppVersion": "0.13.16",
+	"description": "Yet Another Anki Bridge",
+	"author": "Jeppe Klitgaard",
+	"authorUrl": "https://jeppe.science",
+	"isDesktopOnly": true
 }
