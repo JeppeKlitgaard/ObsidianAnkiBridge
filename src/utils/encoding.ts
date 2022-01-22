@@ -1,6 +1,6 @@
 // https://stackoverflow.com/a/58339391/5036246
 
-import { MediaType } from 'entities/note'
+import { MediaType } from 'ankibridge/entities/note'
 import { FileTypeResult } from 'file-type'
 
 // https://stackoverflow.com/questions/34495796/javascript-promises-with-filereader

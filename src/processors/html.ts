@@ -1,6 +1,7 @@
-import { NoteBase } from 'notes/base'
+import { ProcessorContext } from 'ankibridge/processors/base'
 import { Component, MarkdownRenderer } from 'obsidian'
-import { ProcessorContext } from './base'
+
+import { NoteBase } from '../notes/base'
 
 export async function processMarkdownToHtml(
     note: NoteBase,

@@ -1,11 +1,11 @@
-import { getBlueprintById } from 'blueprints'
-import { Blueprint } from 'blueprints/base'
-import { Fragment, FragmentProcessingResult } from 'entities/note'
+import { getBlueprintById } from 'ankibridge/blueprints'
+import { Blueprint } from 'ankibridge/blueprints/base'
+import { Fragment, FragmentProcessingResult } from 'ankibridge/entities/note'
+import AnkiBridgePlugin from 'ankibridge/main'
+import { NoteBase } from 'ankibridge/notes/base'
+import { stripCr } from 'ankibridge/utils/file'
 import _ from 'lodash'
-import AnkiBridgePlugin from 'main'
-import { NoteBase } from 'notes/base'
 import { App, TFile } from 'obsidian'
-import { stripCr } from 'utils'
 
 export interface ProcessedFileResult {
     sourceFile: TFile

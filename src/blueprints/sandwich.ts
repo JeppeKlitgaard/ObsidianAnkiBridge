@@ -1,11 +1,11 @@
-import { Blueprint } from 'blueprints/base'
-import { GRAMMAR_LIBRARIES } from 'consts'
-import { makeGrammar } from 'utils/grammar'
-import { generate } from 'peggy'
-import { NoteField } from 'entities/note'
+import { Blueprint } from 'ankibridge/blueprints/base'
+import { GRAMMAR_LIBRARIES } from 'ankibridge/consts'
+import { NoteField } from 'ankibridge/entities/note'
+import sandwichGrammar from 'ankibridge/grammars/CardSandwich.pegjs'
+import { NoteBase } from 'ankibridge/notes/base'
+import { makeGrammar } from 'ankibridge/utils/grammar'
 import { dump } from 'js-yaml'
-import { NoteBase } from 'notes/base'
-import sandwichGrammar from 'grammars/CardSandwich.pegjs'
+import { generate } from 'peggy'
 
 export class SandwichBlueprint extends Blueprint {
     static id = 'Sandwich'

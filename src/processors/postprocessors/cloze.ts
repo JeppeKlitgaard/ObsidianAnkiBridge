@@ -1,7 +1,7 @@
-import { NoteBase } from 'notes/base'
-import { ProcessorContext } from 'processors/base'
-import { Postprocessor } from './base'
-import { NoteField } from 'entities/note'
+import { NoteField } from 'ankibridge/entities/note'
+import { NoteBase } from 'ankibridge/notes/base'
+import { ProcessorContext } from 'ankibridge/processors/base'
+import { Postprocessor } from 'ankibridge/processors/postprocessors/base'
 
 export class ClozePostprocessor extends Postprocessor {
     static id = 'ClozePostprocessor'

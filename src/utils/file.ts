@@ -1,15 +1,16 @@
-import { DefaultDeckMap } from 'entities/other'
-import { AnkiBridgeError } from 'error'
 import {
     App,
-    normalizePath,
-    TFolder,
-    TFile,
-    TAbstractFile,
-    Vault,
     DataAdapter,
     FileSystemAdapter,
+    normalizePath,
+    TAbstractFile,
+    TFile,
+    TFolder,
+    Vault,
 } from 'obsidian'
+
+import { DefaultDeckMap } from '../entities/other'
+import { AnkiBridgeError } from '../error'
 
 export function resolveTFolder(app: App, folderStr: string): TFolder {
     folderStr = normalizePath(folderStr)

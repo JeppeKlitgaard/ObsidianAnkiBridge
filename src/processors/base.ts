@@ -1,5 +1,5 @@
-import { NoteField } from 'entities/note'
-import AnkiBridgePlugin from 'main'
+import { NoteField } from 'ankibridge/entities/note'
+import AnkiBridgePlugin from 'ankibridge/main'
 import { App } from 'obsidian'
 
 export abstract class Processor {

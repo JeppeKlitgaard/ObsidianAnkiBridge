@@ -1,6 +1,6 @@
-import { NoteBase } from 'notes/base'
-import { ProcessorContext } from 'processors/base'
-import { Preprocessor } from './base'
+import { NoteBase } from 'ankibridge/notes/base'
+import { ProcessorContext } from 'ankibridge/processors/base'
+import { Preprocessor } from 'ankibridge/processors/preprocessors/base'
 
 export abstract class DebugPreprocessor extends Preprocessor {
     static defaultConfigState = false

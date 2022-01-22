@@ -1,6 +1,6 @@
-import { NoteBase } from 'notes/base'
+import { NoteBase } from 'ankibridge/notes/base'
+import { arrayBufferToBase64 } from 'ankibridge/utils/encoding'
 import { TFile } from 'obsidian'
-import { arrayBufferToBase64 } from 'utils/encoding'
 
 export type AnkiBasicField = 'Front' | 'Back'
 export type AnkiClozeField = 'Text' | 'Back Extra'

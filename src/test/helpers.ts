@@ -1,11 +1,11 @@
 // jest.mock('obsidian')
 
-import { Fragment } from 'entities/note'
+import { Fragment } from 'ankibridge/entities/note'
+import { stripCr } from 'ankibridge/utils/file'
 import * as fs from 'fs'
 import glob from 'glob'
 import { FileStats, TFile, TFolder, Vault } from 'obsidian'
 import * as path from 'path'
-import { stripCr } from 'utils/file'
 
 export interface TestDataFile {
     contents: string

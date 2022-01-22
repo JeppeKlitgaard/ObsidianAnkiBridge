@@ -1,12 +1,13 @@
-import { NoteBase } from 'notes/base'
-import { getLinkpath, TFile } from 'obsidian'
-import { ProcessorContext } from 'processors/base'
-import { Postprocessor } from './base'
+import { Media } from 'ankibridge/entities/note'
+import { NoteBase } from 'ankibridge/notes/base'
+import { ProcessorContext } from 'ankibridge/processors/base'
+import { Postprocessor } from 'ankibridge/processors/postprocessors/base'
 import { fileTypeFromBuffer, FileTypeResult } from 'file-type'
-import { fileTypeToMediaType } from 'utils/encoding'
-import { Media } from 'entities/note'
-import { getFullPath } from 'utils/file'
-import { isVideo } from 'utils/media'
+import { getLinkpath, TFile } from 'obsidian'
+
+import { fileTypeToMediaType } from '../../utils/encoding'
+import { getFullPath } from '../../utils/file'
+import { isVideo } from '../../utils/media'
 
 export class MediaPostprocessor extends Postprocessor {
     static id = 'MediaPostprocessor'

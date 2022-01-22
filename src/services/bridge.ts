@@ -1,20 +1,20 @@
-import AnkiBridgePlugin from 'main'
-import { hasID, NoteBase, NoteWithID } from 'notes/base'
-import { App, Notice } from 'obsidian'
-import { ProcessedFileResult } from './reader'
-import _ from 'lodash'
 import {
     AddNoteResponse,
     NotesInfoResponseEntity,
     UpdateNoteFieldsResponse,
-} from 'entities/network'
+} from 'ankibridge/entities/network'
+import { NoteAction, NoteField, NoteFields } from 'ankibridge/entities/note'
+import AnkiBridgePlugin from 'ankibridge/main'
+import { hasID, NoteBase, NoteWithID } from 'ankibridge/notes/base'
+import { getProcessorById } from 'ankibridge/processors'
+import { ProcessorContext } from 'ankibridge/processors/base'
+import { processMarkdownToHtml } from 'ankibridge/processors/html'
+import { Postprocessor } from 'ankibridge/processors/postprocessors/base'
+import { Preprocessor } from 'ankibridge/processors/preprocessors/base'
+import { ProcessedFileResult } from 'ankibridge/services/reader'
+import _ from 'lodash'
+import { App, Notice } from 'obsidian'
 import promiseAllProperties from 'promise-all-properties'
-import { Preprocessor } from 'processors/preprocessors/base'
-import { Postprocessor } from 'processors/postprocessors/base'
-import { getProcessorById } from 'processors'
-import { ProcessorContext } from 'processors/base'
-import { processMarkdownToHtml } from 'processors/html'
-import { NoteAction, NoteField, NoteFields } from 'entities/note'
 
 class NotePairDelta {
     constructor(
@@ -287,7 +287,6 @@ export class Bridge {
 
         return NoteAction.Updated
     }
-
     public async processFileResults(results: ProcessedFileResult): Promise<Array<NoteAction>> {
         let shouldUpdateSource = false
 

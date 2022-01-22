@@ -1,6 +1,6 @@
-import { NoteBase } from 'notes/base'
-import { ProcessorContext } from 'processors/base'
-import { Postprocessor } from './base'
+import { NoteBase } from 'ankibridge/notes/base'
+import { ProcessorContext } from 'ankibridge/processors/base'
+import { Postprocessor } from 'ankibridge/processors/postprocessors/base'
 
 export abstract class DebugPostprocessor extends Postprocessor {
     static defaultConfigState = false

@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
     "baseUrl": "./src",
+    "paths": {
+      "ankibridge/*": ["*"],
+    },
     "inlineSourceMap": true,
     "inlineSources": true,
     "module": "ESNext",
@@ -22,7 +25,6 @@
       "es2020",
     ],
   },
-
   "include": [
     "./src/**/*.ts",
   ]

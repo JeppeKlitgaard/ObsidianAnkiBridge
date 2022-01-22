@@ -1,11 +1,11 @@
 /**
  * Run using `yarn test` by commenting (1)
  */
-import { SandwichBlueprint } from 'blueprints/sandwich'
-import { TestingDatabase } from 'test/helpers'
+import { SandwichBlueprint } from 'ankibridge/blueprints/sandwich'
+import AnkiBridgePlugin from 'ankibridge/main'
+import { TestingDatabase } from 'ankibridge/test/helpers'
 import * as fs from 'fs'
 import { App } from 'obsidian'
-import AnkiBridgePlugin from 'main'
 
 const tdb = new TestingDatabase()
 let bp: SandwichBlueprint

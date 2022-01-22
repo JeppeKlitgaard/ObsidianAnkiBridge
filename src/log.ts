@@ -1,7 +1,7 @@
 // Credit: SilentVoid13's Templater
 
+import { AnkiBridgeError } from 'ankibridge/error'
 import { Notice } from 'obsidian'
-import { AnkiBridgeError } from 'error'
 
 export function logUpdate(msg: string): void {
     const notice = new Notice('', 15000)

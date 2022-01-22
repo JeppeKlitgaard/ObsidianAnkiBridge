@@ -1,8 +1,9 @@
-import { NoteField } from 'entities/note'
-import { NoteBase } from 'notes/base'
-import { ProcessorContext } from 'processors/base'
-import { markdownLinkToTextAndHref } from 'utils'
-import { Postprocessor } from './base'
+import { ProcessorContext } from 'ankibridge/processors/base'
+import { Postprocessor } from 'ankibridge/processors/postprocessors/base'
+import { markdownLinkToTextAndHref } from 'ankibridge/utils'
+
+import { NoteField } from '../../entities/note'
+import { NoteBase } from '../../notes/base'
 
 export class LinkToSourcePostprocessor extends Postprocessor {
     static id = 'LinkToSourcePostprocessor'

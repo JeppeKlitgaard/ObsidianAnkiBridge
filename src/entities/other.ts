@@ -1,4 +1,4 @@
-import { NoteAction } from './note'
+import { NoteAction } from 'ankibridge/entities/note'
 
 export interface SyncResult {
     noteActions: Array<NoteAction>

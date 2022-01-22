@@ -1,9 +1,9 @@
-import { LATEST_MIGRATION_VERSION } from 'consts'
-import { DefaultDeckMap } from 'entities/other'
+import { LATEST_MIGRATION_VERSION } from 'ankibridge/consts'
+import { DefaultDeckMap } from 'ankibridge/entities/other'
+import { POSTPROCESSORS } from 'ankibridge/processors/postprocessors'
+import { PREPROCESSORS } from 'ankibridge/processors/preprocessors'
+import { Preprocessor } from 'ankibridge/processors/preprocessors/base'
 import _ from 'lodash'
-import { POSTPROCESSORS } from 'processors/postprocessors'
-import { PREPROCESSORS } from 'processors/preprocessors'
-import { Preprocessor } from 'processors/preprocessors/base'
 
 export interface ISettings {
     currentMigrationVersion: number

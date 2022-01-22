@@ -1,6 +1,6 @@
-import { Config, NoteBase } from './base'
-import { Media, NoteField, SourceDescriptor } from 'entities/note'
-import { Blueprint } from 'blueprints/base'
+import { Blueprint } from 'ankibridge/blueprints/base'
+import { Media, NoteField, SourceDescriptor } from 'ankibridge/entities/note'
+import { Config, NoteBase } from 'ankibridge/notes/base'
 
 export class BasicNote extends NoteBase {
     constructor(

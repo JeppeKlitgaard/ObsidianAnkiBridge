@@ -37,15 +37,6 @@ export function escapeMarkdown(string: string, skips: string[] = []) {
     }, string)
 }
 
-/**
- * Replaces \r with nothing.
- * @param {string} text - Text to strip
- * @return {string} Stripped text
- */
-export function stripCr(text: string): string {
-    return text.replace(/\r/g, '')
-}
-
 export function showError(message: string): void {
     new Notice('AnkiBridge Error: ' + message)
 }

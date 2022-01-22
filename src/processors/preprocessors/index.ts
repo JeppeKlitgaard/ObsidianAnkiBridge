@@ -1,8 +1,11 @@
-import AnkiBridgePlugin from 'main'
+import AnkiBridgePlugin from 'ankibridge/main'
+import { Preprocessor } from 'ankibridge/processors/preprocessors/base'
+import {
+    FinalDebugPreprocessor,
+    InitialDebugPreprocessor,
+} from 'ankibridge/processors/preprocessors/debug'
+import { MathPreprocessor } from 'ankibridge/processors/preprocessors/math'
 import { App } from 'obsidian'
-import { Preprocessor } from './base'
-import { FinalDebugPreprocessor, InitialDebugPreprocessor } from './debug'
-import { MathPreprocessor } from './math'
 
 export type PreprocessorConstructor = {
     new (app: App, plugin: AnkiBridgePlugin): Preprocessor

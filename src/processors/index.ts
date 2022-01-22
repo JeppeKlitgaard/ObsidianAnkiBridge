@@ -1,5 +1,5 @@
-import { PostprocessorConstructor, POSTPROCESSORS } from './postprocessors'
-import { PreprocessorConstructor, PREPROCESSORS } from './preprocessors'
+import { PostprocessorConstructor, POSTPROCESSORS } from 'ankibridge/processors/postprocessors'
+import { PreprocessorConstructor, PREPROCESSORS } from 'ankibridge/processors/preprocessors'
 
 export function getProcessorById(id: string): PreprocessorConstructor | PostprocessorConstructor {
     const result = [...PREPROCESSORS, ...POSTPROCESSORS].find((o) => o.id === id)

@@ -1,7 +1,7 @@
-import AnkiBridgePlugin from 'main'
+import { SandwichBlueprint } from 'ankibridge/blueprints/sandwich'
+import AnkiBridgePlugin from 'ankibridge/main'
+import { TestingDatabase } from 'ankibridge/test/helpers'
 import { App } from 'obsidian'
-import { TestingDatabase } from 'test/helpers'
-import { SandwichBlueprint } from './sandwich'
 
 const tdb = new TestingDatabase()
 let bp: SandwichBlueprint

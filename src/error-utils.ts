@@ -1,5 +1,5 @@
-import { AnkiBridgeError } from 'error'
-import { logError } from 'log'
+import { AnkiBridgeError } from 'ankibridge/error'
+import { logError } from 'ankibridge/log'
 
 export async function errorWrapper<T>(fn: () => Promise<T>, msg: string): Promise<T | null> {
     try {

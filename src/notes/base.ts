@@ -1,5 +1,5 @@
-import { Blueprint } from 'blueprints/base'
-import { NotesInfoResponseEntity } from 'entities/network'
+import { Blueprint } from 'ankibridge/blueprints/base'
+import { NotesInfoResponseEntity } from 'ankibridge/entities/network'
 import {
     AnkiFields,
     Media,
@@ -7,11 +7,11 @@ import {
     NoteField,
     NoteFields,
     SourceDescriptor,
-} from 'entities/note'
+} from 'ankibridge/entities/note'
+import AnkiBridgePlugin from 'ankibridge/main'
+import { getDefaultDeckForFolder } from 'ankibridge/utils/file'
+import yup from 'ankibridge/utils/yup'
 import { load } from 'js-yaml'
-import AnkiBridgePlugin from 'main'
-import { getDefaultDeckForFolder } from 'utils/file'
-import yup from 'utils/yup'
 
 // Config
 export interface Config {

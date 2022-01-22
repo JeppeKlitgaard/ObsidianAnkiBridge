@@ -1,14 +1,15 @@
-import { Notice, PluginSettingTab, Setting, App, ButtonComponent } from 'obsidian'
-import { BLUEPRINTS, getBlueprintById } from 'blueprints'
-import AnkiBridgePlugin from 'main'
-import { FolderSuggest } from 'suggesters/folder-suggester'
-import { logError } from 'log'
-import { AnkiBridgeError } from 'error'
-import { arraymove } from 'utils/array'
-import { getProcessorById } from 'processors'
-import { DOCUMENTATION_URL } from 'consts'
-import supportHtml from 'settings/support.html'
-import { RequestPermissionResponse } from 'entities/network'
+import { BLUEPRINTS, getBlueprintById } from 'ankibridge/blueprints'
+import { DOCUMENTATION_URL } from 'ankibridge/consts'
+import { RequestPermissionResponse } from 'ankibridge/entities/network'
+import { AnkiBridgeError } from 'ankibridge/error'
+import { logError } from 'ankibridge/log'
+import AnkiBridgePlugin from 'ankibridge/main'
+import supportHtml from 'ankibridge/settings/support.html'
+import { App, ButtonComponent, Notice, PluginSettingTab, Setting } from 'obsidian'
+
+import { getProcessorById } from '../processors'
+import { FolderSuggest } from '../suggesters/folder-suggester'
+import { arraymove } from '../utils/array'
 
 export class SettingsTab extends PluginSettingTab {
     constructor(public app: App, private plugin: AnkiBridgePlugin) {
@@ -75,7 +76,7 @@ export class SettingsTab extends PluginSettingTab {
 
                         const initialNotice = new Notice(initalNoticeFrag, 0)
 
-                        let response: RequestPermissionResponse
+                        let response: RequestPermissionResponse | undefined
                         try {
                             response = await this.plugin.anki.requestPermission()
                         } catch (e) {
@@ -129,7 +130,7 @@ export class SettingsTab extends PluginSettingTab {
         const template = createEl('template')
         template.innerHTML = supportHtml.trim()
 
-        const donateButton = template.content.firstChild
+        const donateButton = template.content.firstChild!
 
         const donateText = container.createDiv('ankibridge-setting-support-text')
         donateText.createEl('p', {

@@ -1,3 +1,4 @@
+import { PLUGIN_NAME } from 'ankibridge/consts'
 import {
     AddNoteRequest,
     AddNoteResponse,
@@ -16,13 +17,12 @@ import {
     StoreMediaFileResponse,
     UpdateNoteFieldsRequest,
     UpdateNoteFieldsResponse,
-} from 'entities/network'
-import { NoteBase, NoteWithID } from 'notes/base'
+} from 'ankibridge/entities/network'
+import { AnkiFields, ModelName } from 'ankibridge/entities/note'
+import AnkiBridgePlugin from 'ankibridge/main'
+import { NoteBase, NoteWithID } from 'ankibridge/notes/base'
 import _ from 'lodash'
 import { App } from 'obsidian'
-import AnkiBridgePlugin from 'main'
-import { PLUGIN_NAME } from 'consts'
-import { AnkiFields, ModelName } from 'entities/note'
 
 export class Anki {
     private static version = 6

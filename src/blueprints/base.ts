@@ -1,5 +1,5 @@
-import { Fragment, FragmentProcessingResult } from 'entities/note'
-import AnkiBridgePlugin from 'main'
+import { Fragment, FragmentProcessingResult, SourceDescriptor } from 'ankibridge/entities/note'
+import AnkiBridgePlugin from 'ankibridge/main'
 import {
     NoteBase,
     ParseConfig,
@@ -8,7 +8,11 @@ import {
     ParseLocation,
     ParseNoteResult,
     ParseNoteResultSchema,
-} from 'notes/base'
+} from 'ankibridge/notes/base'
+import { BasicNote } from 'ankibridge/notes/basic'
+import { showError } from 'ankibridge/utils'
+import yup from 'ankibridge/utils/yup'
+import _ from 'lodash'
 import {
     App,
     MarkdownPostProcessor,
@@ -19,11 +23,6 @@ import {
 } from 'obsidian'
 import { Parser } from 'peggy'
 
-import { SourceDescriptor } from 'entities/note'
-import { showError } from 'utils'
-import { BasicNote } from 'notes/basic'
-import yup from 'utils/yup'
-import _ from 'lodash'
 export abstract class Blueprint {
     public static readonly displayName: string
     public static readonly id: string

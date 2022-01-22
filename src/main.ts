@@ -1,13 +1,13 @@
-import { addIcon, Notice, Plugin, TFile } from 'obsidian'
-import { DEFAULT_SETTINGS, Settings } from 'settings/settings'
-import { SettingsTab } from 'settings/settings-tab'
-import { Anki } from 'services/anki'
-import flashcardsIcon from 'assets/flashcard.svg_content'
-import { Reader } from 'services/reader'
-import { Bridge } from 'services/bridge'
-import { SyncResult } from 'entities/other'
-import { NoteAction } from 'entities/note'
+import flashcardsIcon from 'ankibridge/assets/flashcard.svg_content'
+import { NoteAction } from 'ankibridge/entities/note'
+import { SyncResult } from 'ankibridge/entities/other'
+import { Anki } from 'ankibridge/services/anki'
+import { Bridge } from 'ankibridge/services/bridge'
+import { Reader } from 'ankibridge/services/reader'
+import { DEFAULT_SETTINGS, Settings } from 'ankibridge/settings/settings'
+import { SettingsTab } from 'ankibridge/settings/settings-tab'
 import _ from 'lodash'
+import { addIcon, Notice, Plugin, TFile } from 'obsidian'
 
 export default class AnkiBridgePlugin extends Plugin {
     public settings: Settings

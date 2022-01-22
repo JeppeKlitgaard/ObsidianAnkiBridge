@@ -1,16 +1,16 @@
 // Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 
+import { errorWrapperSync } from 'ankibridge/error-utils'
+import AnkiBridgePlugin from 'ankibridge/main'
+import { TextInputSuggest } from 'ankibridge/suggesters/suggest'
+import { getTFilesFromFolder } from 'ankibridge/utils/file'
 import { App, TAbstractFile, TFile, TFolder } from 'obsidian'
-import { TextInputSuggest } from 'suggesters/suggest'
-import { getTFilesFromFolder } from 'utils/file'
-import { errorWrapperSync } from 'error-utils'
-import BetterMathPlugin from 'main'
 
 export class FileSuggest extends TextInputSuggest<TFile> {
     constructor(
         public app: App,
         public inputEl: HTMLInputElement,
-        private plugin: BetterMathPlugin,
+        private plugin: AnkiBridgePlugin,
         private folder: TFolder | undefined = undefined,
         private extensions: Array<string> = ['md'],
     ) {

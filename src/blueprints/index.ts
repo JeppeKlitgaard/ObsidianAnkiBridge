@@ -1,8 +1,8 @@
-import AnkiBridgePlugin from 'main'
+import { Blueprint, CodeBlockBlueprint } from 'ankibridge/blueprints/base'
+import { BasicCodeBlockBlueprint } from 'ankibridge/blueprints/basic-codeblock'
+import { SandwichBlueprint } from 'ankibridge/blueprints/sandwich'
+import AnkiBridgePlugin from 'ankibridge/main'
 import { App } from 'obsidian'
-import { Blueprint, CodeBlockBlueprint } from './base'
-import { BasicCodeBlockBlueprint } from './basic-codeblock'
-import { SandwichBlueprint } from './sandwich'
 
 // TODO
 // This could definite be made better, but advanced typing in TypeScript is

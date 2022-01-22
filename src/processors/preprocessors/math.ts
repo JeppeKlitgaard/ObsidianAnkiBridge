@@ -1,7 +1,7 @@
-import { NoteBase } from 'notes/base'
-import { ProcessorContext } from 'processors/base'
-import { escapeMarkdown } from 'utils'
-import { Preprocessor } from './base'
+import { NoteBase } from 'ankibridge/notes/base'
+import { ProcessorContext } from 'ankibridge/processors/base'
+import { Preprocessor } from 'ankibridge/processors/preprocessors/base'
+import { escapeMarkdown } from 'ankibridge/utils'
 
 export class MathPreprocessor extends Preprocessor {
     /**

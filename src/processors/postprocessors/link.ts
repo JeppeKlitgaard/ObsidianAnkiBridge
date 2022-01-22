@@ -1,7 +1,7 @@
-import { NoteBase } from 'notes/base'
-import { ProcessorContext } from 'processors/base'
-import { renderObsidianURIOpen } from 'utils'
-import { Postprocessor } from './base'
+import { NoteBase } from 'ankibridge/notes/base'
+import { ProcessorContext } from 'ankibridge/processors/base'
+import { Postprocessor } from 'ankibridge/processors/postprocessors/base'
+import { renderObsidianURIOpen } from 'ankibridge/utils'
 
 export class LinkPostprocessor extends Postprocessor {
     static id = 'LinkPostprocessor'

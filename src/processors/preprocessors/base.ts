@@ -1,5 +1,5 @@
-import { NoteBase } from 'notes/base'
-import { Processor, ProcessorContext } from 'processors/base'
+import { NoteBase } from 'ankibridge/notes/base'
+import { Processor, ProcessorContext } from 'ankibridge/processors/base'
 
 export abstract class Preprocessor extends Processor {
     public abstract preprocess(

@@ -1,7 +1,7 @@
 // Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 
-import { App, ISuggestOwner, Scope } from 'obsidian'
 import { createPopper, Instance as PopperInstance } from '@popperjs/core'
+import { App, ISuggestOwner, Scope } from 'obsidian'
 
 const wrapAround = (value: number, size: number): number => {
     return ((value % size) + size) % size
