@@ -7,7 +7,7 @@
   "author": "Jeppe Klitgaard <hi@jeppe.science>",
   "main": "main.js",
   "scripts": {
-    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && yarn sass:ci",
+    "build": "node esbuild.config.mjs production && yarn sass:ci",
     "vup": "node bin/version-bump.mjs",
     "check": "tsc --noEmit --watch",
     "dev": "node esbuild.config.mjs",
