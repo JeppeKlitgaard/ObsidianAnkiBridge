@@ -127,6 +127,7 @@ div.ankibridge-card {
         }
 
         div.ankibridge-card-fields {
+
             // Front
             div.ankibridge-card-front {}
 
@@ -134,28 +135,48 @@ div.ankibridge-card {
             div.ankibridge-card-separator {
                 height       : 0.25rem;
                 border-radius: 0.15rem;
-                margin: 1rem 0;
+                margin       : 1rem 0;
 
                 background-color: var(--background-modifier-border);
             }
 
             // Back
             div.ankibridge-card-back {}
+        }
+    }
+}
 
-            // Front and back
-            .ankibridge-card-content>* {
-                // Live Preview-fixed
-                // Inspired by https://github.com/valentine195/obsidian-admonition/blob/master/src/assets/main.css
-                // Hopefully not needed after Obsidian supports rendering to LP-mode format
-                margin-top   : 0px;
-                margin-bottom: 0px;
+// Reading only
+div.markdown-reading-view {
+    div.ankibridge-card-parent {
+        padding: 4px;
+    }
+}
 
-                br {
-                    display: none;
-                }
+// Live-preview only
+div.is-live-preview {
+    div.cm-preview-code-block.cm-embed-block.ankibridge-card-parent {
+        border: 0;
+        div.ankibridge-card {
+            div.ankibridge-card-fields {
+                // Front and back
+                .ankibridge-card-content {
+                    ul {
+                        white-space: normal;
+                    }
 
-                ul {
-                    white-space: normal;
+                    &>* {
+                        // Live Preview-fixed
+                        // Inspired by https://github.com/valentine195/obsidian-admonition/blob/master/src/assets/main.css
+                        // Hopefully not needed after Obsidian supports rendering to LP-mode format
+                        margin-top   : 0px;
+                        margin-bottom: 0px;
+                        line-height: 1.5;
+
+                        br {
+                            display: none;
+                        }
+                    }
                 }
             }
         }
