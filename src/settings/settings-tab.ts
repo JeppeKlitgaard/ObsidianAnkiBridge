@@ -435,7 +435,7 @@ export class SettingsTab extends PluginSettingTab {
 
         const blueprintSettingsConst = Object.fromEntries(
             BLUEPRINTS.map((bp) => {
-                return [bp.id, false]
+                return [bp.id, bp.defaultConfigState]
             }),
         )
 

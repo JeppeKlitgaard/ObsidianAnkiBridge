@@ -8,9 +8,10 @@ import { dump } from 'js-yaml'
 import { generate } from 'peggy'
 
 export class SandwichBlueprint extends Blueprint {
-    static id = 'Sandwich'
-    static displayName = 'Sandwich'
-    static weight = 50
+    public static readonly id = 'Sandwich'
+    public static readonly displayName = 'Sandwich'
+    public static readonly weight = 50
+    public static readonly defaultConfigState = true
 
     protected async setupParser(): Promise<void> {
         const grammar = await makeGrammar(sandwichGrammar, GRAMMAR_LIBRARIES)

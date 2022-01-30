@@ -27,6 +27,7 @@ export abstract class Blueprint {
     public static readonly displayName: string
     public static readonly id: string
     public static readonly weight: number
+    public static readonly defaultConfigState: boolean
 
     protected app: App
     protected plugin: AnkiBridgePlugin
