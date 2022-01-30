@@ -10,11 +10,12 @@ import { MarkdownPostProcessorContext, MarkdownRenderChild } from 'obsidian'
 import { generate } from 'peggy'
 
 export abstract class BasicCodeBlockBlueprint extends CodeBlockBlueprint {
-    public static readonly codeBlockLanguage: string = 'anki'
     public static readonly id = 'BasicCodeblock'
     public static readonly displayName = 'BasicCodeblock'
     public static readonly weight = 50
     public static readonly defaultConfigState = true
+
+    public readonly codeBlockLanguage: string = 'anki'
 
     protected async setupParser(): Promise<void> {
         const grammar = await makeGrammar(basicCodeBlockGrammar, GRAMMAR_LIBRARIES)

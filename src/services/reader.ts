@@ -17,8 +17,9 @@ export class Reader {
 
     constructor(public app: App, public plugin: AnkiBridgePlugin) {
         this.blueprints = []
+        const blueprintSettings = this.plugin.settings.getBlueprintSettings()
 
-        for (const [id, enabled] of Object.entries(this.plugin.settings.blueprints)) {
+        for (const [id, enabled] of Object.entries(blueprintSettings)) {
             if (enabled) {
                 const blueprintClass = getBlueprintById(id)
                 const blueprint = new blueprintClass(this.app, this.plugin)
@@ -31,6 +32,7 @@ export class Reader {
     async setup(): Promise<void> {
         await Promise.all(
             this.blueprints.map(async (bp) => {
+                this.plugin.debug('Setting up blueprint: ', bp)
                 await bp.setup()
             }),
         )
@@ -38,6 +40,7 @@ export class Reader {
     async teardown(): Promise<void> {
         await Promise.all(
             this.blueprints.map(async (bp) => {
+                this.plugin.debug('Tearing down blueprint: ', bp)
                 await bp.teardown()
             }),
         )

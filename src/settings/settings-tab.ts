@@ -1,4 +1,4 @@
-import { BLUEPRINTS, getBlueprintById } from 'ankibridge/blueprints'
+import { getBlueprintById } from 'ankibridge/blueprints'
 import { DOCUMENTATION_URL } from 'ankibridge/consts'
 import { RequestPermissionResponse } from 'ankibridge/entities/network'
 import { AnkiBridgeError } from 'ankibridge/error'
@@ -433,17 +433,7 @@ export class SettingsTab extends PluginSettingTab {
     addBlueprints(): void {
         this.containerEl.createEl('h2', { text: 'Blueprint Settings' })
 
-        const blueprintSettingsConst = Object.fromEntries(
-            BLUEPRINTS.map((bp) => {
-                return [bp.id, bp.defaultConfigState]
-            }),
-        )
-
-        const blueprintSettings: Record<string, boolean> = Object.assign(
-            {},
-            blueprintSettingsConst,
-            this.plugin.settings.blueprints,
-        )
+        const blueprintSettings = this.plugin.settings.getBlueprintSettings()
 
         for (const [id, enabled] of Object.entries(blueprintSettings)) {
             const bp = getBlueprintById(id)

@@ -1,3 +1,4 @@
+import { BLUEPRINTS } from 'ankibridge/blueprints'
 import { LATEST_MIGRATION_VERSION } from 'ankibridge/consts'
 import { DefaultDeckMap } from 'ankibridge/entities/other'
 import { POSTPROCESSORS } from 'ankibridge/processors/postprocessors'
@@ -34,6 +35,22 @@ export interface ISettings {
 // eslint-disable-next-line
 export interface Settings extends ISettings {}
 export class Settings {
+    public getBlueprintSettings(): Record<string, boolean> {
+        const blueprintSettingsConst = Object.fromEntries(
+            BLUEPRINTS.map((bp) => {
+                return [bp.id, bp.defaultConfigState]
+            }),
+        )
+
+        const blueprintSettings: Record<string, boolean> = Object.assign(
+            {},
+            blueprintSettingsConst,
+            this.blueprints,
+        )
+
+        return blueprintSettings
+    }
+
     public getMergedProcessors(): Record<string, boolean> {
         const processors = [...PREPROCESSORS, ...POSTPROCESSORS]
 
