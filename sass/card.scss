@@ -155,6 +155,14 @@ div.markdown-reading-view {
 
 // Live-preview only
 div.is-live-preview {
+    // These are fixes for live-preview, which currently renders as reader-style HTML,
+    // But without the styling of the reader.
+    // TODO: This should be fixed in the future by Obsidian core.
+    mark {
+        background-color: var(--text-highlight-bg);
+        color: var(--text-normal);
+    }
+
     div.cm-preview-code-block.cm-embed-block.ankibridge-card-parent {
         border: 0;
         div.ankibridge-card {
