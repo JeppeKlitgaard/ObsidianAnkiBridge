@@ -19,7 +19,7 @@ import {
     MarkdownPostProcessorContext,
     MarkdownPreviewRenderer,
     MarkdownRenderChild,
-    MarkdownRenderer,
+    MarkdownRenderer, MarkdownView, TFile,
 } from 'obsidian'
 import { Parser } from 'peggy'
 
@@ -272,6 +272,7 @@ export abstract class CodeBlockBlueprint extends Blueprint {
         // Add front
         const frontEl = fieldsEl.createDiv('ankibridge-card-front ankibridge-card-content')
         MarkdownRenderer.renderMarkdown(front, frontEl, ctx.sourcePath, renderChild)
+        this.includeImages(frontEl, ctx.sourcePath);
 
         // Add back
         if (back !== null) {
@@ -279,9 +280,30 @@ export abstract class CodeBlockBlueprint extends Blueprint {
 
             const backEl = fieldsEl.createDiv('ankibridge-card-back ankibridge-card-content')
             MarkdownRenderer.renderMarkdown(back, backEl, ctx.sourcePath, renderChild)
+            this.includeImages(backEl, ctx.sourcePath)
         }
 
+
+
+
         return renderChild
+    }
+
+
+    public includeImages(element: HTMLElement, sourcePath: string) {
+        element.findAll(".internal-embed").forEach(el => {
+            const src = el.getAttribute("src");
+            if (src === null) return;
+            const target: TFile|null = this.app.metadataCache.getFirstLinkpathDest(src, sourcePath);
+            if (target !== null && target.extension !== "md") {
+                el.innerText = '';
+                el.createEl("img", {attr: {src: this.app.vault.getResourcePath(target)}}, img => {
+                    if (el.hasAttribute("width")) img.setAttribute("width", el.getAttribute("width")?? "")
+                    if (el.hasAttribute("alt"))   img.setAttribute("alt",   el.getAttribute("alt")?? "")
+                })
+                el.addClasses(["image-embed", "is-loaded"]);
+            }
+        });
     }
 
     public async renderErrorCard(
