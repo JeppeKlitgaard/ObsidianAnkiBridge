@@ -272,7 +272,7 @@ export abstract class CodeBlockBlueprint extends Blueprint {
         // Add front
         const frontEl = fieldsEl.createDiv('ankibridge-card-front ankibridge-card-content')
         MarkdownRenderer.renderMarkdown(front, frontEl, ctx.sourcePath, renderChild)
-        this.includeImages(frontEl);
+        this.includeImages(frontEl, ctx.sourcePath);
 
         // Add back
         if (back !== null) {
@@ -280,7 +280,7 @@ export abstract class CodeBlockBlueprint extends Blueprint {
 
             const backEl = fieldsEl.createDiv('ankibridge-card-back ankibridge-card-content')
             MarkdownRenderer.renderMarkdown(back, backEl, ctx.sourcePath, renderChild)
-            this.includeImages(backEl)
+            this.includeImages(backEl, ctx.sourcePath)
         }
 
 
@@ -290,12 +290,12 @@ export abstract class CodeBlockBlueprint extends Blueprint {
     }
 
 
-
-    public includeImages(element: HTMLElement) {
+    public includeImages(element: HTMLElement, sourcePath: string) {
         element.findAll(".internal-embed").forEach(el => {
             const src = el.getAttribute("src");
-            const target = this.app.vault.getAbstractFileByPath("Attachments/" + src)
-            if (target instanceof TFile && target.extension !== "md") {
+            if (src === null) return;
+            const target: TFile|null = this.app.metadataCache.getFirstLinkpathDest(src, sourcePath);
+            if (target !== null && target.extension !== "md") {
                 el.innerText = '';
                 el.createEl("img", {attr: {src: this.app.vault.getResourcePath(target)}}, img => {
                     if (el.hasAttribute("width")) img.setAttribute("width", el.getAttribute("width")?? "")
