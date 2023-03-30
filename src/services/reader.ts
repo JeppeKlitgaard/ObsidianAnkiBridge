@@ -21,7 +21,9 @@ export class Reader {
 
         for (const [id, enabled] of Object.entries(blueprintSettings)) {
             if (enabled) {
-                const blueprintClass = getBlueprintById(id)
+                // Can't figure out how to type this correctly
+                // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+                const blueprintClass: any = getBlueprintById(id)
                 const blueprint = new blueprintClass(this.app, this.plugin)
 
                 this.blueprints.push(blueprint)

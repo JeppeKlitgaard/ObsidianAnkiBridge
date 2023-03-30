@@ -4,7 +4,9 @@ import { SandwichBlueprint } from 'ankibridge/blueprints/sandwich'
 import AnkiBridgePlugin from 'ankibridge/main'
 import { App } from 'obsidian'
 
-// TODO
+// TODO: This typing current does not work and needs to be cast to any,
+// See in reader.ts
+
 // This could definite be made better, but advanced typing in TypeScript is
 // Still a bit of a jungle to me.
 type BlueprintConstructor = (new (app: App, plugin: AnkiBridgePlugin) => Blueprint) &
