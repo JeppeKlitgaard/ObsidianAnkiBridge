@@ -1,3 +1,4 @@
+// Usage: yarn vup {major,minor,patch}
 import { readFile, writeFile } from "fs/promises";
 import { promisify } from "util";
 import { exec } from "child_process";
