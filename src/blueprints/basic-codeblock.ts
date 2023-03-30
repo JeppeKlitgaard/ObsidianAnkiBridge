@@ -9,7 +9,7 @@ import { dump, YAMLException } from 'js-yaml'
 import { MarkdownPostProcessorContext, MarkdownRenderChild } from 'obsidian'
 import { generate } from 'peggy'
 
-export abstract class BasicCodeBlockBlueprint extends CodeBlockBlueprint {
+export class BasicCodeBlockBlueprint extends CodeBlockBlueprint {
     public static readonly id = 'BasicCodeblock'
     public static readonly displayName = 'BasicCodeblock'
     public static readonly weight = 50
