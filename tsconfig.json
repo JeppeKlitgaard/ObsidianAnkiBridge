@@ -16,6 +16,7 @@
     "importHelpers": true,
     "downlevelIteration": true,
     "esModuleInterop": true,
+    "isolatedModules": true,
     "lib": [
       "dom",
       "es6",
