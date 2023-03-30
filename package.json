@@ -21,7 +21,7 @@
   "devDependencies": {
     "@popperjs/core": "^2.11.2",
     "@types/glob": "^7.2.0",
-    "@types/jest": "^27.4.0",
+    "@types/jest": "^29.5.0",
     "@types/js-yaml": "^4.0.5",
     "@types/lodash": "^4.14.178",
     "@types/markdown-it": "^12.2.3",
@@ -43,7 +43,7 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "file-type": "^17.1.1",
     "glob": "^7.2.0",
-    "jest": "^27.4.7",
+    "jest": "^29.5.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "obsidian": "^0.13.21",
@@ -51,11 +51,12 @@
     "prettier": "^2.5.1",
     "promise-all-properties": "^3.0.4",
     "sass": "^1.49.0",
-    "ts-jest": "^27.1.3",
-    "ts-node": "^10.4.0",
+    "ts-jest": "^29.0.5",
+    "ts-node": "^10.9.1",
     "ts-pegjs": "^1.2.1",
-    "tslib": "^2.3.1",
-    "typescript": "^4.5.5",
+    "tslib": "^2.5.0",
+    "typescript": "^5.0.2",
     "yup": "^0.32.11"
-  }
+  },
+  "packageManager": "yarn@3.5.0"
 }
