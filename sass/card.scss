@@ -11,7 +11,7 @@ div.ankibridge-card {
 
     margin: 15px 0;
 
-    &:hover {
+    &:active {
         div.ankibridge-card-container {
             div.ankibridge-card-config {
                 transform: translateX(0%);
@@ -20,13 +20,21 @@ div.ankibridge-card {
         }
     }
 
+    &:hover {
+        div.ankibridge-card-container {
+            div.ankibridge-card-fields {
+                cursor: pointer;
+                transform: rotateX(180deg);
+            }
+        }
+    }
+
     &.error {
         background-color: var(--background-modifier-error);
     }
-
+    
     div.ankibridge-card-container {
-        margin: 20px 25px;
-
+        padding: 25px 25px;
         // Config
         div.ankibridge-card-config {
             padding: 0.4rem 1rem;
@@ -125,23 +133,46 @@ div.ankibridge-card {
                 }
             }
         }
-
         div.ankibridge-card-fields {
-
+            display: grid;
+            align-items: center;
+            transition-duration: 0.45s;
+            transition-timing-function: ease-in-out;
+            transform-style: preserve-3d;
             // Front
-            div.ankibridge-card-front {}
+            div.ankibridge-card-front, 
+            div.ankibridge-card-back {
+                grid-row: 1/2;
+                grid-column: 1/2;
+                backface-visibility: hidden;
+                text-align: center;
+                & > * {
+                    text-align: inherit;
+                    vertical-align: inherit;
+                    background-color: inherit;
+                    color: inherit;
+                }
+            }
+
+            div.ankibridge-card-front {
+                
+            }
 
             // Separator
             div.ankibridge-card-separator {
-                height       : 0.25rem;
-                border-radius: 0.15rem;
-                margin       : 1rem 0;
+                //display: none;
+                //position: absolute;
+                //height       : 0.25rem;
+                //border-radius: 0.15rem;
+                //margin       : 1rem 0;
 
-                background-color: var(--background-modifier-border);
+                //background-color: var(--background-modifier-border);
             }
 
             // Back
-            div.ankibridge-card-back {}
+            div.ankibridge-card-back {
+                transform: rotateX(180deg);
+            }
         }
     }
 }
