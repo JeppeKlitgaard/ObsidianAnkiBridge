@@ -30,6 +30,7 @@ export class SandwichBlueprint extends Blueprint {
             delete: note.config.delete,
             enabled: note.config.enabled,
             cloze: note.config.cloze,
+            clozeReplacements: note.config.clozeReplacements,
         })
 
         let str = ''
