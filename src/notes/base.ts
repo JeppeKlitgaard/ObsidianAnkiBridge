@@ -20,6 +20,7 @@ export interface Config {
     delete?: boolean
     enabled?: boolean
     cloze?: boolean
+    clozeReplacements?: Array<string>
 }
 
 export interface ParseConfig extends Config {
@@ -42,6 +43,7 @@ export const ParseConfigSchema: yup.SchemaOf<ParseConfig> = yup.object({
     delete: yup.boolean().nullAsUndefined(),
     enabled: yup.boolean().nullAsUndefined(),
     cloze: yup.boolean().nullAsUndefined(),
+    clozeReplacements: yup.array().of(yup.string()).notRequired(),
 })
 
 // Location

@@ -57,7 +57,7 @@ esbuild
         platform: 'node',
         format: 'cjs',
         watch: !prod,
-        target: 'es2016',
+        target: 'es2021',
         logLevel: 'info',
         loader: {
             '.pegjs': 'text',
