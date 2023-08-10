@@ -20,7 +20,7 @@ export class MediaPostprocessor extends Postprocessor {
         domField: HTMLTemplateElement,
         ctx: ProcessorContext,
     ): Promise<void> {
-        const embeds = Array.from(domField.content.querySelectorAll('span.internal-embed'))
+        const embeds = Array.from(domField.content.querySelectorAll('div.internal-embed'))
 
         await Promise.all(
             embeds.map(async (embed) => {
