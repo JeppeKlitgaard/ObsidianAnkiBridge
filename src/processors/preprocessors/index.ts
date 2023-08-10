@@ -5,6 +5,7 @@ import {
     InitialDebugPreprocessor,
 } from 'ankibridge/processors/preprocessors/debug'
 import { MathPreprocessor } from 'ankibridge/processors/preprocessors/math'
+import { EmbedPreprocessor } from 'ankibridge/processors/preprocessors/embed'
 import { App } from 'obsidian'
 
 export type PreprocessorConstructor = {
@@ -14,6 +15,7 @@ export type PreprocessorConstructor = {
 export const PREPROCESSORS: Array<PreprocessorConstructor> = [
     InitialDebugPreprocessor,
     FinalDebugPreprocessor,
+    EmbedPreprocessor,
     MathPreprocessor,
 ]
 
