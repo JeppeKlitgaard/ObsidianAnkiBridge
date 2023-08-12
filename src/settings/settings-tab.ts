@@ -165,6 +165,16 @@ export class SettingsTab extends PluginSettingTab {
                         }
                     })
             })
+        
+        new Setting(this.containerEl)
+            .setName('Inherit Tags')
+            .setDesc('Inherit tags from the note to the flashcards.')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.inheritTags).onChange((newState) => {
+                    this.plugin.settings.inheritTags = newState
+                    this.plugin.saveSettings()
+                })
+            })
 
         // Folders to ignore
         new Setting(this.containerEl)

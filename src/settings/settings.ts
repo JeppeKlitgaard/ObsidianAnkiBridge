@@ -10,6 +10,7 @@ export interface ISettings {
     currentMigrationVersion: number
 
     tagInAnki: string
+    inheritTags: boolean
     foldersToIgnore: Array<string>
 
     periodicPingEnabled: boolean
@@ -95,6 +96,7 @@ export const DEFAULT_SETTINGS: ISettings = {
     currentMigrationVersion: LATEST_MIGRATION_VERSION,
 
     tagInAnki: 'obsidian',
+    inheritTags: true,
     foldersToIgnore: [],
 
     periodicPingEnabled: false,

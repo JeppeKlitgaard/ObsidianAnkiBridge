@@ -11,7 +11,9 @@ import {
 import AnkiBridgePlugin from 'ankibridge/main'
 import { getDefaultDeckForFolder } from 'ankibridge/utils/file'
 import yup from 'ankibridge/utils/yup'
-import { load } from 'js-yaml'
+import { Type, load } from 'js-yaml'
+import { get } from 'lodash'
+import { App, Notice, getAllTags } from 'obsidian'
 
 // Config
 export interface Config {
@@ -181,7 +183,24 @@ export abstract class NoteBase {
     }
 
     public getTags(plugin: AnkiBridgePlugin): Array<string> {
-        return [plugin.settings.tagInAnki, ...(this.config.tags || [])]
+        if (plugin.settings.inheritTags === true) {
+            const cache = plugin.app.metadataCache.getFileCache(this.source.file)
+            if (cache && getAllTags(cache) !== null) {
+                var tags = (getAllTags(cache)) as string[]
+                // Strip out the hash symbol
+                var tags = tags.map((tag) => tag.replace('#', ''))
+                // Convert hierarchial tags to anki format
+                var tags = tags.map((tag) => tag.replace('/', '::'))
+                var tags = tags?.concat(this.config.tags || [])
+                // Filter out duplicates
+                var tags = tags.filter((item, index) => tags.indexOf(item) === index)
+                return [plugin.settings.tagInAnki, ...(tags || [])]
+            } else {
+                return [plugin.settings.tagInAnki, ...(this.config.tags || [])]
+            }
+        } else {
+            return [plugin.settings.tagInAnki, ...(this.config.tags || [])]
+        }
     }
 
     public getEnabled(): boolean {
