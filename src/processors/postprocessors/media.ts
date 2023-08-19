@@ -3,7 +3,7 @@ import { NoteBase } from 'ankibridge/notes/base'
 import { ProcessorContext } from 'ankibridge/processors/base'
 import { Postprocessor } from 'ankibridge/processors/postprocessors/base'
 import { fileTypeFromBuffer, FileTypeResult } from 'file-type'
-import { getLinkpath, TFile } from 'obsidian'
+import { getLinkpath, Notice, TFile } from 'obsidian'
 
 import { fileTypeToMediaType } from '../../utils/encoding'
 import { getFullPath } from '../../utils/file'
@@ -26,15 +26,18 @@ export class MediaPostprocessor extends Postprocessor {
             embeds.map(async (embed) => {
                 const alt = embed.innerHTML;
                 const srcpath = embed.getAttribute("src");
+                if (srcpath == null) {
+                    throw new Error(`Could not find src attribute for embed: ${alt} for file: ${note.source.file.path}`);
+                }
                 const file = this.app.metadataCache.getFirstLinkpathDest(srcpath, note.source.file.path);
                 if (file === null) {
-                    throw new Error('Could not find embed')
+                    throw new Error(`Could not find embed: ${srcpath} for file: ${note.source.file.path}: media postprocessor could not find source file - is it an embedded media file?`);
                 }
 
                 const resourcepath = this.app.vault.adapter.getResourcePath(file.path)
 
                 if (!(file instanceof TFile)) {
-                    console.warn('Offending linkpath: ', linkpath)
+                    console.warn('Offending linkpath: ', note.source.file.path)
                     console.warn('Offending file: ', file)
                     throw TypeError('Embed was not a file. Contact developer on GitHub.')
                 }
