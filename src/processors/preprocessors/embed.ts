@@ -39,7 +39,8 @@ export class EmbedPreprocessor extends Preprocessor {
                     if (abstractFile instanceof TFile) {
                         file = abstractFile;
                     } else {
-                        throw new Error(`Could not find embed: ${match[0]} for file: ${note.source.file.path} - source path ${path} does not exist or is not Tfile`);
+                        // Assumes that embedded file is not a Tfile, rather than not existing - could use better error handling here to cover this
+                        continue
                     }
                 }
                 if (file !== null) {
@@ -74,7 +75,7 @@ export class EmbedPreprocessor extends Preprocessor {
                     if (note.source.file instanceof TFile) {
                         file = note.source.file;
                     } else {
-                        throw new Error(`Could not find embed: ${match[0]} for file: ${note.source.file.path} ' - path does not exist'`);
+                        throw new Error(`Could not find embed: ${match[0]} for file: ${note.source.file.path} - path does not exist or is not Tfile`);
                     }
                 } else {
                     // Check if path is a Tfile
@@ -82,7 +83,8 @@ export class EmbedPreprocessor extends Preprocessor {
                     if (abstractFile instanceof TFile) {
                         file = abstractFile;
                     } else {
-                        throw new Error(`Could not find embed: ${match[0]} for file: ${note.source.file.path} ' - source path ${path} does not exist'`);
+                        // Assumes that embedded file is not a Tfile, rather than not existing - could use better error handling here to cover this
+                        continue
                     }
                 }
                 if (file !== null) {
