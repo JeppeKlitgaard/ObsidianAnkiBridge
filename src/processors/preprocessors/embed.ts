@@ -18,7 +18,7 @@ export class EmbedPreprocessor extends Preprocessor {
         const embedRegex_md = /!\[([^\[]*?)]\((.*?)\)/gis;
         const embedRegex_wiki = /!\[\[(.*?)\]\]/gis;
         let file: TFile | null = null;
-    
+        
         for (const match of strField.matchAll(embedRegex_md)) {
             const result = parseLinktext(match[2]);
             const subpath = result.subpath.replace(/%20/gis, " ");
@@ -30,28 +30,33 @@ export class EmbedPreprocessor extends Preprocessor {
                 } else {
                     throw new Error(`Could not find embed: ${match[0]} for file: ${note.source.file.path} - path does not exist or is not Tfile`);
                 }
-            } else {
+            } else if (path.contains("md")) {
                 // Check if path is a Tfile
-                const abstractFile = this.app.vault.getAbstractFileByPath(path);
+                const abstractFile = this.app.metadataCache.getFirstLinkpathDest(path, "");
                 if (abstractFile instanceof TFile) {
                     file = abstractFile;
                 } else {
-                    // Assumes that embedded file is not a Tfile, rather than not existing - could use better error handling here to cover this
-                    continue
+                    throw new Error(`Could not find embed: ${match[0]} for file: ${note.source.file.path} - path does not exist or is not Tfile`);
                 }
+            } else {
+                continue
             }
             if (file !== null) {
                 const cache = this.app.metadataCache.getFileCache(file);
                 if (cache !== null) {
                     const loc = resolveSubpath(cache, subpath);
-                    const filetext = stripCr(await this.app.vault.read(file));
-                    const splitLines = filetext.split("\n");
-                    if (loc.end !== null) {
-                        const filetextlines = splitLines.slice(loc.start.line, loc.end.line).join("\n");
-                        strField = strField.replace(match[0], filetextlines);
+                    if (loc !== null) {
+                        const filetext = stripCr(await this.app.vault.read(file));
+                        const splitLines = filetext.split("\n");
+                        if (loc.end !== null) {
+                            const filetextlines = splitLines.slice(loc.start.line, loc.end.line).join("\n");
+                            strField = strField.replace(match[0], filetextlines);
+                        } else {
+                            const filetextlines = splitLines.slice(loc.start.line).join("\n");
+                            strField = strField.replace(match[0], filetextlines);
+                        }
                     } else {
-                        const filetextlines = splitLines.slice(loc.start.line).join("\n");
-                        strField = strField.replace(match[0], filetextlines);
+                        throw new Error(`Could not find embed: ${match[0]} for file: ${note.source.file.path} - subpath could not be resolved`);
                     }
                 } else {
                     throw new Error(`Could not find embed: ${match[0]} for file: ${note.source.file.path} ' - cache is null'`);
@@ -75,7 +80,7 @@ export class EmbedPreprocessor extends Preprocessor {
                 }
             } else {
                 // Check if path is a Tfile
-                const abstractFile = this.app.vault.getAbstractFileByPath(path);
+                const abstractFile = this.app.metadataCache.getFirstLinkpathDest(path, "");
                 if (abstractFile instanceof TFile) {
                     file = abstractFile;
                 } else {
@@ -87,15 +92,19 @@ export class EmbedPreprocessor extends Preprocessor {
                 const cache = this.app.metadataCache.getFileCache(file);
                 if (cache !== null) {
                     const loc = resolveSubpath(cache, subpath);
-                    const filetext = stripCr(await this.app.vault.read(file));
-                    const splitLines = filetext.split("\n");
-                    if (loc.end !== null) {
-                        const filetextlines = splitLines.slice(loc.start.line, loc.end.line).join("\n");
-                        strField = strField.replace(match[0], filetextlines);
+                    if (loc !== null) {
+                        const filetext = stripCr(await this.app.vault.read(file));
+                        const splitLines = filetext.split("\n");
+                        if (loc.end !== null) {
+                            const filetextlines = splitLines.slice(loc.start.line, loc.end.line).join("\n");
+                            strField = strField.replace(match[0], filetextlines);
+                        } else {
+                            const filetextlines = splitLines.slice(loc.start.line).join("\n");
+                            strField = strField.replace(match[0], filetextlines);
+                        }
                     } else {
-                        const filetextlines = splitLines.slice(loc.start.line).join("\n");
-                        strField = strField.replace(match[0], filetextlines);
-                    }
+                        throw new Error(`Could not find embed: ${match[0]} for file: ${note.source.file.path} - subpath ${subpath} could not be resolved`);
+                    }    
                 } else {
                     throw new Error(`Could not find embed: ${match[0]} for file: ${note.source.file.path} ' - cache is null'`);
                 }
