@@ -11,6 +11,7 @@ export interface ISettings {
 
     tagInAnki: string
     inheritTags: boolean
+    inheritDeck: boolean
     foldersToIgnore: Array<string>
 
     periodicPingEnabled: boolean
@@ -103,6 +104,7 @@ export const DEFAULT_SETTINGS: ISettings = {
     periodicPingInterval: 30, // Seconds
 
     fallbackDeck: 'Default',
+    inheritDeck: true,
     defaultDeckMaps: [],
 
     blueprints: {},

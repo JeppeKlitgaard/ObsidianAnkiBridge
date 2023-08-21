@@ -14,6 +14,7 @@ import yup from 'ankibridge/utils/yup'
 import { Type, load } from 'js-yaml'
 import { get } from 'lodash'
 import { App, Notice, getAllTags } from 'obsidian'
+import { resolve } from 'path'
 
 // Config
 export interface Config {
@@ -165,19 +166,27 @@ export abstract class NoteBase {
      */
     public getDeckName(plugin: AnkiBridgePlugin): string {
         // Use in-note configured deck
-        if (this.config.deck) {
-            return this.config.deck
-        }
+        if (plugin.settings.inheritDeck === false) {
+            if (this.config.deck) {
+                return this.config.deck
+            }
 
-        // Try to resolve based on default deck mappings
-        const resolvedDefaultDeck = getDefaultDeckForFolder(
-            this.source.file.parent,
-            plugin.settings.defaultDeckMaps,
-        )
-        if (resolvedDefaultDeck) {
-            return resolvedDefaultDeck
+            // Try to resolve based on default deck mappings
+            const resolvedDefaultDeck = getDefaultDeckForFolder(
+                this.source.file.parent,
+                plugin.settings.defaultDeckMaps,
+            )
+            if (resolvedDefaultDeck) {
+                return resolvedDefaultDeck
+            }
+        } else if (plugin.settings.inheritDeck === true) {
+            // Mirror the folder structure
+            var deckName = this.source.file.path
+                .split('/')
+                .join('::')
+            var deckName = plugin.settings.fallbackDeck + '::' + deckName
+            return deckName
         }
-
         // Fallback if no deck was found
         return plugin.settings.fallbackDeck
     }
