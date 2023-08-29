@@ -233,8 +233,15 @@ export class Bridge {
 
         const renderedFields = await this.renderFields(note)
 
+        // Create deck - could use improvement, if statement
+        const deckName = note.getDeckName(this.plugin)
+        await anki.createDeck(deckName)
+
         // Create if does not exist
         if (!hasID(note)) {
+            // Check if deck exists
+            const deckName = note.getDeckName(this.plugin)
+            anki.createDeck(deckName)
             // We must create note
             await this.easyAddNote(note, renderedFields)
 
@@ -282,6 +289,7 @@ export class Bridge {
         // We must update deck
         if (notePairDelta.cardsToUpdate.length) {
             const deckName = note.getDeckName(this.plugin)
+            await anki.createDeck(deckName)
             await anki.changeDeck(notePairDelta.cardsToUpdate, deckName)
         }
 

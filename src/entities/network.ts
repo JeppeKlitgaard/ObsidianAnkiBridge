@@ -81,6 +81,13 @@ export interface CardsInfoEntity {
 
 export type CardsInfoResponse = Array<CardsInfoEntity>
 
+// CreateDeck
+export interface CreateDeckRequest {
+    deck: string
+}
+
+export type CreateDeckResponse = null
+
 // ChangeDeck
 export interface ChangeDeckRequest {
     cards: Array<number>

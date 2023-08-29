@@ -17,12 +17,14 @@ import {
     StoreMediaFileResponse,
     UpdateNoteFieldsRequest,
     UpdateNoteFieldsResponse,
+    CreateDeckRequest,
+    CreateDeckResponse,
 } from 'ankibridge/entities/network'
 import { AnkiFields, ModelName } from 'ankibridge/entities/note'
 import AnkiBridgePlugin from 'ankibridge/main'
 import { NoteBase, NoteWithID } from 'ankibridge/notes/base'
 import _ from 'lodash'
-import { App } from 'obsidian'
+import { App, Notice } from 'obsidian'
 
 export class Anki {
     private static version = 6
@@ -46,6 +48,15 @@ export class Anki {
         return await this.invoke('cardsInfo', Anki.version, params)
     }
 
+    //Create a new function which checks if the deck exists, if not, create it
+    public async createDeck(deckName: string): Promise<CreateDeckResponse> {
+        const params: CreateDeckRequest = {
+            deck: deckName,
+        }
+        return await this.invoke('createDeck', Anki.version, params)
+    }
+
+
     public async changeDeck(cardIds: Array<number>, deck: string): Promise<ChangeDeckResponse> {
         const params: ChangeDeckRequest = {
             cards: cardIds,
@@ -53,7 +64,7 @@ export class Anki {
         }
 
         return await this.invoke('changeDeck', Anki.version, params)
-    }
+    }    
 
     public async addNote(
         note: NoteBase,

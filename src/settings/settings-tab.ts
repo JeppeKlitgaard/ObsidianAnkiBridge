@@ -165,6 +165,26 @@ export class SettingsTab extends PluginSettingTab {
                         }
                     })
             })
+        
+        new Setting(this.containerEl)
+            .setName('Inherit Tags')
+            .setDesc('Inherit tags from the note to the flashcards.')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.inheritTags).onChange((newState) => {
+                    this.plugin.settings.inheritTags = newState
+                    this.plugin.saveSettings()
+                })
+            })
+
+        new Setting(this.containerEl)
+            .setName('Folders to decks')
+            .setDesc('Convert folders and subfolders in obsidian to decks and subdecks in anki.')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.inheritDeck).onChange((newState) => {
+                    this.plugin.settings.inheritDeck = newState
+                    this.plugin.saveSettings()
+                })
+            })
 
         // Folders to ignore
         new Setting(this.containerEl)

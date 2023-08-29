@@ -10,6 +10,8 @@ export interface ISettings {
     currentMigrationVersion: number
 
     tagInAnki: string
+    inheritTags: boolean
+    inheritDeck: boolean
     foldersToIgnore: Array<string>
 
     periodicPingEnabled: boolean
@@ -95,12 +97,14 @@ export const DEFAULT_SETTINGS: ISettings = {
     currentMigrationVersion: LATEST_MIGRATION_VERSION,
 
     tagInAnki: 'obsidian',
+    inheritTags: true,
     foldersToIgnore: [],
 
     periodicPingEnabled: false,
     periodicPingInterval: 30, // Seconds
 
     fallbackDeck: 'Default',
+    inheritDeck: true,
     defaultDeckMaps: [],
 
     blueprints: {},

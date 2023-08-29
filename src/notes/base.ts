@@ -11,7 +11,10 @@ import {
 import AnkiBridgePlugin from 'ankibridge/main'
 import { getDefaultDeckForFolder } from 'ankibridge/utils/file'
 import yup from 'ankibridge/utils/yup'
-import { load } from 'js-yaml'
+import { Type, load } from 'js-yaml'
+import { get } from 'lodash'
+import { App, Notice, getAllTags } from 'obsidian'
+import { resolve } from 'path'
 
 // Config
 export interface Config {
@@ -163,25 +166,50 @@ export abstract class NoteBase {
      */
     public getDeckName(plugin: AnkiBridgePlugin): string {
         // Use in-note configured deck
-        if (this.config.deck) {
-            return this.config.deck
-        }
+        if (plugin.settings.inheritDeck === false) {
+            if (this.config.deck) {
+                return this.config.deck
+            }
 
-        // Try to resolve based on default deck mappings
-        const resolvedDefaultDeck = getDefaultDeckForFolder(
-            this.source.file.parent,
-            plugin.settings.defaultDeckMaps,
-        )
-        if (resolvedDefaultDeck) {
-            return resolvedDefaultDeck
+            // Try to resolve based on default deck mappings
+            const resolvedDefaultDeck = getDefaultDeckForFolder(
+                this.source.file.parent,
+                plugin.settings.defaultDeckMaps,
+            )
+            if (resolvedDefaultDeck) {
+                return resolvedDefaultDeck
+            }
+        } else if (plugin.settings.inheritDeck === true) {
+            // Mirror the folder structure
+            var deckName = this.source.file.path
+                .split('/')
+                .join('::')
+            var deckName = plugin.settings.fallbackDeck + '::' + deckName
+            return deckName
         }
-
         // Fallback if no deck was found
         return plugin.settings.fallbackDeck
     }
 
     public getTags(plugin: AnkiBridgePlugin): Array<string> {
-        return [plugin.settings.tagInAnki, ...(this.config.tags || [])]
+        if (plugin.settings.inheritTags === true) {
+            const cache = plugin.app.metadataCache.getFileCache(this.source.file)
+            if (cache && getAllTags(cache) !== null) {
+                var tags = (getAllTags(cache)) as string[]
+                // Strip out the hash symbol
+                var tags = tags.map((tag) => tag.replace('#', ''))
+                // Convert hierarchial tags to anki format
+                var tags = tags.map((tag) => tag.replace(/\//g, '::'));
+                var tags = tags?.concat(this.config.tags || [])
+                // Filter out duplicates
+                var tags = tags.filter((item, index) => tags.indexOf(item) === index)
+                return [plugin.settings.tagInAnki, ...(tags || [])]
+            } else {
+                return [plugin.settings.tagInAnki, ...(this.config.tags || [])]
+            }
+        } else {
+            return [plugin.settings.tagInAnki, ...(this.config.tags || [])]
+        }
     }
 
     public getEnabled(): boolean {
