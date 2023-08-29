@@ -199,7 +199,7 @@ export abstract class NoteBase {
                 // Strip out the hash symbol
                 var tags = tags.map((tag) => tag.replace('#', ''))
                 // Convert hierarchial tags to anki format
-                var tags = tags.map((tag) => tag.replace('/', '::'))
+                var tags = tags.map((tag) => tag.replace(/\//g, '::'));
                 var tags = tags?.concat(this.config.tags || [])
                 // Filter out duplicates
                 var tags = tags.filter((item, index) => tags.indexOf(item) === index)
