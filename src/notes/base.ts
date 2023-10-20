@@ -20,6 +20,7 @@ export interface Config {
     delete?: boolean
     enabled?: boolean
     cloze?: boolean
+    reversed?: boolean
 }
 
 export interface ParseConfig extends Config {
@@ -42,6 +43,7 @@ export const ParseConfigSchema: yup.SchemaOf<ParseConfig> = yup.object({
     delete: yup.boolean().nullAsUndefined(),
     enabled: yup.boolean().nullAsUndefined(),
     cloze: yup.boolean().nullAsUndefined(),
+    reversed: yup.boolean().nullAsUndefined(),
 })
 
 // Location
@@ -154,7 +156,9 @@ export abstract class NoteBase {
         if (this.isCloze) {
             return 'Cloze'
         }
-
+        else if (this.config.reversed) {
+            return 'Basic (and reversed card)'
+        }
         return 'Basic'
     }
 

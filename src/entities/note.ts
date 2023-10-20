@@ -14,7 +14,7 @@ export enum NoteField {
 }
 export type NoteFields = Record<NoteField, string | null>
 
-export type ModelName = 'Basic' | 'Cloze'
+export type ModelName = 'Basic' | 'Basic (and reversed card)' | 'Cloze'
 
 export interface SourceDescriptor {
     from: number

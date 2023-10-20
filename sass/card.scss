@@ -91,6 +91,7 @@ div.ankibridge-card {
 
                 // Boolean properties
                 &[data-type="cloze"],
+                &[data-type="reversed"],
                 &[data-type="enabled"],
                 &[data-type="delete"] {
                     font-size : 0;
@@ -113,6 +114,10 @@ div.ankibridge-card {
 
                 &[data-type="cloze"]::before {
                     content: "Cloze";
+                }
+
+                &[data-type="reversed"]::before {
+                    content: "Reversed Card";
                 }
 
                 &[data-type="enabled"]::before {

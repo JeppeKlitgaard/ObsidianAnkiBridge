@@ -39,6 +39,7 @@ export class BasicCodeBlockBlueprint extends CodeBlockBlueprint {
             delete: note.config.delete,
             enabled: note.config.enabled,
             cloze: note.config.cloze,
+            reversed: note.config.reversed,
         })
 
         let str = ''
